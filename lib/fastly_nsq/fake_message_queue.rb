@@ -1,22 +1,17 @@
 require 'active_support/core_ext/module/attribute_accessors'
 require 'active_support/core_ext/module/introspection'
 
-class FakeMessageQueue
+module FakeMessageQueue
   cattr_accessor :queue
-
-  def self.producer(topic:)
-    @producer ||= Producer.new
-  end
-
-  def self.consumer(topic:, channel:)
-    @consumer ||= Consumer.new
-  end
 
   def self.reset!
     self.queue = []
   end
 
   class Producer
+    def initialize(nsqd:, topic:)
+    end
+
     def write(string)
       message = Message.new(string)
       queue.push(message)
@@ -30,6 +25,9 @@ class FakeMessageQueue
   end
 
   class Consumer
+    def initialize(nsqlookupd:, topic:, channel:)
+    end
+
     def pop
       queue.pop
     end
