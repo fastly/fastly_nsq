@@ -1,8 +1,11 @@
-require 'active_support/core_ext/module/attribute_accessors'
-require 'active_support/core_ext/module/introspection'
-
 module FakeMessageQueue
-  cattr_accessor :queue
+  def self.queue
+    @@queue
+  end
+
+  def self.queue=(message)
+    @@queue = message
+  end
 
   def self.reset!
     self.queue = []
@@ -20,7 +23,7 @@ module FakeMessageQueue
     private
 
     def queue
-      self.class.parent.queue
+      FakeMessageQueue.queue
     end
   end
 
@@ -39,7 +42,7 @@ module FakeMessageQueue
     private
 
     def queue
-      self.class.parent.queue
+      FakeMessageQueue.queue
     end
   end
 
