@@ -8,7 +8,7 @@ describe SampleMessageProcessor do
       message = double('Message', body: body, finish: nil)
       allow(HeartbeatWorker).to receive(:perform_async)
 
-      SampleMessageProcessor.new(message).start
+      SampleMessageProcessor.new(message).go
 
       expect(HeartbeatWorker).to have_received(:perform_async).with(data)
     end
@@ -19,7 +19,7 @@ describe SampleMessageProcessor do
       message = double('Message', body: body, finish: nil)
       allow(HeartbeatWorker).to receive(:perform_async)
 
-      SampleMessageProcessor.new(message).start
+      SampleMessageProcessor.new(message).go
 
       expect(message).to have_received(:finish)
     end
@@ -34,7 +34,7 @@ describe SampleMessageProcessor do
         message = double('Message', body: body, finish: nil)
         allow(UnknownMessageWorker).to receive(:perform_async)
 
-        SampleMessageProcessor.new(message).start
+        SampleMessageProcessor.new(message).go
 
         expect(UnknownMessageWorker).to have_received(:perform_async).with(data)
       end
@@ -50,7 +50,7 @@ describe SampleMessageProcessor do
         message = double('Message', body: body, finish: nil)
         allow(UnknownMessageWorker).to receive(:perform_async)
 
-        SampleMessageProcessor.new(message).start
+        SampleMessageProcessor.new(message).go
 
         expect(UnknownMessageWorker).to have_received(:perform_async).with(data)
       end

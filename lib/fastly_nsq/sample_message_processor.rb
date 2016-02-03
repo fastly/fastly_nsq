@@ -10,7 +10,7 @@ class SampleMessageProcessor
     @message = message
   end
 
-  def start
+  def go
     process_message
     message.finish
   end
