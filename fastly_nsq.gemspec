@@ -10,7 +10,7 @@ Gem::Specification.new do |gem|
   gem.summary       = 'Fastly NSQ Adapter'
   gem.description   = "Helper classes for Fastly's NSQ Services"
   gem.license       = 'MIT'
-  gem.authors       = ["Tommy O'Neill, Adarsh Pandit"]
+  gem.authors       = ["Tommy O'Neil", 'Adarsh Pandit']
   gem.email         = 'tommy@fastly.com'
   gem.homepage      = 'https://github.com/fastly/fastly-nsq'
 
@@ -30,6 +30,5 @@ Gem::Specification.new do |gem|
   gem.add_development_dependency 'rspec-mocks', '~> 3.4'
   gem.add_development_dependency 'rubygems-tasks', '~> 0.2'
 
-  gem.add_dependency 'activesupport', '~> 4.2', '>= 4.2.5.1'
   gem.add_dependency 'nsq-ruby', '~> 1.5.0', '>= 1.5.0'
 end
