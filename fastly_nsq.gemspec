@@ -14,7 +14,7 @@ Gem::Specification.new do |gem|
   gem.email         = 'tommy@fastly.com'
   gem.homepage      = 'https://github.com/fastly/fastly-nsq'
 
-  gem.files         = ['lib/fastly_nsq']
+  gem.files         = `git ls-files`.split("\n")
 
   gem.executables   = gem.files.grep(%r{^bin/}).map{ |f| File.basename(f) }
   gem.test_files    = gem.files.grep(%r{^(test|features)/})
