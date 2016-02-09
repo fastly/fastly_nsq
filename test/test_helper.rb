@@ -17,7 +17,6 @@ MessageProcessor = SampleMessageProcessor
 
 MiniTest::Spec.before do
   load_sample_environment_variables
-  FakeMessageQueue.reset!
 end
 
 def load_sample_environment_variables

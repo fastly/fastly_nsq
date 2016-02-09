@@ -215,6 +215,11 @@ start by using the fake queue:
 FAKE_QUEUE=true
 ```
 
+Also be sure call
+`FakeMessageQueue.reset!`
+before each test in your app to ensure
+there are no leftover messages.
+
 Also note that during gem tests,
 we are aliasing `MessageProcessor` to `SampleMessageProcessor`.
 You can also refer to the latter

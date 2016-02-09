@@ -1,6 +1,12 @@
 require 'test_helper'
 
 describe FakeMessageQueue do
+  describe '@@queue' do
+    it 'is initalized as an empty array' do
+      assert_equal [], FakeMessageQueue.queue
+    end
+  end
+
   describe '.reset!' do
     it 'resets the fake message queue' do
       FakeMessageQueue.queue = ['hello']
@@ -14,6 +20,10 @@ describe FakeMessageQueue do
 end
 
 describe FakeMessageQueue::Producer do
+  after do
+    FakeMessageQueue.reset!
+  end
+
   describe '#write' do
     it 'adds a new message to the queue' do
       topic = 'death_star'
@@ -30,6 +40,10 @@ describe FakeMessageQueue::Producer do
 end
 
 describe FakeMessageQueue::Message do
+  after do
+    FakeMessageQueue.reset!
+  end
+
   describe '#body' do
     it 'returns the body of the message' do
       topic = 'death_star'
@@ -49,6 +63,10 @@ describe FakeMessageQueue::Message do
 end
 
 describe FakeMessageQueue::Consumer do
+  after do
+    FakeMessageQueue.reset!
+  end
+
   describe '#size' do
     it 'tells you how many messages are in the queue' do
       FakeMessageQueue.queue = ['hello']
