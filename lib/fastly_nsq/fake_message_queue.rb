@@ -1,4 +1,6 @@
 module FakeMessageQueue
+  @@queue = []
+
   def self.queue
     @@queue
   end
