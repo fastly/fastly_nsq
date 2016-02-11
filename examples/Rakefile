@@ -1,0 +1,36 @@
+require 'fastly_nsq'
+require 'fastly_nsq/rake_task'
+
+##
+# Both topic and channel will need to be passed into the rake task when
+# it is called.
+#
+# ex: `rake listen_task[my_topic,my_channel]`
+# topic will be 'my_topic' and channel will be 'my_channel'
+#
+MessageQueue::RakeTask.new(:listen_task, [:topic, :channel])
+
+##
+# Topic and channel can also be preset in the task by passing a block and
+# assigning value like so. This is useful if you want a single purpose
+# listener task.
+#
+# ex: `rake listen_task`
+# topic will be 'some_topic' and channel will be 'some_channel'
+#
+MessageQueue::RakeTask.new(:listen_task) do |task|
+  task.topic   = 'some_topic'
+  task.channel = 'some_channel'
+end
+
+##
+# Both forms can be combine to provide defaults of a sort with the ability
+# to override at time of rake call
+#
+# ex: `rake listen_task[altered_topic]`
+# topic will be 'altered_topic' and channel will be 'some_channel'
+#
+MessageQueue::RakeTask.new(:listen_task, [:topic, :channel]) do |task|
+  task.topic   = 'some_topic'
+  task.channel = 'some_channel'
+end
