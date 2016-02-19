@@ -9,7 +9,7 @@ describe Strategy do
 
           strategy = Strategy.for_queue
 
-          assert equal FakeMessageQueue, strategy
+          assert_equal FakeMessageQueue, strategy
         end
       end
     end
@@ -21,7 +21,7 @@ describe Strategy do
 
           strategy = Strategy.for_queue
 
-          assert equal Nsq, strategy
+          assert_equal Nsq, strategy
         end
       end
     end
