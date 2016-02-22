@@ -1,5 +1,14 @@
-class HeartbeatWorker; end
-class UnknownMessageWorker; end
+class HeartbeatWorker
+  def self.perform_async(_data)
+    # noop
+  end
+end
+
+class UnknownMessageWorker
+  def self.perform_async(_data)
+    # noop
+  end
+end
 
 class SampleMessageProcessor
   EVENT_TYPE_TO_WORKER_MAP = {

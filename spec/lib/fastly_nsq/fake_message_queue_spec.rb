@@ -1,25 +1,25 @@
-require 'test_helper'
+require 'spec_helper'
 
-describe FakeMessageQueue do
+RSpec.describe FakeMessageQueue do
   describe '@@queue' do
     it 'is initalized as an empty array' do
-      assert_equal [], FakeMessageQueue.queue
+      expect(FakeMessageQueue.queue).to eq []
     end
   end
 
   describe '.reset!' do
     it 'resets the fake message queue' do
       FakeMessageQueue.queue = ['hello']
-      assert_equal 1, FakeMessageQueue.queue.size
+      expect(FakeMessageQueue.queue.size).to eq 1
 
       FakeMessageQueue.reset!
 
-      assert_empty FakeMessageQueue.queue
+      expect(FakeMessageQueue.queue).to be_empty
     end
   end
 end
 
-describe FakeMessageQueue::Producer do
+RSpec.describe FakeMessageQueue::Producer do
   after do
     FakeMessageQueue.reset!
   end
@@ -34,12 +34,12 @@ describe FakeMessageQueue::Producer do
       )
       producer.write('hello')
 
-      assert_equal 1, FakeMessageQueue.queue.size
+      expect(FakeMessageQueue.queue.size).to eq 1
     end
   end
 end
 
-describe FakeMessageQueue::Message do
+RSpec.describe FakeMessageQueue::Message do
   after do
     FakeMessageQueue.reset!
   end
@@ -57,12 +57,12 @@ describe FakeMessageQueue::Message do
       message = FakeMessageQueue.queue.pop
       body = message.body
 
-      assert_equal content, body
+      expect(content).to eq body
     end
   end
 end
 
-describe FakeMessageQueue::Consumer do
+RSpec.describe FakeMessageQueue::Consumer do
   after do
     FakeMessageQueue.reset!
   end
@@ -80,7 +80,7 @@ describe FakeMessageQueue::Consumer do
       )
       queue_size = consumer.size
 
-      assert_equal 1, queue_size
+      expect(queue_size).to eq 1
     end
   end
 
@@ -98,7 +98,7 @@ describe FakeMessageQueue::Consumer do
       )
       popped_message = consumer.pop
 
-      assert_equal message, popped_message
+      expect(popped_message). to eq message
     end
   end
 end

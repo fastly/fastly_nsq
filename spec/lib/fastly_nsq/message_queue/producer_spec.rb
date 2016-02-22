@@ -1,6 +1,6 @@
-require 'test_helper'
+require 'spec_helper'
 
-describe MessageQueue::Producer do
+RSpec.describe MessageQueue::Producer do
   describe '#connection' do
     describe 'when using the real queue' do
       it 'returns an instance of the queue producer' do
@@ -46,9 +46,7 @@ describe MessageQueue::Producer do
 
       producer = MessageQueue::Producer.new(topic: topic)
 
-      assert_raises(InvalidParameterError) do
-        producer.connection
-      end
+      expect{ producer.connection }.to raise_error(InvalidParameterError)
     end
   end
 end

@@ -1,6 +1,6 @@
-require 'test_helper'
+require 'spec_helper'
 
-describe MessageQueue::Listener do
+RSpec.describe MessageQueue::Listener do
   describe '#process_next_message' do
     it 'pass the topic and channel to the consumer' do
       allow(SampleMessageProcessor).to receive_message_chain(:new, :go)

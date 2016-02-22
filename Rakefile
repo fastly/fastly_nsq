@@ -17,14 +17,6 @@ require 'rdoc/task'
 RDoc::Task.new
 task doc: :rdoc
 
-require 'rake/testtask'
-
-Rake::TestTask.new do |test|
-  test.libs << 'test'
-  test.pattern = 'test/**/*_test.rb'
-  test.verbose = true
-end
-
 require 'bundler/audit/cli'
 
 namespace :bundler do
@@ -36,5 +28,8 @@ namespace :bundler do
   end
 end
 
+require 'rspec/core/rake_task'
+RSpec::Core::RakeTask.new(:spec)
+
 task(:default).clear
-task default: ['test', 'bundler:audit']
+task default: ['spec', 'bundler:audit']

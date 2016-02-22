@@ -1,6 +1,6 @@
-require 'test_helper'
+require 'spec_helper'
 
-describe Strategy do
+RSpec.describe Strategy do
   describe '.for_queue' do
     describe 'when using the fake queue' do
       it 'returns the strategy based on the ENV variable' do
@@ -9,7 +9,7 @@ describe Strategy do
 
           strategy = Strategy.for_queue
 
-          assert_equal FakeMessageQueue, strategy
+          expect(strategy).to eq FakeMessageQueue
         end
       end
     end
@@ -21,7 +21,7 @@ describe Strategy do
 
           strategy = Strategy.for_queue
 
-          assert_equal Nsq, strategy
+          expect(strategy).to eq Nsq
         end
       end
     end
@@ -30,9 +30,7 @@ describe Strategy do
       it 'raises with a helpful error' do
         allow(ENV).to receive(:[]).with('FAKE_QUEUE').and_return('taco')
 
-        assert_raises(InvalidParameterError) do
-          Strategy.for_queue
-        end
+        expect{ Strategy.for_queue }.to raise_error(InvalidParameterError)
       end
     end
   end

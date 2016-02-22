@@ -1,6 +1,6 @@
-require 'test_helper'
+require 'spec_helper'
 
-describe SampleMessageProcessor do
+RSpec.describe SampleMessageProcessor do
   describe '#start' do
     it 'enqueues the appropriate message processor' do
       data =  { 'key' => 'value' }

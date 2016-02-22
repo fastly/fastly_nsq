@@ -1,10 +1,10 @@
-require 'test_helper'
+require 'spec_helper'
 require 'fastly_nsq'
 
-describe FastlyNsq do
+RSpec.describe FastlyNsq do
   it 'has a version number' do
     version = FastlyNsq.const_get('VERSION')
 
-    assert(!version.empty?, 'should have a VERSION constant')
+    expect(version).not_to be_empty
   end
 end

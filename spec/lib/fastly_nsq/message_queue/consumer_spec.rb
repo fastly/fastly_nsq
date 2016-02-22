@@ -1,6 +1,6 @@
-require 'test_helper'
+require 'spec_helper'
 
-describe MessageQueue::Consumer do
+RSpec.describe MessageQueue::Consumer do
   describe '#connection' do
     describe 'when using the real queue' do
       it 'returns an instance of the queue consumer' do
@@ -51,9 +51,7 @@ describe MessageQueue::Consumer do
 
       consumer = MessageQueue::Consumer.new(topic: topic, channel: channel)
 
-      assert_raises(InvalidParameterError) do
-        consumer.connection
-      end
+      expect{ consumer.connection }.to raise_error(InvalidParameterError)
     end
   end
 end
