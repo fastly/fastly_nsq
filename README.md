@@ -29,7 +29,7 @@ Please use [GitHub Issues] to report bugs.
 
 `fastly_nsq` is a Ruby Gem
 tested against Rails `>= 4.2`
-and Ruby `>= 2.0`.
+and Ruby `>= 2.3.0`.
 
 To get started,
 add `fastly_nsq` to your `Gemfile`
@@ -52,9 +52,9 @@ write messages onto the queue:
 
 ```ruby
 message_data = {
-  "event_type": "heartbeat",
-  "data": {
-    "key": "value"
+  "event_type" => "heartbeat",
+  "data" => {
+    "key" => "value"
   }
 }
 
@@ -73,10 +73,10 @@ to your application:
 
 ```ruby
 # for the fake
-ENV['FAKE_QUEUE'] == true
+ENV['FAKE_QUEUE'] = true
 
 # for the real thing
-ENV['FAKE_QUEUE'] == false
+ENV['FAKE_QUEUE'] = false
 ```
 
 ### `MessageQueue::Consumer`
@@ -94,9 +94,10 @@ consumer = MessageQueue::Consumer.new(
 
 consumer.size #=> 1
 message = consumer.pop
-message.body #=>'hey this is my message!'
+message.body #=> "{ 'event_type': 'heartbeat','data': { 'key': 'value' } }"
 message.finish
 consumer.size #=> 0
+consumer.terminate
 ```
 
 As above,
@@ -117,7 +118,8 @@ MessageQueue::Listener.new(topic: topic, channel: channel).process_next_message
 
 This will pop the next message
 off of the queue
-and send it to `MessageProcessor.new(message).go`.
+and send the JSON text body
+to `MessageProcessor.new(message_body).go`.
 
 To initiate a blocking loop to process messages continuously:
 
@@ -132,7 +134,7 @@ This will block until
 there is a new message on the queue,
       pop the next message
       off of the queue
-      and send it to `MessageProcessor.new(message).go`.
+      and send it to `MessageProcessor.new(message_body).go`.
 
 ### `MessageQueue::RakeTask`
 
@@ -200,15 +202,18 @@ This class needs to adhere to the following API:
 ```ruby
 class MessageProcessor
   # This an instance of NSQ::Message or FakeMessageQueue::Message
-  def initialize(message)
-    @message = message
+  def initialize(message_body)
+    @message_body = message_body
   end
 
   def start
-    # Do things with the message. It's JSON body is accessible by @message.body.
+    # Do things
+  end
 
-    # Finish the message to let the queue know it is complete like so:
-    @message.finish
+  private
+
+  def message
+    JSON.parse(@message_body)
   end
 end
 ```

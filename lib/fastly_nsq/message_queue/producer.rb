@@ -7,7 +7,11 @@ module MessageQueue
     end
 
     def connection
-      producer.new(params)
+      @producer ||= producer.new(params)
+    end
+
+    def terminate
+      @producer.terminate
     end
 
     private
