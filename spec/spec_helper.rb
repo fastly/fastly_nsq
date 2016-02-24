@@ -3,6 +3,7 @@ require 'awesome_print'
 require 'pry-byebug'
 
 require_relative '../lib/fastly_nsq/sample_message_processor'
+require_relative 'support/env_helpers'
 
 MessageProcessor = SampleMessageProcessor
 
@@ -19,20 +20,18 @@ RSpec.configure do |config|
   config.disable_monkey_patching!
   config.example_status_persistence_file_path = 'spec/examples.txt'
   config.filter_run :focus
-  config.run_all_when_everything_filtered = true
-
-  config.profile_examples = 1
   config.order = :random
+  config.profile_examples = false
+  config.run_all_when_everything_filtered = true
   Kernel.srand config.seed
 
   if config.files_to_run.one?
     config.default_formatter = 'doc'
-    config.profile_examples = false
   end
 
   config.before(:each) do
     load_sample_environment_variables
-  #   FakeMessageQueue.reset!
+    FakeMessageQueue.reset!
   end
 
   def load_sample_environment_variables

@@ -15,20 +15,19 @@ class SampleMessageProcessor
     'heartbeat' => HeartbeatWorker,
   }.freeze
 
-  def initialize(message)
-    @message = message
+  def initialize(message_body)
+    @message_body = message_body
   end
 
   def go
-    process_message
-    message.finish
+    process_message_body
   end
 
   private
 
-  attr_reader :message
+  attr_reader :message_body
 
-  def process_message
+  def process_message_body
     message_processor.perform_async(message_data)
   end
 
@@ -46,9 +45,5 @@ class SampleMessageProcessor
 
   def parsed_message_body
     JSON.parse(message_body)
-  end
-
-  def message_body
-    message.body
   end
 end

@@ -8,7 +8,11 @@ module MessageQueue
     end
 
     def connection
-      consumer.new(params)
+      @connection ||= consumer.new(params)
+    end
+
+    def terminate
+      @connection.terminate
     end
 
     private
