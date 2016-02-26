@@ -22,6 +22,10 @@ module FakeMessageQueue
       queue.push(message)
     end
 
+    def terminate
+      # noop
+    end
+
     private
 
     def queue
@@ -39,6 +43,10 @@ module FakeMessageQueue
 
     def size
       queue.size
+    end
+
+    def terminate
+      # noop
     end
 
     private

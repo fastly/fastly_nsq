@@ -37,6 +37,13 @@ RSpec.describe FakeMessageQueue::Producer do
       expect(FakeMessageQueue.queue.size).to eq 1
     end
   end
+
+  describe '#terminate' do
+    it 'has a terminate method which is a noop' do
+      producer = instance_double('FakeMessageQueue::Producer')
+      allow(producer).to receive(:terminate)
+    end
+  end
 end
 
 RSpec.describe FakeMessageQueue::Message do
@@ -99,6 +106,13 @@ RSpec.describe FakeMessageQueue::Consumer do
       popped_message = consumer.pop
 
       expect(popped_message). to eq message
+    end
+  end
+
+  describe '#terminate' do
+    it 'has a terminate method which is a noop' do
+      consumer = instance_double('FakeMessageQueue::Consumer')
+      allow(consumer).to receive(:terminate)
     end
   end
 end
