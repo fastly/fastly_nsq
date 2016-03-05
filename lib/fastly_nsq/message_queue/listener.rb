@@ -30,6 +30,12 @@ module MessageQueue
       message = consumer.pop
       MessageProcessor.new(message.body).go
       message.finish
+    rescue NoMethodError => exception
+      if exception.message =~ /method \`body/
+        raise EmptyFakeQueueError.new
+      else
+        raise exception
+      end
     end
 
     attr_reader :channel, :topic
@@ -46,5 +52,17 @@ module MessageQueue
       consumer.terminate
       exit
     end
+  end
+end
+
+class EmptyFakeQueueError < StandardError
+  def initialize(message=default_message)
+    super
+  end
+
+  private
+
+  def default_message
+    'You are using the fake queue with no messages and trying to get messages.'
   end
 end

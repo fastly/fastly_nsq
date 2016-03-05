@@ -8,8 +8,8 @@ RSpec.describe MessageQueue::Listener do
       connection = double('Connection', pop: message, terminate: nil)
       consumer = double('Consumer', connection: connection)
       allow(MessageQueue::Consumer).to receive(:new).and_return(consumer)
-      topic = 'minitest'
-      channel = 'northstar'
+      topic = 'testing_topic'
+      channel = 'testing_channel'
 
       MessageQueue::Listener.new(topic: topic, channel: channel).
         process_next_message
@@ -26,8 +26,8 @@ RSpec.describe MessageQueue::Listener do
       connection = double('Connection', pop: message, terminate: nil)
       consumer = double('Consumer', connection: connection)
       allow(MessageQueue::Consumer).to receive(:new).and_return(consumer)
-      topic = 'minitest'
-      channel = 'northstar'
+      topic = 'testing_topic'
+      channel = 'testing_channel'
 
       MessageQueue::Listener.new(topic: topic, channel: channel).
         process_next_message
@@ -42,13 +42,28 @@ RSpec.describe MessageQueue::Listener do
       connection = double('Connection', pop: message, terminate: nil)
       consumer = double('Consumer', connection: connection)
       allow(MessageQueue::Consumer).to receive(:new).and_return(consumer)
-      topic = 'minitest'
-      channel = 'northstar'
+      topic = 'testing_topic'
+      channel = 'testing_channel'
 
       MessageQueue::Listener.new(topic: topic, channel: channel).
         process_next_message
 
       expect(message).to have_received(:finish)
+    end
+
+    context 'when using the fake queue and it is empty' do
+      it 'offers a helpful exception message' do
+        MessageQueue::TRUTHY_VALUES.each do |yes|
+          allow(ENV).to receive(:[]).with('FAKE_QUEUE').and_return(yes)
+          topic = 'testing_topic'
+          channel = 'testing_channel'
+
+          expect {
+            MessageQueue::Listener.new(topic: topic, channel: channel).
+            process_next_message
+          }.to raise_error(EmptyFakeQueueError, /fake queue with no messages/)
+        end
+      end
     end
   end
 
@@ -60,8 +75,8 @@ RSpec.describe MessageQueue::Listener do
         connection = double('Connection', pop: message, terminate: nil)
         consumer = double('Consumer', connection: connection)
         allow(MessageQueue::Consumer).to receive(:new).and_return(consumer)
-        topic = 'minitest'
-        channel = 'northstar'
+        topic = 'testing_topic'
+        channel = 'testing_channel'
 
         pid = fork do
           MessageQueue::Listener.new(topic: topic, channel: channel).go
