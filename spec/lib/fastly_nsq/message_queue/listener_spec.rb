@@ -52,14 +52,14 @@ RSpec.describe MessageQueue::Listener do
     end
 
     context 'when using the fake queue and it is empty' do
-      it 'blocks on the process for longer than a half second' do
+      it 'blocks on the process, waiting for a message ' do
         MessageQueue::TRUTHY_VALUES.each do |yes|
           allow(ENV).to receive(:[]).with('FAKE_QUEUE').and_return(yes)
           topic = 'testing_topic'
           channel = 'testing_channel'
 
           expect {
-            Timeout::timeout(0.5) do
+            Timeout::timeout(0.1) do
               MessageQueue::Listener.new(topic: topic, channel: channel).
                 process_next_message
             end

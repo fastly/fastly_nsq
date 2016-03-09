@@ -1,16 +1,12 @@
 module FakeMessageQueue
-  @@queue = []
+  @@queue = Queue.new
 
   def self.queue
     @@queue
   end
 
-  def self.queue=(message)
-    @@queue = message
-  end
-
   def self.reset!
-    self.queue = []
+    self.queue.clear
   end
 
   class Producer
@@ -34,20 +30,11 @@ module FakeMessageQueue
   end
 
   class Consumer
-    SECONDS_BETWEEN_MESSAGE_QUEUE_CHECKS = 1
-
     def initialize(nsqlookupd:, topic:, channel:)
     end
 
     def pop
-      message = nil
-
-      until message do
-        message = queue.pop
-        sleep SECONDS_BETWEEN_MESSAGE_QUEUE_CHECKS
-      end
-
-      message
+      queue.pop
     end
 
     def size

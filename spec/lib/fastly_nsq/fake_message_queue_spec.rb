@@ -2,14 +2,17 @@ require 'spec_helper'
 
 RSpec.describe FakeMessageQueue do
   describe '@@queue' do
-    it 'is initalized as an empty array' do
-      expect(FakeMessageQueue.queue).to eq []
+    it 'is initalized as an empty Ruby Queue' do
+      queue = FakeMessageQueue.queue
+
+      expect(queue).to be_a Thread::Queue
+      expect(queue).to be_empty
     end
   end
 
   describe '.reset!' do
     it 'resets the fake message queue' do
-      FakeMessageQueue.queue = ['hello']
+      FakeMessageQueue.queue.push('hello')
       expect(FakeMessageQueue.queue.size).to eq 1
 
       FakeMessageQueue.reset!
@@ -76,7 +79,7 @@ RSpec.describe FakeMessageQueue::Consumer do
 
   describe '#size' do
     it 'tells you how many messages are in the queue' do
-      FakeMessageQueue.queue = ['hello']
+      FakeMessageQueue.queue.push('hello')
       topic = 'death_star'
       channel = 'star_killer_base'
 
@@ -95,7 +98,7 @@ RSpec.describe FakeMessageQueue::Consumer do
     context 'when there is a message on the queue' do
       it 'returns the last message off of the queue' do
         message = FakeMessageQueue::Message.new('hello')
-        FakeMessageQueue.queue = [message]
+        FakeMessageQueue.queue.push(message)
         topic = 'death_star'
         channel = 'star_killer_base'
 
@@ -111,8 +114,8 @@ RSpec.describe FakeMessageQueue::Consumer do
     end
 
     context 'when there no message on the queue' do
-      it 'blocks for longer than a half second' do
-        FakeMessageQueue.queue = []
+      it 'blocks on the process, waiting for a message ' do
+        FakeMessageQueue.reset!
         topic = 'death_star'
         channel = 'star_killer_base'
 
@@ -123,7 +126,7 @@ RSpec.describe FakeMessageQueue::Consumer do
         )
 
         expect {
-          Timeout::timeout(0.5) do
+          Timeout::timeout(0.1) do
             consumer.pop
           end
         }.to raise_error(Timeout::Error)
