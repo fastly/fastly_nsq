@@ -92,20 +92,42 @@ RSpec.describe FakeMessageQueue::Consumer do
   end
 
   describe '#pop' do
-    it 'returns the last message off of the queue' do
-      message = FakeMessageQueue::Message.new('hello')
-      FakeMessageQueue.queue = [message]
-      topic = 'death_star'
-      channel = 'star_killer_base'
+    context 'when there is a message on the queue' do
+      it 'returns the last message off of the queue' do
+        message = FakeMessageQueue::Message.new('hello')
+        FakeMessageQueue.queue = [message]
+        topic = 'death_star'
+        channel = 'star_killer_base'
 
-      consumer = FakeMessageQueue::Consumer.new(
-        nsqlookupd: ENV.fetch('NSQLOOKUPD_HTTP_ADDRESS'),
-        topic: topic,
-        channel: channel,
-      )
-      popped_message = consumer.pop
+        consumer = FakeMessageQueue::Consumer.new(
+          nsqlookupd: ENV.fetch('NSQLOOKUPD_HTTP_ADDRESS'),
+          topic: topic,
+          channel: channel,
+        )
+        popped_message = consumer.pop
 
-      expect(popped_message). to eq message
+        expect(popped_message).to eq message
+      end
+    end
+
+    context 'when there no message on the queue' do
+      it 'blocks for longer than a half second' do
+        FakeMessageQueue.queue = []
+        topic = 'death_star'
+        channel = 'star_killer_base'
+
+        consumer = FakeMessageQueue::Consumer.new(
+          nsqlookupd: ENV.fetch('NSQLOOKUPD_HTTP_ADDRESS'),
+          topic: topic,
+          channel: channel,
+        )
+
+        expect {
+          Timeout::timeout(0.5) do
+            consumer.pop
+          end
+        }.to raise_error(Timeout::Error)
+      end
     end
   end
 

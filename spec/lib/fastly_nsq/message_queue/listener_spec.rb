@@ -52,16 +52,18 @@ RSpec.describe MessageQueue::Listener do
     end
 
     context 'when using the fake queue and it is empty' do
-      it 'offers a helpful exception message' do
+      it 'blocks on the process for longer than a half second' do
         MessageQueue::TRUTHY_VALUES.each do |yes|
           allow(ENV).to receive(:[]).with('FAKE_QUEUE').and_return(yes)
           topic = 'testing_topic'
           channel = 'testing_channel'
 
           expect {
-            MessageQueue::Listener.new(topic: topic, channel: channel).
-            process_next_message
-          }.to raise_error(EmptyFakeQueueError, /fake queue with no messages/)
+            Timeout::timeout(0.5) do
+              MessageQueue::Listener.new(topic: topic, channel: channel).
+                process_next_message
+            end
+          }.to raise_error(Timeout::Error)
         end
       end
     end
@@ -84,9 +86,10 @@ RSpec.describe MessageQueue::Listener do
 
         Process.kill('TERM', pid)
 
-        # Success for this test is to expect it to complete
-        # Note: We are not testing the SIGINT case because it orphans the test
-        # Ruby process and is sort of meaningless as a test.
+        # Success for this test is to expect it to complete.
+        #
+        # Additional Note: We are NOT testing the SIGINT case because it
+        # orphans the test's Ruby process and is thus meaningless as a test.
       end
     end
   end
