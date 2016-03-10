@@ -1,35 +1,40 @@
-require 'test_helper'
+require 'spec_helper'
 require 'fastly_nsq/rake_task'
 
-describe MessageQueue::RakeTask do
+RSpec.describe MessageQueue::RakeTask do
   before(:each) do
     Rake::Task['begin_listening'].clear if Rake::Task.task_defined?('begin_listening')
   end
 
-  describe 'defining tasks' do
+  describe 'when defining tasks' do
     it 'creates a begin_listening task' do
       MessageQueue::RakeTask.new
 
       allow_any_instance_of(MessageQueue::RakeTask).to receive(:output) { nil }
-      assert_equal true, Rake::Task.task_defined?(:begin_listening)
+
+      is_defined = Rake::Task.task_defined?(:begin_listening)
+      expect(is_defined).to be_truthy
     end
 
     it 'creates a named task' do
       MessageQueue::RakeTask.new(:test_name)
 
       allow_any_instance_of(MessageQueue::RakeTask).to receive(:output) { nil }
-      assert_equal true, Rake::Task.task_defined?(:test_name)
+
+      is_defined = Rake::Task.task_defined?(:test_name)
+      expect(is_defined).to be_truthy
     end
   end
 
-  describe 'running tasks' do
+  describe 'when running tasks' do
     it 'runs with inline options defined' do
-      MessageQueue::RakeTask.new(:begin_listening, [:topic, :channel])
+      options = { topic: 'dwarf', channel: 'star' }
+      task = MessageQueue::RakeTask.new(:begin_listening, [:topic, :channel])
 
-      dbl = double('go', go: nil)
+      message_queue_listener = double('go', go: nil)
       expect(MessageQueue::Listener).to receive(:new).
-        with(topic: 'dwarf', channel: 'star').
-        and_return(dbl)
+        with(options).
+        and_return(message_queue_listener)
 
       allow_any_instance_of(MessageQueue::RakeTask).to receive(:output) { nil }
       Rake::Task['begin_listening'].execute(topic: 'dwarf', channel: 'star')
@@ -41,25 +46,25 @@ describe MessageQueue::RakeTask do
         task.channel = 'star'
       end
 
-      dbl = double('go', go: nil)
+      message_queue_listener = double('go', go: nil)
       expect(MessageQueue::Listener).to receive(:new).
         with(topic: 'dwarf', channel: 'star').
-        and_return(dbl)
+        and_return(message_queue_listener)
 
       allow_any_instance_of(MessageQueue::RakeTask).to receive(:output) { nil }
       Rake::Task['begin_listening'].execute(topic: 'dwarf', channel: 'star')
     end
 
-    it 'uses inline over block' do
+    it 'uses inline definitions over block assignments' do
       MessageQueue::RakeTask.new(:begin_listening, [:topic, :channel]) do |task|
         task.topic   = 'loud'
         task.channel = 'noise'
       end
 
-      dbl = double('go', go: nil)
+      message_queue_listener = double('go', go: nil)
       expect(MessageQueue::Listener).to receive(:new).
         with(topic: 'dwarf', channel: 'star').
-        and_return(dbl)
+        and_return(message_queue_listener)
 
       allow_any_instance_of(MessageQueue::RakeTask).to receive(:output) { nil }
       Rake::Task['begin_listening'].execute(topic: 'dwarf', channel: 'star')
