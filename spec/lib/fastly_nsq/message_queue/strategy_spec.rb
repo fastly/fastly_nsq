@@ -2,27 +2,19 @@ require 'spec_helper'
 
 RSpec.describe Strategy do
   describe '.for_queue' do
-    describe 'when using the fake queue' do
+    describe 'when using the fake queue', fake_queue: true do
       it 'returns the strategy based on the ENV variable' do
-        MessageQueue::TRUTHY_VALUES.each do |yes|
-          allow(ENV).to receive(:[]).with('FAKE_QUEUE').and_return(yes)
+        strategy = Strategy.for_queue
 
-          strategy = Strategy.for_queue
-
-          expect(strategy).to eq FakeMessageQueue
-        end
+        expect(strategy).to eq FakeMessageQueue
       end
     end
 
-    describe 'when using the real queue' do
+    describe 'when using the real queue', fake_queue: false do
       it 'returns the strategy based on the ENV variable' do
-        MessageQueue::FALSY_VALUES.each do |no|
-          allow(ENV).to receive(:[]).with('FAKE_QUEUE').and_return(no)
+        strategy = Strategy.for_queue
 
-          strategy = Strategy.for_queue
-
-          expect(strategy).to eq Nsq
-        end
+        expect(strategy).to eq Nsq
       end
     end
 

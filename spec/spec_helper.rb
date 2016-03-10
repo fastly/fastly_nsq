@@ -34,6 +34,22 @@ RSpec.configure do |config|
     FakeMessageQueue.reset!
   end
 
+  config.around(:each, fake_queue: true) do |example|
+    RSpec::Mocks.with_temporary_scope do
+      use_fake_connection do
+        example.run
+      end
+    end
+  end
+
+  config.around(:each, fake_queue: false) do |example|
+    RSpec::Mocks.with_temporary_scope do
+      use_real_connection do
+        example.run
+      end
+    end
+  end
+
   def load_sample_environment_variables
     env_file = File.open('env_configuration_for_local_gem_tests.yml')
 
