@@ -11,6 +11,11 @@ require 'fastly_nsq/rake_task'
 MessageQueue::RakeTask.new(:listen_task, [:topic, :channel])
 
 ##
+# In Rails, you can include the environment like so:
+#
+MessageQueue::RakeTask.new(:listen_task, [:topic, :channel] => :environment)
+
+##
 # Topic and channel can also be preset in the task by passing a block and
 # assigning value like so. This is useful if you want a single purpose
 # listener task.
