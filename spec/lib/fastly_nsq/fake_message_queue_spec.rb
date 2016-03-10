@@ -10,6 +10,23 @@ RSpec.describe FakeMessageQueue do
     end
   end
 
+  describe '@@logger' do
+    after do
+      FakeMessageQueue.logger = Logger.new(nil)
+    end
+
+    it 'is initalized as an empty Ruby Logger' do
+      expect(FakeMessageQueue.logger).to be_a Logger
+    end
+
+    it 'can be set and retrieved' do
+      logger = double('some logger')
+      FakeMessageQueue.logger = logger
+
+      expect(FakeMessageQueue.logger).to eq logger
+    end
+  end
+
   describe '.reset!' do
     it 'resets the fake message queue' do
       FakeMessageQueue.queue.push('hello')

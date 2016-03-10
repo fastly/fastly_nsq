@@ -1,5 +1,6 @@
 module FakeMessageQueue
   @@queue = Queue.new
+  @@logger = Logger.new(nil)
 
   def self.queue
     @@queue
@@ -7,6 +8,14 @@ module FakeMessageQueue
 
   def self.reset!
     self.queue.clear
+  end
+
+  def self.logger=(logger)
+    @@logger = logger
+  end
+
+  def self.logger
+    @@logger
   end
 
   class Producer
