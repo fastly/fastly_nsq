@@ -136,43 +136,6 @@ there is a new message on the queue,
       off of the queue
       and send it to `MessageProcessor.new(message_body).go`.
 
-### `MessageQueue::RakeTask`
-
-To help facilitate running the `MessageQueue::Listener` in a blocking fashion
-outside your application, a simple `RakeTask` is provided.
-
-This can be added into your `Rakefile` in one of two ways:
-
-Using a block:
-```ruby
-require 'fastly_nsq'
-require 'fastly_nsq/rake_task'
-
-MessageQueue::RakeTask.new(:listen_task) do |task|
-  task.topic   = 'some_topic'
-  task.channel = 'some_channel'
-end
-
-# usage:
-`rake listen_task`
-```
-
-or using passed in values:
-```ruby
-require 'fastly_nsq'
-require 'fastly_nsq/rake_task'
-
-MessageQueue::RakeTask.new(:listen_task, [:topic, :channel])
-
-# usage:
-`rake listen_task['my_topic','my_channel']`
-```
-
-Both methods can be used at the same time with the passed in values taking
-priority over block assigned values
-
-See the [`Rakefile`](examples/Rakefile) file
-for more detail.
 
 ### Real vs. Fake
 
