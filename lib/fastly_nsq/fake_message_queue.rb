@@ -1,13 +1,16 @@
 module FakeMessageQueue
-  @@queue = Queue.new
   @@logger = Logger.new(nil)
 
   def self.queue
     @@queue
   end
 
+  def self.queue=(message)
+    @@queue = message
+  end
+
   def self.reset!
-    self.queue.clear
+    self.queue = []
   end
 
   def self.logger=(logger)
@@ -39,11 +42,20 @@ module FakeMessageQueue
   end
 
   class Consumer
+    SECONDS_BETWEEN_QUEUE_CHECKS = 0.5
+
     def initialize(nsqlookupd:, topic:, channel:)
     end
 
     def pop
-      queue.pop
+      message = nil
+
+      until message do
+        message = queue.pop
+        sleep SECONDS_BETWEEN_QUEUE_CHECKS
+      end
+
+      message
     end
 
     def size

@@ -2,11 +2,8 @@ require 'spec_helper'
 
 RSpec.describe FakeMessageQueue do
   describe '@@queue' do
-    it 'is initalized as an empty Ruby Queue' do
-      queue = FakeMessageQueue.queue
-
-      expect(queue).to be_a Thread::Queue
-      expect(queue).to be_empty
+    it 'is initalized as an empty array' do
+      expect(FakeMessageQueue.queue).to eq []
     end
   end
 
@@ -29,7 +26,7 @@ RSpec.describe FakeMessageQueue do
 
   describe '.reset!' do
     it 'resets the fake message queue' do
-      FakeMessageQueue.queue.push('hello')
+      FakeMessageQueue.queue = ['hello']
       expect(FakeMessageQueue.queue.size).to eq 1
 
       FakeMessageQueue.reset!
@@ -59,8 +56,9 @@ RSpec.describe FakeMessageQueue::Producer do
   end
 
   describe '#terminate' do
-    it 'has a terminate method which is a noop' do
+    it 'has a `terminate` method which is a noop' do
       producer = instance_double('FakeMessageQueue::Producer')
+
       allow(producer).to receive(:terminate)
     end
   end
@@ -96,7 +94,7 @@ RSpec.describe FakeMessageQueue::Consumer do
 
   describe '#size' do
     it 'tells you how many messages are in the queue' do
-      FakeMessageQueue.queue.push('hello')
+      FakeMessageQueue.queue = ['hello']
       topic = 'death_star'
       channel = 'star_killer_base'
 
@@ -115,7 +113,7 @@ RSpec.describe FakeMessageQueue::Consumer do
     context 'when there is a message on the queue' do
       it 'returns the last message off of the queue' do
         message = FakeMessageQueue::Message.new('hello')
-        FakeMessageQueue.queue.push(message)
+        FakeMessageQueue.queue = [message]
         topic = 'death_star'
         channel = 'star_killer_base'
 
@@ -131,10 +129,11 @@ RSpec.describe FakeMessageQueue::Consumer do
     end
 
     context 'when there no message on the queue' do
-      it 'blocks on the process, waiting for a message ' do
-        FakeMessageQueue.reset!
+      it 'blocks for longer than the queue check cycle' do
+        FakeMessageQueue.queue = []
         topic = 'death_star'
         channel = 'star_killer_base'
+        delay = FakeMessageQueue::Consumer::SECONDS_BETWEEN_QUEUE_CHECKS + 0.1
 
         consumer = FakeMessageQueue::Consumer.new(
           nsqlookupd: ENV.fetch('NSQLOOKUPD_HTTP_ADDRESS'),
@@ -143,7 +142,7 @@ RSpec.describe FakeMessageQueue::Consumer do
         )
 
         expect {
-          Timeout::timeout(0.1) do
+          Timeout::timeout(delay) do
             consumer.pop
           end
         }.to raise_error(Timeout::Error)
