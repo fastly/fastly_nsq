@@ -1,0 +1,72 @@
+AllCops:
+  Include:
+    - '**/Rakefile'
+  Exclude:
+    - 'db/schema.rb'
+    - 'vendor/**/*'
+  TargetRubyVersion: 2.1
+
+LineLength:
+  Enabled: false
+
+HashSyntax:
+  Enabled: false
+
+BracesAroundHashParameters:
+  Enabled: false
+
+CollectionMethods:
+  Enabled: false
+
+CyclomaticComplexity:
+  Enabled: true
+
+Style/DotPosition:
+  Enabled: true
+  EnforcedStyle: trailing
+  SupportedStyles:
+    - leading
+    - trailing
+
+MethodLength:
+  Enabled: false
+
+PerlBackrefs:
+  Enabled: false
+
+RescueModifier:
+  Enabled: false
+
+GuardClause:
+  Enabled: false
+
+IfUnlessModifier:
+  Enabled: false
+
+ClassLength:
+  Enabled: false
+
+Style/ClassVars:
+  Description: 'Avoid the use of class variables.'
+  StyleGuide: 'https://github.com/bbatsov/ruby-style-guide#no-class-vars'
+  Enabled: false
+
+Documentation:
+  Enabled: false
+
+RegexpLiteral:
+  Enabled: false
+
+SignalException:
+  EnforcedStyle: only_raise
+
+Style/ClassAndModuleChildren:
+  Enabled: false
+
+Style/TrailingCommaInLiteral:
+  EnforcedStyleForMultiline: comma
+  Enabled: true
+
+Style/TrailingCommaInArguments:
+  EnforcedStyleForMultiline: comma
+  Enabled: true

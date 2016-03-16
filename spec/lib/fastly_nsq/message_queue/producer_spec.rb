@@ -13,7 +13,7 @@ RSpec.describe MessageQueue::Producer do
           with(
             nsqd: ENV.fetch('NSQD_TCP_ADDRESS'),
             topic: topic,
-        ).at_least(:once)
+          ).at_least(:once)
       end
     end
 
@@ -28,7 +28,7 @@ RSpec.describe MessageQueue::Producer do
           with(
             nsqd: ENV.fetch('NSQD_TCP_ADDRESS'),
             topic: topic,
-        ).at_least(:once)
+          ).at_least(:once)
       end
     end
 
@@ -39,7 +39,7 @@ RSpec.describe MessageQueue::Producer do
 
         producer = MessageQueue::Producer.new(topic: topic)
 
-        expect{ producer.connection }.to raise_error(InvalidParameterError)
+        expect { producer.connection }.to raise_error(InvalidParameterError)
       end
     end
   end

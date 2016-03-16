@@ -50,7 +50,7 @@ module FakeMessageQueue
     def pop
       message = nil
 
-      until message do
+      until message
         message = queue.pop
         sleep SECONDS_BETWEEN_QUEUE_CHECKS
       end

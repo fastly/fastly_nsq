@@ -5,7 +5,7 @@ require 'fastly_nsq/rake_task'
 
 class MessageProcessor
   def self.topics
-    ['customer_created', 'customer_deleted']
+    %w(customer_created customer_deleted)
   end
 
   # ...

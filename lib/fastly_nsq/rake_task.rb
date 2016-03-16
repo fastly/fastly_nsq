@@ -7,10 +7,7 @@ module MessageQueue
 
     def initialize(*args, &task_block)
       @name = args.shift || :begin_listening
-
-      unless ::Rake.application.last_comment
-        desc 'Listen to NSQ on topic using channel'
-      end
+      add_rake_task_description_if_one_needed
 
       task(name, *args) do |_, task_args|
         RakeFileUtils.send(:verbose, verbose) do
@@ -29,6 +26,12 @@ module MessageQueue
     end
 
     private
+
+    def add_rake_task_description_if_one_needed
+      unless ::Rake.application.last_comment
+        desc 'Listen to NSQ on topic using channel'
+      end
+    end
 
     def run_tasks
       topics.each do |topic|
