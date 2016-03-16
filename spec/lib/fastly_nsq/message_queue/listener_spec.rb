@@ -32,7 +32,8 @@ RSpec.describe MessageQueue::Listener do
       MessageQueue::Listener.new(topic: topic, channel: channel).
         process_next_message
 
-      expect(MessageProcessor).to have_received(:new).with(message_body)
+      expect(MessageProcessor).to have_received(:new).
+        with(topic: topic, message_body: message_body)
       expect(process_message).to have_received(:go)
     end
 

@@ -26,13 +26,13 @@ module MessageQueue
 
     private
 
+    attr_reader :channel, :topic
+
     def process_one_message
       message = consumer.pop
-      MessageProcessor.new(message.body).go
+      MessageProcessor.new(message_body: message.body, topic: topic).go
       message.finish
     end
-
-    attr_reader :channel, :topic
 
     def consumer
       @consumer ||= MessageQueue::Consumer.new(consumer_params).connection

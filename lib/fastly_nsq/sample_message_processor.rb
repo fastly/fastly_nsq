@@ -11,12 +11,17 @@ class UnknownMessageWorker
 end
 
 class SampleMessageProcessor
-  EVENT_TYPE_TO_WORKER_MAP = {
+  TOPIC_TO_WORKER_MAP = {
     'heartbeat' => HeartbeatWorker,
   }.freeze
 
-  def initialize(message_body)
+  def self.topics
+    TOPIC_TO_WORKER_MAP.keys
+  end
+
+  def initialize(message_body:, topic:)
     @message_body = message_body
+    @topic = topic
   end
 
   def go
@@ -25,18 +30,14 @@ class SampleMessageProcessor
 
   private
 
-  attr_reader :message_body
+  attr_reader :message_body, :topic
 
   def process_message_body
     message_processor.perform_async(message_data)
   end
 
   def message_processor
-    EVENT_TYPE_TO_WORKER_MAP.fetch(event_type, UnknownMessageWorker)
-  end
-
-  def event_type
-    parsed_message_body['event_type']
+    TOPIC_TO_WORKER_MAP.fetch(topic, UnknownMessageWorker)
   end
 
   def message_data

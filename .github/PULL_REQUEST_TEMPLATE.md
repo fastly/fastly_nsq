@@ -19,7 +19,7 @@ Checklist
 _Put an `x` in the boxes that apply. 
 You can also fill these out after creating the PR._
 
-- [ ] I have linked to all relavant reference issues or work requests
+- [ ] I have linked to all relevant reference issues or work requests
 - [ ] I have added tests that prove my fix is effective or that my feature works
 - [ ] I have added or updated necessary documentation (if appropriate)
 - [ ] Any dependent changes have been merged and published in downstream

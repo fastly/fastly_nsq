@@ -3,38 +3,77 @@ require 'rake/tasklib'
 
 module MessageQueue
   class RakeTask < Rake::TaskLib
-    attr_accessor :name, :topic, :channel
+    attr_accessor :name, :channel
 
     def initialize(*args, &task_block)
       @name = args.shift || :begin_listening
 
-      desc 'Listen to NSQ on topic using channel' unless ::Rake.application.last_comment
+      unless ::Rake.application.last_comment
+        desc 'Listen to NSQ on topic using channel'
+      end
 
       task(name, *args) do |_, task_args|
         RakeFileUtils.send(:verbose, verbose) do
-          yield(*[self, task_args].slice(0, task_block.arity)) if block_given?
-          @topic   = task_args[:topic] if task_args[:topic]
-          @channel = task_args[:channel] if task_args[:channel]
-          run_task
+          if block_given?
+            yield(*[self, task_args].slice(0, task_block.arity))
+          end
+
+          if task_args[:channel]
+            @channel = task_args[:channel]
+          end
+
+          guard_missing_channel
+          run_tasks
         end
       end
     end
 
     private
 
-    def run_task
-      raise ArgumentError, "topic and channel are required. Recieved topic: #{topic} channel: #{channel}" unless topic && channel
+    def run_tasks
+      topics.each do |topic|
+        Thread.new do
+          wrap_helpful_output(topic) do
+            MessageQueue::Listener.new(topic: topic, channel: channel).go
+          end
+        end
+      end
 
-      output "Listening to the queue on topic:'#{topic}' and channel ':#{channel}'"
-
-      MessageQueue::Listener.new(topic: topic, channel: channel).go
-
-      output "... done listening to queue on topic:'#{topic}' and channel ':#{channel}'"
+      non_main_threads.map(&:join)
     end
 
-    # wrapping output for stubbing in tests to avoid clobbering output...
-    def output(str)
-      puts str
+    def non_main_threads
+      (Thread.list - [Thread.main])
+    end
+
+    def guard_missing_channel
+      unless channel
+        raise ArgumentError, "channel is required. Received channel: #{channel}"
+      end
+    end
+
+    def wrap_helpful_output(topic)
+      output "Listening to queue, topic:'#{topic}' and channel: '#{channel}'"
+      yield
+      output "... done listening on topic:'#{topic}' and channel: '#{channel}'."
+    end
+
+    def topics
+      MessageProcessor.topics
+    rescue NoMethodError => exception
+      if exception.message =~ /undefined method `topics'/
+        raise ArgumentError, 'MessageProcessor.topics is not defined.'
+      else
+        raise exception
+      end
+    end
+
+    def output(string)
+      logger.info(string)
+    end
+
+    def logger
+      MessageQueue.logger = Logger.new(STDOUT)
     end
   end
 end

@@ -5,8 +5,6 @@ require 'pry-byebug'
 require_relative '../lib/fastly_nsq/sample_message_processor'
 require_relative 'support/env_helpers'
 
-MessageProcessor = SampleMessageProcessor
-
 RSpec.configure do |config|
   config.expect_with :rspec do |expectations|
     expectations.include_chain_clauses_in_custom_matcher_descriptions = true
@@ -21,12 +19,16 @@ RSpec.configure do |config|
   config.example_status_persistence_file_path = 'spec/examples.txt'
   config.filter_run :focus
   config.order = :random
-  config.profile_examples = false
+  config.profile_examples = 1
   config.run_all_when_everything_filtered = true
   Kernel.srand config.seed
 
   if config.files_to_run.one?
     config.default_formatter = 'doc'
+  end
+
+  config.before(:suite) do
+    MessageProcessor = SampleMessageProcessor
   end
 
   config.before(:each) do

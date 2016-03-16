@@ -1,41 +1,88 @@
-require 'fastly_nsq'
 require 'fastly_nsq/rake_task'
 
-##
-# Both topic and channel will need to be passed into the rake task when
-# it is called.
-#
-# ex: `rake listen_task[my_topic,my_channel]`
-# topic will be 'my_topic' and channel will be 'my_channel'
-#
-MessageQueue::RakeTask.new(:listen_task, [:topic, :channel])
+#-------------------------------------------------------------------------------
+# You are required to to set the topics in MessageProcessor.topics as an array:
 
-##
-# In Rails, you can include the environment like so:
-#
-MessageQueue::RakeTask.new(:listen_task, [:topic, :channel] => :environment)
+class MessageProcessor
+  def self.topics
+    ['customer_created', 'customer_deleted']
+  end
 
-##
-# Topic and channel can also be preset in the task by passing a block and
-# assigning value like so. This is useful if you want a single purpose
-# listener task.
+  # ...
+end
+
+# A channel will need to be passed in
+# to the Rake task
+# when it is called.
 #
-# ex: `rake listen_task`
-# topic will be 'some_topic' and channel will be 'some_channel'
-#
+# The task looks like:
+
+desc 'Listen to the messaging queue with the given channel.'
+
+MessageQueue::RakeTask.new(:listen_task, [:channel])
+
+# Call `rake listen_task[my_channel]`.
+# The topics will be ['customer_created', 'customer_deleted']
+# and channel will be 'my_channel'.
+
+#-------------------------------------------------------------------------------
+# In Rails, you can include the application environment. The task looks like:
+
+desc 'Listen to the messaging queue with the given channel.'
+
+MessageQueue::RakeTask.new(:listen_task, [:channel] => :environment)
+
+# Call `rake listen_task[your_channel]`.
+# The topics will be ['customer_created', 'customer_deleted']
+# and channel will be 'your_channel'.
+
+#-------------------------------------------------------------------------------
+# The channel can also be preset in the task
+# by passing a block and assigning the value. The task looks like:
+
+desc 'Listen to the messaging queue with the given channel.'
+
 MessageQueue::RakeTask.new(:listen_task) do |task|
-  task.topic   = 'some_topic'
   task.channel = 'some_channel'
 end
 
-##
-# Both forms can be combine to provide defaults of a sort with the ability
-# to override at time of rake call
-#
-# ex: `rake listen_task[altered_topic]`
-# topic will be 'altered_topic' and channel will be 'some_channel'
-#
-MessageQueue::RakeTask.new(:listen_task, [:topic, :channel]) do |task|
-  task.topic   = 'some_topic'
-  task.channel = 'some_channel'
+# Call `rake listen_task`.
+# The topics will be ['customer_created', 'customer_deleted']
+# and channel will be 'some_channel'.
+
+#-------------------------------------------------------------------------------
+# Do the same thing and include the environment:
+
+desc 'Listen to the messaging queue with the given channel.'
+
+MessageQueue::RakeTask.new(:listen_task, [] => :environment) do |task|
+  task.channel = 'her_channel'
 end
+
+# Call `rake listen_task`.
+# The topics will be ['customer_created', 'customer_deleted']
+# and channel will be 'her_channel'.
+
+#-------------------------------------------------------------------------------
+# Both forms can be combined
+# to provide defaults
+# with the ability to override at time of Rake call:
+
+MessageQueue::RakeTask.new(:listen_task, [:channel]) do |task|
+  task.channel = 'default_channel'
+end
+
+# Call `rake listen_task[overridden_channel]`.
+# The topics will be ['customer_created', 'customer_deleted']
+# and channel will be 'overridden_channel'.
+
+#-------------------------------------------------------------------------------
+# The same, but including the environment:
+
+MessageQueue::RakeTask.new(:listen_task, [:channel] => :environment) do |task|
+  task.channel = 'default_channel'
+end
+
+# Call `rake listen_task[overridden_channel]`.
+# The topics will be ['customer_created', 'customer_deleted']
+# and channel will be 'overridden_channel'.

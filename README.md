@@ -52,7 +52,6 @@ write messages onto the queue:
 
 ```ruby
 message_data = {
-  "event_type" => "heartbeat",
   "data" => {
     "key" => "value"
   }
@@ -65,7 +64,6 @@ producer = MessageQueue::Producer.new(
 
 producer.write(message_data.to_json)
 ```
-
 The mock/real strategy used
 can be switched
 by adding an environment variable
@@ -94,7 +92,7 @@ consumer = MessageQueue::Consumer.new(
 
 consumer.size #=> 1
 message = consumer.pop
-message.body #=> "{ 'event_type': 'heartbeat','data': { 'key': 'value' } }"
+message.body #=> "{ 'data': { 'key': 'value' } }"
 message.finish
 consumer.size #=> 0
 consumer.terminate
@@ -119,7 +117,7 @@ MessageQueue::Listener.new(topic: topic, channel: channel).process_next_message
 This will pop the next message
 off of the queue
 and send the JSON text body
-to `MessageProcessor.new(message_body).go`.
+to `MessageProcessor.new(message_body: message_body, topic: topic).go`.
 
 To initiate a blocking loop to process messages continuously:
 
@@ -141,15 +139,23 @@ there is a new message on the queue,
 To help facilitate running the `MessageQueue::Listener` in a blocking fashion
 outside your application, a simple `RakeTask` is provided.
 
-This can be added into your `Rakefile` in one of two ways:
+NOTE: The rake task expects a
+`MessageProcessor.topics` method,
+which must return an array of strings
+defining the topics to which
+we would like to listen and process messages.
+
+The task will listen
+to all specified topics,
+each in a separate thread.
+
+This task can be added into your `Rakefile` in one of two ways:
 
 Using a block:
 ```ruby
-require 'fastly_nsq'
 require 'fastly_nsq/rake_task'
 
 MessageQueue::RakeTask.new(:listen_task) do |task|
-  task.topic   = 'some_topic'
   task.channel = 'some_channel'
 end
 
@@ -159,13 +165,12 @@ end
 
 or using passed in values:
 ```ruby
-require 'fastly_nsq'
 require 'fastly_nsq/rake_task'
 
-MessageQueue::RakeTask.new(:listen_task, [:topic, :channel])
+MessageQueue::RakeTask.new(:listen_task, [:channel])
 
 # usage:
-`rake listen_task['my_topic','my_channel']`
+`rake listen_task['my_channel']`
 ```
 
 Both methods can be used at the same time with the passed in values taking
