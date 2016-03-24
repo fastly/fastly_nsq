@@ -21,7 +21,7 @@ RSpec.describe MessageQueue::Listener do
     it 'processes the message' do
       process_message = double(go: nil)
       allow(MessageProcessor).to receive(:new).and_return(process_message)
-      message_body = { data: 'value'  }.to_json
+      message_body = { data: 'value' }.to_json
       message = double('Message', finish: nil, body: message_body)
       connection = double('Connection', pop: message, terminate: nil)
       consumer = double('Consumer', connection: connection)
@@ -58,12 +58,12 @@ RSpec.describe MessageQueue::Listener do
         channel = 'testing_channel'
         delay = FakeMessageQueue::Consumer::SECONDS_BETWEEN_QUEUE_CHECKS + 0.1
 
-        expect {
-          Timeout::timeout(delay) do
+        expect do
+          Timeout.timeout(delay) do
             MessageQueue::Listener.new(topic: topic, channel: channel).
               process_next_message
           end
-        }.to raise_error(Timeout::Error)
+        end.to raise_error(Timeout::Error)
       end
     end
   end

@@ -1,4 +1,4 @@
-class InvalidParameterError < StandardError; end;
+class InvalidParameterError < StandardError; end
 
 module MessageQueue
   class Producer

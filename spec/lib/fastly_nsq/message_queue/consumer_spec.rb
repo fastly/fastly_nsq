@@ -15,7 +15,7 @@ RSpec.describe MessageQueue::Consumer do
             nsqlookupd: ENV.fetch('NSQLOOKUPD_HTTP_ADDRESS'),
             topic: topic,
             channel: channel,
-        ).at_least(:once)
+          ).at_least(:once)
       end
     end
 
@@ -32,7 +32,7 @@ RSpec.describe MessageQueue::Consumer do
             nsqlookupd: ENV.fetch('NSQLOOKUPD_HTTP_ADDRESS'),
             topic: topic,
             channel: channel,
-        ).at_least(:once)
+          ).at_least(:once)
       end
     end
   end
@@ -45,7 +45,7 @@ RSpec.describe MessageQueue::Consumer do
 
       consumer = MessageQueue::Consumer.new(topic: topic, channel: channel)
 
-      expect{ consumer.connection }.to raise_error(InvalidParameterError)
+      expect { consumer.connection }.to raise_error(InvalidParameterError)
     end
   end
 

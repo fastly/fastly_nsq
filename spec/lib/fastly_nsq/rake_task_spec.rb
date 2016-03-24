@@ -37,7 +37,7 @@ RSpec.describe MessageQueue::RakeTask do
     context 'when multiple topics are defined' do
       it 'creates a listener for each' do
         channel = 'clown_generating_service'
-        topics = ['customer_created', 'customer_now_awesome']
+        topics = %w(customer_created customer_now_awesome)
         allow(SampleMessageProcessor).to receive(:topics).and_return(topics)
         message_queue_listener = double('listener', go: nil)
         allow(MessageQueue::Listener).to receive(:new).
@@ -105,23 +105,24 @@ RSpec.describe MessageQueue::RakeTask do
         topics = ['customer_created']
         allow(SampleMessageProcessor).to receive(:topics).and_return(topics)
 
-        expect {
+        expect do
           MessageQueue::RakeTask.new(:begin_listening, [:channel])
           Rake::Task['begin_listening'].execute
-        }.to raise_error(ArgumentError, /channel is required/)
+        end.to raise_error(ArgumentError, /channel is required/)
       end
     end
 
     context 'when MessageProcessor.topics is not defined' do
       it 'raises an error' do
         channel = 'best_server_number_1'
+        error_message = /MessageProcessor.topics is not defined/
         allow(SampleMessageProcessor).to receive(:topics).
           and_raise(NoMethodError, "undefined method `topics'")
 
-        expect {
+        expect do
           MessageQueue::RakeTask.new(:begin_listening, [:channel])
           Rake::Task['begin_listening'].execute(channel: channel)
-        }.to raise_error(ArgumentError, /MessageProcessor.topics is not defined/)
+        end.to raise_error(ArgumentError, error_message)
       end
     end
   end

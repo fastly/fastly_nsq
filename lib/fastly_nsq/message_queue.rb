@@ -6,8 +6,8 @@ require_relative 'message_queue/consumer'
 require_relative 'message_queue/strategy'
 
 module MessageQueue
-  FALSY_VALUES = [false, 0, '0', 'false', 'FALSE', 'off', 'OFF', nil]
-  TRUTHY_VALUES = [true, 1, '1', 'true', 'TRUE', 'on', 'ON']
+  FALSY_VALUES = [false, 0, '0', 'false', 'FALSE', 'off', 'OFF', nil].freeze
+  TRUTHY_VALUES = [true, 1, '1', 'true', 'TRUE', 'on', 'ON'].freeze
 
   def self.logger=(logger)
     strategy.logger = logger

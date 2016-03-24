@@ -17,8 +17,10 @@ require 'rdoc/task'
 RDoc::Task.new
 task doc: :rdoc
 
-require 'bundler/audit/cli'
+require 'rspec/core/rake_task'
+RSpec::Core::RakeTask.new(:spec)
 
+require 'bundler/audit/cli'
 namespace :bundler do
   desc 'Updates the ruby-advisory-db and runs audit'
   task :audit do
@@ -28,8 +30,8 @@ namespace :bundler do
   end
 end
 
-require 'rspec/core/rake_task'
-RSpec::Core::RakeTask.new(:spec)
+require 'rubocop/rake_task'
+RuboCop::RakeTask.new
 
 task(:default).clear
-task default: ['spec', 'bundler:audit']
+task default: ['spec', 'rubocop', 'bundler:audit']

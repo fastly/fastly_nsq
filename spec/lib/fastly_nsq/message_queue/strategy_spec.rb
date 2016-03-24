@@ -22,7 +22,7 @@ RSpec.describe Strategy do
       it 'raises with a helpful error' do
         allow(ENV).to receive(:[]).with('FAKE_QUEUE').and_return('taco')
 
-        expect{ Strategy.for_queue }.to raise_error(InvalidParameterError)
+        expect { Strategy.for_queue }.to raise_error(InvalidParameterError)
       end
     end
   end

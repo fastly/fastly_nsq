@@ -141,11 +141,11 @@ RSpec.describe FakeMessageQueue::Consumer do
           channel: channel,
         )
 
-        expect {
-          Timeout::timeout(delay) do
+        expect do
+          Timeout.timeout(delay) do
             consumer.pop
           end
-        }.to raise_error(Timeout::Error)
+        end.to raise_error(Timeout::Error)
       end
     end
   end
