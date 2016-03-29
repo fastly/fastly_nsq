@@ -28,7 +28,7 @@ module MessageQueue
     private
 
     def add_rake_task_description_if_one_needed
-      unless ::Rake.application.last_comment
+      unless ::Rake.application.last_description
         desc 'Listen to NSQ on topic using channel'
       end
     end
