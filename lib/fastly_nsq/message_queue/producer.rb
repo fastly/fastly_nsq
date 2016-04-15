@@ -2,8 +2,9 @@ class InvalidParameterError < StandardError; end
 
 module MessageQueue
   class Producer
-    def initialize(topic:)
+    def initialize(topic:, ssl_context: nil)
       @topic = topic
+      @ssl_context = SSLContext.new(ssl_context)
     end
 
     def connection
@@ -16,7 +17,7 @@ module MessageQueue
 
     private
 
-    attr_reader :topic
+    attr_reader :topic, :ssl_context
 
     def producer
       Strategy.for_queue::Producer
@@ -26,6 +27,7 @@ module MessageQueue
       {
         nsqd: ENV.fetch('NSQD_TCP_ADDRESS'),
         topic: topic,
+        ssl_context: ssl_context.to_h,
       }
     end
   end
