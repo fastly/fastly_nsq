@@ -22,7 +22,7 @@ module FakeMessageQueue
   end
 
   class Producer
-    def initialize(nsqd:, topic:)
+    def initialize(nsqd:, topic:, ssl_context: nil)
     end
 
     def write(string)
@@ -44,7 +44,7 @@ module FakeMessageQueue
   class Consumer
     SECONDS_BETWEEN_QUEUE_CHECKS = 0.5
 
-    def initialize(nsqlookupd:, topic:, channel:)
+    def initialize(nsqlookupd:, topic:, channel:, ssl_context: nil)
     end
 
     def pop

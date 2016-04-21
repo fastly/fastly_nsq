@@ -2,9 +2,10 @@ class InvalidParameterError < StandardError; end
 
 module MessageQueue
   class Consumer
-    def initialize(topic:, channel:)
+    def initialize(topic:, channel:, ssl_context: nil)
       @topic = topic
       @channel = channel
+      @ssl_context = SSLContext.new(ssl_context)
     end
 
     def connection
@@ -17,7 +18,7 @@ module MessageQueue
 
     private
 
-    attr_reader :channel, :topic
+    attr_reader :channel, :topic, :ssl_context
 
     def consumer
       Strategy.for_queue::Consumer
@@ -28,6 +29,7 @@ module MessageQueue
         nsqlookupd: ENV.fetch('NSQLOOKUPD_HTTP_ADDRESS'),
         topic: topic,
         channel: channel,
+        ssl_context: ssl_context.to_h,
       }
     end
   end

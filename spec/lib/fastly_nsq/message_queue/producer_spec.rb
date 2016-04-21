@@ -13,6 +13,7 @@ RSpec.describe MessageQueue::Producer do
           with(
             nsqd: ENV.fetch('NSQD_TCP_ADDRESS'),
             topic: topic,
+            ssl_context: nil,
           ).at_least(:once)
       end
     end
@@ -28,6 +29,7 @@ RSpec.describe MessageQueue::Producer do
           with(
             nsqd: ENV.fetch('NSQD_TCP_ADDRESS'),
             topic: topic,
+            ssl_context: nil,
           ).at_least(:once)
       end
     end

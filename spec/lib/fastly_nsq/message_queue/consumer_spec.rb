@@ -15,6 +15,7 @@ RSpec.describe MessageQueue::Consumer do
             nsqlookupd: ENV.fetch('NSQLOOKUPD_HTTP_ADDRESS'),
             topic: topic,
             channel: channel,
+            ssl_context: nil,
           ).at_least(:once)
       end
     end
@@ -32,6 +33,7 @@ RSpec.describe MessageQueue::Consumer do
             nsqlookupd: ENV.fetch('NSQLOOKUPD_HTTP_ADDRESS'),
             topic: topic,
             channel: channel,
+            ssl_context: nil,
           ).at_least(:once)
       end
     end
