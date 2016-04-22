@@ -21,7 +21,6 @@ RSpec.describe MessageQueue::Consumer do
     before(:example) do
       @fake_consumer = fake_consumer
       allow(Nsq::Consumer).to receive(:new).and_return(@fake_consumer)
-      consumer.connect
     end
 
     it 'forwards #pop to Nsq::Consumer' do
@@ -34,23 +33,12 @@ RSpec.describe MessageQueue::Consumer do
 
       expect(@fake_consumer).to have_received(:terminate)
     end
-
-    it 'instantiates the queue consumer' do
-      expect(Nsq::Consumer).to have_received(:new).
-        with(
-          nsqlookupd: ENV.fetch('NSQLOOKUPD_HTTP_ADDRESS'),
-          topic: topic,
-          channel: channel,
-          ssl_context: nil,
-        ).at_least(:once)
-    end
   end
 
   describe 'when using the fake queue', fake_queue: true do
     before(:example) do
       @fake_consumer = fake_consumer
       allow(FakeMessageQueue::Consumer).to receive(:new).and_return(@fake_consumer)
-      consumer.connect
     end
 
     it 'forwards #pop to FakeMessageQueue::Consumer' do
@@ -62,16 +50,6 @@ RSpec.describe MessageQueue::Consumer do
       consumer.terminate
 
       expect(@fake_consumer).to have_received(:terminate)
-    end
-
-    it 'instantiates the queue consumer' do
-      expect(FakeMessageQueue::Consumer).to have_received(:new).
-        with(
-          nsqlookupd: ENV.fetch('NSQLOOKUPD_HTTP_ADDRESS'),
-          topic: topic,
-          channel: channel,
-          ssl_context: nil,
-        ).at_least(:once)
     end
   end
 end
