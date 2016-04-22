@@ -72,4 +72,25 @@ RSpec.describe MessageQueue::Consumer do
       end
     end
   end
+
+  let(:fake_consumer) { double 'Consumer', connection: nil, terminate: nil, pop: :popped }
+
+  describe 'when using the real queue', fake_queue: false do
+    before(:each) { allow(Nsq::Consumer).to receive(:new).and_return(fake_consumer) }
+
+    it 'forwards #pop to Nsq::Consumer' do
+      consumer.pop
+      expect(fake_consumer).to have_received(:pop)
+    end
+  end
+
+  describe 'when using the fake queue', fake_queue: true do
+    let(:fake_consumer) { double 'Consumer', connection: nil, terminate: nil, pop: :popped }
+    before(:each) { allow(FakeMessageQueue::Consumer).to receive(:new).and_return(fake_consumer) }
+
+    it 'forwards #pop to FakeMessageQueue::Consumer' do
+      consumer.pop
+      expect(fake_consumer).to have_received(:pop)
+    end
+  end
 end
