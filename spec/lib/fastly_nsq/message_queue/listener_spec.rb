@@ -36,7 +36,7 @@ RSpec.describe MessageQueue::Listener do
   let(:message)            { TestMessageProcessor::Message.new 'this is message body', topic }
   let(:messages_processed) { TestMessageProcessor.messages_processed }
   let(:expected_message)   { TestMessageProcessor::Message.new('this is message body', topic) }
-  let(:expected_messages)  { [ expected_message ] }
+  let(:expected_messages)  { [expected_message] }
 
   describe 'instantiating without a consumer' do
     it 'instantiates a consumer, passing the topic and channel' do
