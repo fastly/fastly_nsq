@@ -44,7 +44,7 @@ module FakeMessageQueue
   class Consumer
     SECONDS_BETWEEN_QUEUE_CHECKS = 0.5
 
-    def initialize(nsqlookupd:, topic:, channel:, ssl_context: nil)
+    def initialize(nsqlookupd: nil, topic:, channel:, ssl_context: nil)
     end
 
     def pop
