@@ -13,6 +13,7 @@ module MessageQueue
     end
 
     def connect
+      @connection = nil
       !!connection
     end
 

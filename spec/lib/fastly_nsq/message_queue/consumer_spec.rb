@@ -42,7 +42,7 @@ RSpec.describe MessageQueue::Consumer do
   describe 'when the ENV is set incorrectly' do
     it 'raises with a helpful error' do
       allow(ENV).to receive(:[]).with('FAKE_QUEUE').and_return('taco')
-      
+
       expect { consumer.connect }.to raise_error(InvalidParameterError)
     end
   end
@@ -53,6 +53,7 @@ RSpec.describe MessageQueue::Consumer do
         fake_consumer = double('Consumer', connection: nil, terminate: nil)
         allow(Nsq::Consumer).to receive(:new).and_return(fake_consumer)
 
+        consumer.connect
         consumer.terminate
 
         expect(fake_consumer).to have_received(:terminate)
@@ -64,6 +65,7 @@ RSpec.describe MessageQueue::Consumer do
         fake_consumer = double('Consumer', connection: nil, terminate: nil)
         allow(FakeMessageQueue::Consumer).to receive(:new).and_return(fake_consumer)
 
+        consumer.connect
         consumer.terminate
 
         expect(fake_consumer).to have_received(:terminate)
