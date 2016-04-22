@@ -50,12 +50,12 @@ RSpec.describe MessageQueue::Consumer do
   describe '#terminate' do
     describe 'when using the real queue', fake_queue: false do
       it 'closes the connection' do
-        consumer = double('Consumer', connection: nil, terminate: nil)
-        allow(Nsq::Consumer).to receive(:new).and_return(consumer)
+        fake_consumer = double('Consumer', connection: nil, terminate: nil)
+        allow(Nsq::Consumer).to receive(:new).and_return(fake_consumer)
 
         consumer.terminate
 
-        expect(consumer).to have_received(:terminate)
+        expect(fake_consumer).to have_received(:terminate)
       end
     end
 
@@ -66,7 +66,7 @@ RSpec.describe MessageQueue::Consumer do
 
         consumer.terminate
 
-        expect(consumer).to have_received(:terminate)
+        expect(fake_consumer).to have_received(:terminate)
       end
     end
   end
