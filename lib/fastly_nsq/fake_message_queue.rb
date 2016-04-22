@@ -1,6 +1,7 @@
 module FakeMessageQueue
   @@logger = Logger.new(nil)
   @@delay  = 0.5
+  @@queue  = []
 
   def self.queue
     @@queue
