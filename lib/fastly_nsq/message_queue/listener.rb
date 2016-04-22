@@ -1,8 +1,10 @@
 module MessageQueue
   class Listener
-    def initialize(topic:, channel:)
-      @topic = topic
-      @channel = channel
+    def initialize(topic:, channel:, processor: nil, consumer: nil)
+      @topic     = topic
+      @channel   = channel
+      @processor = processor || DEFAULT_PROCESSOR
+      @consumer  = consumer
     end
 
     def go
@@ -26,11 +28,12 @@ module MessageQueue
 
     private
 
-    attr_reader :channel, :topic
+    attr_reader :channel, :topic, :processor
+    DEFAULT_PROCESSOR = ->(body, topic) { MessageProcessor.new(message_body: body, topic: topic).go }
 
     def process_one_message
       message = consumer.pop
-      MessageProcessor.new(message_body: message.body, topic: topic).go
+      processor.call(message.body, topic)
       message.finish
     end
 
