@@ -35,7 +35,7 @@ module MessageQueue
     end
 
     def consumer
-      @consumer ||= MessageQueue::Consumer.new(consumer_params).connection
+      @consumer ||= MessageQueue::Consumer.new(consumer_params)
     end
 
     def consumer_params
