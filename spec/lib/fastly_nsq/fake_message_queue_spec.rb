@@ -133,7 +133,8 @@ RSpec.describe FakeMessageQueue::Consumer do
         FakeMessageQueue.queue = []
         topic = 'death_star'
         channel = 'star_killer_base'
-        delay = FakeMessageQueue::Consumer::SECONDS_BETWEEN_QUEUE_CHECKS + 0.1
+        FakeMessageQueue.delay = 0.1
+        delay = FakeMessageQueue.delay + 0.1
 
         consumer = FakeMessageQueue::Consumer.new(
           nsqlookupd: ENV.fetch('NSQLOOKUPD_HTTP_ADDRESS'),

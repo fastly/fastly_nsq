@@ -70,13 +70,16 @@ RSpec.describe MessageQueue::Listener do
     end
 
     context 'when using the fake queue and it is empty', fake_queue: true do
+      before do
+        FakeMessageQueue.delay = 0.1
+      end
+
       it 'blocks on the process for longer than the check cycle' do
-        delay = FakeMessageQueue::Consumer::SECONDS_BETWEEN_QUEUE_CHECKS + 0.1
+        delay = FakeMessageQueue.delay + 0.1
 
         expect do
           Timeout.timeout(delay) do
-            MessageQueue::Listener.new(topic: topic, channel: channel).
-              process_next_message
+            listener.process_next_message
           end
         end.to raise_error(Timeout::Error)
       end
