@@ -1,6 +1,9 @@
 require 'spec_helper'
 
 RSpec.describe MessageQueue::Listener do
+  let(:topic)   { 'testing_topic' }
+  let(:channel) { 'testing_channel' }
+
   describe '#process_next_message' do
     it 'pass the topic and channel to the consumer' do
       allow(SampleMessageProcessor).to receive_message_chain(:new, :go)
@@ -8,8 +11,6 @@ RSpec.describe MessageQueue::Listener do
       connection = double('Connection', pop: message, terminate: nil)
       consumer = double('Consumer', connection: connection)
       allow(MessageQueue::Consumer).to receive(:new).and_return(consumer)
-      topic = 'testing_topic'
-      channel = 'testing_channel'
 
       MessageQueue::Listener.new(topic: topic, channel: channel).
         process_next_message
@@ -26,8 +27,6 @@ RSpec.describe MessageQueue::Listener do
       connection = double('Connection', pop: message, terminate: nil)
       consumer = double('Consumer', connection: connection)
       allow(MessageQueue::Consumer).to receive(:new).and_return(consumer)
-      topic = 'testing_topic'
-      channel = 'testing_channel'
 
       MessageQueue::Listener.new(topic: topic, channel: channel).
         process_next_message
@@ -43,8 +42,6 @@ RSpec.describe MessageQueue::Listener do
       connection = double('Connection', pop: message, terminate: nil)
       consumer = double('Consumer', connection: connection)
       allow(MessageQueue::Consumer).to receive(:new).and_return(consumer)
-      topic = 'testing_topic'
-      channel = 'testing_channel'
 
       MessageQueue::Listener.new(topic: topic, channel: channel).
         process_next_message
@@ -54,8 +51,6 @@ RSpec.describe MessageQueue::Listener do
 
     context 'when using the fake queue and it is empty', fake_queue: true do
       it 'blocks on the process for longer than the check cycle' do
-        topic = 'testing_topic'
-        channel = 'testing_channel'
         delay = FakeMessageQueue::Consumer::SECONDS_BETWEEN_QUEUE_CHECKS + 0.1
 
         expect do
@@ -76,8 +71,6 @@ RSpec.describe MessageQueue::Listener do
         connection = double('Connection', pop: message, terminate: nil)
         consumer = double('Consumer', connection: connection)
         allow(MessageQueue::Consumer).to receive(:new).and_return(consumer)
-        topic = 'testing_topic'
-        channel = 'testing_channel'
 
         pid = fork do
           MessageQueue::Listener.new(topic: topic, channel: channel).go
