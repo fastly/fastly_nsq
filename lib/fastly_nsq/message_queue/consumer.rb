@@ -8,17 +8,17 @@ module MessageQueue
       @ssl_context = SSLContext.new(ssl_context)
     end
 
-    def connection
-      @connection ||= consumer.new(params)
-    end
-
     def terminate
-      @connection.terminate
+      connection.terminate
     end
 
     private
 
     attr_reader :channel, :topic, :ssl_context
+
+    def connection
+      @connection ||= consumer.new(params)
+    end
 
     def consumer
       Strategy.for_queue::Consumer
