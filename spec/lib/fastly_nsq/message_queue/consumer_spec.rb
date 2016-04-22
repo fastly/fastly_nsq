@@ -49,9 +49,9 @@ RSpec.describe MessageQueue::Consumer do
   describe 'when using the fake queue', fake_queue: true do
     before(:example) do
       @fake_consumer = fake_consumer
-     allow(FakeMessageQueue::Consumer).to receive(:new).and_return(@fake_consumer)
-     consumer.connect
-   end
+      allow(FakeMessageQueue::Consumer).to receive(:new).and_return(@fake_consumer)
+      consumer.connect
+    end
 
     it 'forwards #pop to FakeMessageQueue::Consumer' do
       consumer.pop
@@ -73,6 +73,5 @@ RSpec.describe MessageQueue::Consumer do
           ssl_context: nil,
         ).at_least(:once)
     end
-
   end
 end

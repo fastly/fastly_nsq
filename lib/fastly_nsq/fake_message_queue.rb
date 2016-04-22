@@ -55,7 +55,7 @@ module FakeMessageQueue
     def initialize(nsqlookupd: nil, topic:, channel:, ssl_context: nil)
     end
 
-    def pop(delay=FakeMessageQueue.delay)
+    def pop(delay = FakeMessageQueue.delay)
       message = nil
 
       until message

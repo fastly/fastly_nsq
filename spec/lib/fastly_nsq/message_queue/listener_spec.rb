@@ -8,7 +8,9 @@ RSpec.describe MessageQueue::Listener do
   module TestMessageProcessor
     @@messages_processed = []
     Message = Struct.new(:body, :topic) do
-      def finish; @did_finish = true; end
+      def finish
+        @did_finish = true
+      end
     end
 
     def self.call(body, topic)
