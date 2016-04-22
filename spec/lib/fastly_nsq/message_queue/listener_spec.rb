@@ -86,12 +86,6 @@ RSpec.describe MessageQueue::Listener do
   describe '#go' do
     describe 'when a SIGTERM is received' do
       it 'closes the consumer connection' do
-        allow(SampleMessageProcessor).to receive_message_chain(:new, :go)
-        message = double(finish: nil, body: nil)
-        connection = double('Connection', pop: message, terminate: nil)
-        consumer = double('Consumer', connection: connection)
-        allow(MessageQueue::Consumer).to receive(:new).and_return(consumer)
-
         pid = fork do
           MessageQueue::Listener.new(topic: topic, channel: channel).go
         end
