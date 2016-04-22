@@ -5,7 +5,7 @@ class InvalidParameterError < StandardError; end
 module MessageQueue
   class Consumer
     extend Forwardable
-    def_delegator :connection, :pop, :terminate
+    def_delegator :connection, :pop, :pop_without_blocking, :terminate
 
     def initialize(topic:, channel:, ssl_context: nil)
       @topic = topic
