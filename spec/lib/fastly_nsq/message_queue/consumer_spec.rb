@@ -8,7 +8,7 @@ RSpec.describe MessageQueue::Consumer do
         topic = 'death_star'
         channel = 'star_killer_base'
 
-        MessageQueue::Consumer.new(topic: topic, channel: channel).connection
+        MessageQueue::Consumer.new(topic: topic, channel: channel).connect
 
         expect(Nsq::Consumer).to have_received(:new).
           with(
@@ -26,7 +26,7 @@ RSpec.describe MessageQueue::Consumer do
         topic = 'death_star'
         channel = 'star_killer_base'
 
-        MessageQueue::Consumer.new(topic: topic, channel: channel).connection
+        MessageQueue::Consumer.new(topic: topic, channel: channel).connect
 
         expect(FakeMessageQueue::Consumer).to have_received(:new).
           with(
@@ -47,7 +47,7 @@ RSpec.describe MessageQueue::Consumer do
 
       consumer = MessageQueue::Consumer.new(topic: topic, channel: channel)
 
-      expect { consumer.connection }.to raise_error(InvalidParameterError)
+      expect { consumer.connect }.to raise_error(InvalidParameterError)
     end
   end
 

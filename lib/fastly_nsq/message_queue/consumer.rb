@@ -12,6 +12,10 @@ module MessageQueue
       connection.terminate
     end
 
+    def connect
+      !!connection
+    end
+
     private
 
     attr_reader :channel, :topic, :ssl_context
