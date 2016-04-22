@@ -4,7 +4,7 @@ module MessageQueue
       @topic     = topic
       @channel   = channel
       @processor = processor || DEFAULT_PROCESSOR
-      @consumer  = consumer
+      @consumer  = consumer  || MessageQueue::Consumer.new(consumer_params)
     end
 
     def go
@@ -28,17 +28,13 @@ module MessageQueue
 
     private
 
-    attr_reader :channel, :topic, :processor
+    attr_reader :channel, :topic, :processor, :consumer
     DEFAULT_PROCESSOR = ->(body, topic) { MessageProcessor.new(message_body: body, topic: topic).go }
 
     def process_one_message
       message = consumer.pop
       processor.call(message.body, topic)
       message.finish
-    end
-
-    def consumer
-      @consumer ||= MessageQueue::Consumer.new(consumer_params)
     end
 
     def consumer_params
