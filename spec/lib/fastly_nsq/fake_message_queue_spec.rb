@@ -88,6 +88,9 @@ RSpec.describe FakeMessageQueue::Message do
 end
 
 RSpec.describe FakeMessageQueue::Consumer do
+  let(:topic)   { 'death_star' }
+  let(:channel) { 'star_killer_base' }
+
   after do
     FakeMessageQueue.reset!
   end
@@ -95,8 +98,6 @@ RSpec.describe FakeMessageQueue::Consumer do
   describe '#size' do
     it 'tells you how many messages are in the queue' do
       FakeMessageQueue.queue = ['hello']
-      topic = 'death_star'
-      channel = 'star_killer_base'
 
       consumer = FakeMessageQueue::Consumer.new(
         nsqlookupd: ENV.fetch('NSQLOOKUPD_HTTP_ADDRESS'),
@@ -114,8 +115,6 @@ RSpec.describe FakeMessageQueue::Consumer do
       it 'returns the last message off of the queue' do
         message = FakeMessageQueue::Message.new('hello')
         FakeMessageQueue.queue = [message]
-        topic = 'death_star'
-        channel = 'star_killer_base'
 
         consumer = FakeMessageQueue::Consumer.new(
           nsqlookupd: ENV.fetch('NSQLOOKUPD_HTTP_ADDRESS'),
@@ -131,8 +130,6 @@ RSpec.describe FakeMessageQueue::Consumer do
     context 'when there no message on the queue' do
       it 'blocks for longer than the queue check cycle' do
         FakeMessageQueue.queue = []
-        topic = 'death_star'
-        channel = 'star_killer_base'
         FakeMessageQueue.delay = 0.1
         delay = FakeMessageQueue.delay + 0.1
 
