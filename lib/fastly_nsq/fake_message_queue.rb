@@ -66,6 +66,10 @@ module FakeMessageQueue
       message
     end
 
+    def pop_without_blocking
+      queue.pop
+    end
+
     def size
       queue.size
     end
