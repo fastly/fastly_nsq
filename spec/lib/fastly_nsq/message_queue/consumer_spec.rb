@@ -13,7 +13,7 @@ RSpec.describe MessageQueue::Consumer do
     it 'raises with a helpful error' do
       allow(ENV).to receive(:[]).with('FAKE_QUEUE').and_return('taco')
 
-      expect { consumer.connect }.to raise_error(InvalidParameterError)
+      expect { consumer.terminate }.to raise_error(InvalidParameterError)
     end
   end
 
