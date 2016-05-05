@@ -88,8 +88,8 @@ RSpec.describe FakeMessageQueue::Message do
 end
 
 RSpec.describe FakeMessageQueue::Consumer do
-  let(:topic)   { 'death_star' }
-  let(:channel) { 'star_killer_base' }
+  let(:topic)    { 'death_star' }
+  let(:channel)  { 'star_killer_base' }
   let(:consumer) { FakeMessageQueue::Consumer.new topic: topic, channel: channel }
 
   after do
