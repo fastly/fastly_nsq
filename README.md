@@ -65,7 +65,7 @@ This is a class which provides an adapter to the fake and real NSQ consumers. Th
 consumer = MessageQueue::Consumer.new(
   topic: 'topic',
   channel: 'channel'
-).connection
+)
 
 consumer.size #=> 1
 message = consumer.pop
