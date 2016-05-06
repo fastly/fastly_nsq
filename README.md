@@ -1,22 +1,14 @@
 # fastly_nsq [![Build Status](https://travis-ci.org/fastly/fastly_nsq.svg?branch=master)](https://travis-ci.org/fastly/fastly_nsq)
 
-*NOTE: This is a point-release
-which is not yet suitable for production.
-Use at your own peril.*
+*NOTE: This is a point-release which is not yet suitable for production. Use at your own peril.*
 
-NSQ adapter and testing objects
-for using the NSQ messaging system
-in your Ruby project.
+NSQ adapter and testing objects for using the NSQ messaging system in your Ruby project.
 
-This library is intended
-to facilitate publishing and consuming
-messages on an NSQ messaging queue.
+This library is intended to facilitate publishing and consuming messages on an NSQ messaging queue.
 
-We also include fakes
-to make testing easier.
+We also include fakes to make testing easier.
 
-This library is dependent
-on the [`nsq-ruby`] gem.
+This library is dependent on the [`nsq-ruby`] gem.
 
 [`nsq-ruby`]: https://github.com/wistia/nsq-ruby
 
@@ -27,28 +19,18 @@ Please use [GitHub Issues] to report bugs.
 
 ## Install
 
-`fastly_nsq` is a Ruby Gem
-tested against Rails `>= 4.2`
-and Ruby `>= 2.3.0`.
+`fastly_nsq` is a Ruby Gem tested against Rails `>= 4.2` and Ruby `>= 2.3.0`.
 
-To get started,
-add `fastly_nsq` to your `Gemfile`
-and `bundle install`.
+To get started, add `fastly_nsq` to your `Gemfile` and `bundle install`.
 
 ## Usage
-
-*IMPORTANT NOTE:* You must create your own `MessageProcessor` class
-for this gem to work in your application.
+*IMPORTANT NOTE:* You must create your own `MessageProcessor` class for this gem to work in your application.
 
 See more information below.
 
 ### `MessageQueue::Producer`
 
-This is a class
-which provides an adapter to the
-fake and real NSQ producers.
-These are used to
-write messages onto the queue:
+This is a class which provides an adapter to the fake and real NSQ producers. These are used to write messages onto the queue:
 
 ```ruby
 message_data = {
@@ -64,10 +46,8 @@ producer = MessageQueue::Producer.new(
 
 producer.write(message_data.to_json)
 ```
-The mock/real strategy used
-can be switched
-by adding an environment variable
-to your application:
+
+The mock/real strategy used can be switched by adding an environment variable to your application:
 
 ```ruby
 # for the fake
@@ -78,11 +58,8 @@ ENV['FAKE_QUEUE'] = false
 ```
 
 ### `MessageQueue::Consumer`
-This is a class
-which provides an adapter to the
-fake and real NSQ consumers.
-These are used to
-read messages off of the queue:
+
+This is a class which provides an adapter to the fake and real NSQ consumers. These are used to read messages off of the queue:
 
 ```ruby
 consumer = MessageQueue::Consumer.new(
@@ -98,10 +75,7 @@ consumer.size #=> 0
 consumer.terminate
 ```
 
-As above,
-the mock/real strategy used
-can be switched by setting the
-`FAKE_QUEUE` environment variable appropriately.
+As above, the mock/real strategy used can be switched by setting the `FAKE_QUEUE` environment variable appropriately.
 
 ### `MessageQueue::Listener`
 
@@ -114,10 +88,7 @@ channel = 'my_consuming_service'
 MessageQueue::Listener.new(topic: topic, channel: channel).process_next_message
 ```
 
-This will pop the next message
-off of the queue
-and send the JSON text body
-to `MessageProcessor.new(message_body: message_body, topic: topic).go`.
+This will pop the next message off of the queue and send the JSON text body to `MessageProcessor.new(message_body: message_body, topic: topic).go`.
 
 To initiate a blocking loop to process messages continuously:
 
@@ -128,26 +99,15 @@ channel = 'my_consuming_service'
 MessageQueue::Listener.new(topic: topic, channel: channel).go
 ```
 
-This will block until
-there is a new message on the queue,
-      pop the next message
-      off of the queue
-      and send it to `MessageProcessor.new(message_body).go`.
+This will block until there is a new message on the queue, pop the next message off of the queue and send it to `MessageProcessor.new(message_body).go`.
 
 ### `MessageQueue::RakeTask`
 
-To help facilitate running the `MessageQueue::Listener` in a blocking fashion
-outside your application, a simple `RakeTask` is provided.
+To help facilitate running the `MessageQueue::Listener` in a blocking fashion outside your application, a simple `RakeTask` is provided.
 
-NOTE: The rake task expects a
-`MessageProcessor.topics` method,
-which must return an array of strings
-defining the topics to which
-we would like to listen and process messages.
+NOTE: The rake task expects a `MessageProcessor.topics` method, which must return an array of strings defining the topics to which we would like to listen and process messages.
 
-The task will listen
-to all specified topics,
-each in a separate thread.
+The task will listen to all specified topics, each in a separate thread.
 
 This task can be added into your `Rakefile` in one of two ways:
 
@@ -173,34 +133,21 @@ MessageQueue::RakeTask.new(:listen_task, [:channel])
 `rake listen_task['my_channel']`
 ```
 
-Both methods can be used at the same time with the passed in values taking
-priority over block assigned values
+Both methods can be used at the same time with the passed in values taking priority over block assigned values
 
-See the [`Rakefile`](examples/Rakefile) file
-for more detail.
+See the [`Rakefile`](examples/Rakefile) file for more detail.
 
 ### Real vs. Fake
+The real strategy creates a connection to `nsq-ruby`'s `Nsq::Producer` and `Nsq::Consumer` classes.
 
-The real strategy
-creates a connection
-to `nsq-ruby`'s
-`Nsq::Producer` and `Nsq::Consumer` classes.
-
-The fake strategy
-mocks the connection
-to NSQ for testing purposes.
-It adheres to the same API
-as the real adapter.
+The fake strategy mocks the connection to NSQ for testing purposes. It adheres to the same API as the real adapter.
 
 
 ## Configuration
 
 ### Processing Messages
 
-This gem expects you to create a
-new class called `MessageProcessor`
-which will process messages
-once they are consumed off of the queue topic.
+This gem expects you to create a new class called `MessageProcessor` which will process messages once they are consumed off of the queue topic.
 
 This class needs to adhere to the following API:
 
@@ -225,14 +172,9 @@ end
 
 ### Environment Variables
 
-The URLs for the various
-NSQ endpoints are expected
-in `ENV` variables.
+The URLs for the various NSQ endpoints are expected in `ENV` variables.
 
-Below are the required variables
-and sample values for using
-stock NSQ on OS X,
-installed via Homebrew:
+Below are the required variables and sample values for using stock NSQ on OS X, installed via Homebrew:
 
 ```shell
 BROADCAST_ADDRESS='127.0.0.1'
@@ -242,36 +184,21 @@ NSQLOOKUPD_TCP_ADDRESS='127.0.0.1:4160'
 NSQLOOKUPD_HTTP_ADDRESS='127.0.0.1:4161'
 ```
 
-See the [`.sample.env`](examples/.sample.env) file
-for more detail.
+See the [`.sample.env`](examples/.sample.env) file for more detail.
 
 ### Testing Against the Fake
+In the gem's test suite, the fake message queue is used.
 
-In the gem's test suite,
-the fake message queue is used.
+If you would like to force use of the real NSQ adapter, ensure `FAKE_QUEUE` is set to `false`.
 
-If you would like to force
-use of the real NSQ adapter,
-ensure `FAKE_QUEUE` is set to `false`.
-
-When you are developing your application,
-it is recommended to
-start by using the fake queue:
+When you are developing your application, it is recommended to start by using the fake queue:
 
 ```shell
 FAKE_QUEUE=true
 ```
+Also be sure call `FakeMessageQueue.reset!` before each test in your app to ensure there are no leftover messages.
 
-Also be sure call
-`FakeMessageQueue.reset!`
-before each test in your app to ensure
-there are no leftover messages.
-
-Also note that during gem tests,
-we are aliasing `MessageProcessor` to `SampleMessageProcessor`.
-You can also refer to the latter
-as an example of how
-you might write your own processor.
+Also note that during gem tests, we are aliasing `MessageProcessor` to `SampleMessageProcessor`. You can also refer to the latter as an example of how you might write your own processor.
 
 ## Acknowledgements
 
