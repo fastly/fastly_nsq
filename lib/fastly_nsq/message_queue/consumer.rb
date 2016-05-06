@@ -7,6 +7,7 @@ module MessageQueue
     extend Forwardable
     def_delegator :connection, :pop
     def_delegator :connection, :pop_without_blocking
+    def_delegator :connection, :size
     def_delegator :connection, :terminate
 
     def initialize(topic:, channel:, ssl_context: nil)
