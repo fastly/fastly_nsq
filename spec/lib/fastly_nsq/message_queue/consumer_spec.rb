@@ -6,7 +6,7 @@ RSpec.describe MessageQueue::Consumer do
   let(:consumer) { MessageQueue::Consumer.new(topic: topic, channel: channel) }
 
   def fake_consumer
-    double 'Consumer', connection: nil, terminate: nil, pop: :popped
+    double 'Consumer', connection: nil, terminate: nil, pop: :popped, size: 0
   end
 
   describe 'when the ENV is set incorrectly' do
@@ -28,7 +28,12 @@ RSpec.describe MessageQueue::Consumer do
       expect(@fake_consumer).to have_received(:pop)
     end
 
-    it 'closes the connection' do
+    it 'forwards #size to Nsq::Consumer' do
+      consumer.size
+      expect(@fake_consumer).to have_received(:size)
+    end
+
+    it 'forwards #terminate to Nsq::Consumer' do
       consumer.terminate
 
       expect(@fake_consumer).to have_received(:terminate)
@@ -46,7 +51,12 @@ RSpec.describe MessageQueue::Consumer do
       expect(@fake_consumer).to have_received(:pop)
     end
 
-    it 'closes the connection' do
+    it 'forwards #size to FakeMessageQueue::Consumer' do
+      consumer.size
+      expect(@fake_consumer).to have_received(:size)
+    end
+
+    it 'forwards #terminate to FakeMessageQueue::Consumer' do
       consumer.terminate
 
       expect(@fake_consumer).to have_received(:terminate)
