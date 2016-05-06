@@ -19,7 +19,7 @@ Please use [GitHub Issues] to report bugs.
 
 ## Install
 
-`fastly_nsq` is a Ruby Gem tested against Rails `>= 4.2` and Ruby `>= 2.3.0`.
+`fastly_nsq` is a Ruby Gem tested against Rails `>= 4.2` and Ruby `>= 2.1.8`.
 
 To get started, add `fastly_nsq` to your `Gemfile` and `bundle install`.
 
