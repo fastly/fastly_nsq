@@ -1,11 +1,12 @@
 require 'spec_helper'
 
 RSpec.describe MessageQueue::Producer do
+  let(:topic) { 'death_star' }
+
   describe '#connection' do
     describe 'when using the real queue', fake_queue: false do
       it 'returns an instance of the queue producer' do
         allow(Nsq::Producer).to receive(:new)
-        topic = 'death_star'
 
         MessageQueue::Producer.new(topic: topic).connection
 
@@ -21,7 +22,6 @@ RSpec.describe MessageQueue::Producer do
     describe 'when using the fake queue', fake_queue: true do
       it 'returns an instance of the queue producer' do
         allow(FakeMessageQueue::Producer).to receive(:new)
-        topic = 'death_star'
 
         MessageQueue::Producer.new(topic: topic).connection
 
@@ -37,7 +37,6 @@ RSpec.describe MessageQueue::Producer do
     describe 'when the ENV is set incorrectly' do
       it 'raises with a helpful error' do
         allow(ENV).to receive(:[]).with('FAKE_QUEUE').and_return('taco')
-        topic = 'death_star'
 
         producer = MessageQueue::Producer.new(topic: topic)
 
@@ -51,7 +50,6 @@ RSpec.describe MessageQueue::Producer do
       it 'closes the connection' do
         producer = double('Producer', connection: nil, terminate: nil)
         allow(Nsq::Producer).to receive(:new).and_return(producer)
-        topic = 'death_star'
 
         live_producer = MessageQueue::Producer.new(topic: topic)
         live_producer.connection
@@ -65,7 +63,6 @@ RSpec.describe MessageQueue::Producer do
       it 'closes the connection' do
         producer = double('Producer', connection: nil, terminate: nil)
         allow(FakeMessageQueue::Producer).to receive(:new).and_return(producer)
-        topic = 'death_star'
 
         live_producer = MessageQueue::Producer.new(topic: topic)
         live_producer.connection
