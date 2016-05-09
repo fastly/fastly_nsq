@@ -2,74 +2,52 @@ require 'spec_helper'
 
 RSpec.describe MessageQueue::Producer do
   let(:topic) { 'death_star' }
+  let(:producer) { MessageQueue::Producer.new(topic: topic) }
 
-  describe '#connection' do
-    describe 'when using the real queue', fake_queue: false do
-      it 'returns an instance of the queue producer' do
-        allow(Nsq::Producer).to receive(:new)
+  def fake_producer
+    double 'Producer', connection: nil, terminate: nil, write: :written
+  end
 
-        MessageQueue::Producer.new(topic: topic).connection
+  describe 'when the ENV is set incorrectly' do
+    it 'raises with a helpful error' do
+      allow(ENV).to receive(:[]).with('FAKE_QUEUE').and_return('taco')
 
-        expect(Nsq::Producer).to have_received(:new).
-          with(
-            nsqd: ENV.fetch('NSQD_TCP_ADDRESS'),
-            topic: topic,
-            ssl_context: nil,
-          ).at_least(:once)
-      end
-    end
-
-    describe 'when using the fake queue', fake_queue: true do
-      it 'returns an instance of the queue producer' do
-        allow(FakeMessageQueue::Producer).to receive(:new)
-
-        MessageQueue::Producer.new(topic: topic).connection
-
-        expect(FakeMessageQueue::Producer).to have_received(:new).
-          with(
-            nsqd: ENV.fetch('NSQD_TCP_ADDRESS'),
-            topic: topic,
-            ssl_context: nil,
-          ).at_least(:once)
-      end
-    end
-
-    describe 'when the ENV is set incorrectly' do
-      it 'raises with a helpful error' do
-        allow(ENV).to receive(:[]).with('FAKE_QUEUE').and_return('taco')
-
-        producer = MessageQueue::Producer.new(topic: topic)
-
-        expect { producer.connection }.to raise_error(InvalidParameterError)
-      end
+      expect { producer.terminate }.to raise_error(InvalidParameterError)
     end
   end
 
-  describe '#terminate' do
-    describe 'when using the real queue', fake_queue: false do
-      it 'closes the connection' do
-        producer = double('Producer', connection: nil, terminate: nil)
-        allow(Nsq::Producer).to receive(:new).and_return(producer)
-
-        live_producer = MessageQueue::Producer.new(topic: topic)
-        live_producer.connection
-        live_producer.terminate
-
-        expect(producer).to have_received(:terminate)
-      end
+  describe 'when using the real queue', fake_queue: false do
+    before(:example) do
+      @fake_producer = fake_producer
+      allow(Nsq::Producer).to receive(:new).and_return(@fake_producer)
     end
 
-    describe 'when using the fake queue', fake_queue: true do
-      it 'closes the connection' do
-        producer = double('Producer', connection: nil, terminate: nil)
-        allow(FakeMessageQueue::Producer).to receive(:new).and_return(producer)
-
-        live_producer = MessageQueue::Producer.new(topic: topic)
-        live_producer.connection
-        live_producer.terminate
-
-        expect(producer).to have_received(:terminate)
-      end
+    it 'forwards #terminate to Nsq::Producer' do
+      producer.terminate
+      expect(@fake_producer).to have_received(:terminate)
     end
+
+    it 'forwards #write to Nsq::Producer' do
+      producer.write
+      expect(@fake_producer).to have_received(:write)
+    end
+  end
+
+  describe 'when using the fake queue', fake_queue: true do
+    before(:example) do
+      @fake_producer = fake_producer
+      allow(FakeMessageQueue::Producer).to receive(:new).and_return(@fake_producer)
+    end
+
+    it 'forwards #terminate to the FakeMessageQueue::Producer' do
+      producer.terminate
+      expect(@fake_producer).to have_received(:terminate)
+    end
+
+    it 'forwards #write to FakeMessageQueue::Producer' do
+      producer.write
+      expect(@fake_producer).to have_received(:write)
+    end
+
   end
 end
