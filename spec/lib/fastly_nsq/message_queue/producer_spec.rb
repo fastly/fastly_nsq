@@ -48,6 +48,5 @@ RSpec.describe MessageQueue::Producer do
       producer.write
       expect(@fake_producer).to have_received(:write)
     end
-
   end
 end
