@@ -87,21 +87,4 @@ RSpec.describe MessageQueue::Listener do
       end
     end
   end
-
-  describe '#go' do
-    describe 'when a SIGTERM is received' do
-      it 'closes the consumer connection' do
-        pid = fork do
-          MessageQueue::Listener.new(topic: topic, channel: channel).go
-        end
-
-        Process.kill('TERM', pid)
-
-        # Success for this test is to expect it to complete.
-        #
-        # Additional Note: We are NOT testing the SIGINT case because it
-        # orphans the test's Ruby process and is thus meaningless as a test.
-      end
-    end
-  end
 end
