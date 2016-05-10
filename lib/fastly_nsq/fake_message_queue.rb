@@ -32,7 +32,7 @@ module FakeMessageQueue
   end
 
   class Producer
-    def initialize(nsqd:, topic:, ssl_context: nil)
+    def initialize(topic:, nsqd: nil, ssl_context: nil)
     end
 
     def write(string)
