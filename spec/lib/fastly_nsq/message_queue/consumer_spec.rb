@@ -16,7 +16,7 @@ RSpec.describe MessageQueue::Consumer do
   describe 'when using the real queue', fake_queue: false do
     before(:example) do
       @fake_consumer = spy 'Consumer backend'
-      consumer.instance_variable_set("@connection", nil)
+      consumer.instance_variable_set('@connection', nil)
       allow(Nsq::Consumer).to receive(:new).and_return(@fake_consumer)
     end
 
@@ -35,7 +35,7 @@ RSpec.describe MessageQueue::Consumer do
   describe 'when using the fake queue', fake_queue: true do
     before(:example) do
       @fake_consumer = spy 'Consumer backend'
-      consumer.instance_variable_set("@connection", nil)
+      consumer.instance_variable_set('@connection', nil)
       allow(FakeMessageQueue::Consumer).to receive(:new).and_return(@fake_consumer)
     end
 
