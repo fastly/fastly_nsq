@@ -1,67 +1,87 @@
 require 'spec_helper'
 
 RSpec.describe MessageQueue::Listener do
-  describe '#process_next_message' do
-    it 'pass the topic and channel to the consumer' do
-      allow(SampleMessageProcessor).to receive_message_chain(:new, :go)
-      message = double('Message', finish: nil, body: nil)
-      connection = double('Connection', pop: message, terminate: nil)
-      consumer = double('Consumer', connection: connection)
-      allow(MessageQueue::Consumer).to receive(:new).and_return(consumer)
-      topic = 'testing_topic'
-      channel = 'testing_channel'
+  let(:topic)    { 'testing_topic' }
+  let(:channel)  { 'testing_channel' }
+  let(:consumer) { FakeMessageQueue::Consumer.new topic: topic, channel: channel }
 
-      MessageQueue::Listener.new(topic: topic, channel: channel).
-        process_next_message
+  module TestMessageProcessor
+    @@messages_processed = []
+    Message = Struct.new(:body, :topic) do
+      def finish
+        @did_finish = true
+      end
+    end
+
+    def self.call(body, topic)
+      @@messages_processed.push Message.new(body, topic)
+    end
+
+    def self.messages_processed
+      @@messages_processed
+    end
+
+    def self.clear
+      @@messages_processed = []
+    end
+  end
+
+  let(:listener) do
+    MessageQueue::Listener.new topic:     topic,
+                               channel:   channel,
+                               processor: TestMessageProcessor,
+                               consumer:  consumer
+  end
+
+  let(:message)            { TestMessageProcessor::Message.new 'this is message body', topic }
+  let(:messages_processed) { TestMessageProcessor.messages_processed }
+  let(:expected_message)   { TestMessageProcessor::Message.new('this is message body', topic) }
+  let(:expected_messages)  { [expected_message] }
+
+  describe 'instantiating without a consumer' do
+    it 'instantiates a consumer, passing the topic and channel' do
+      allow(MessageQueue::Consumer).to receive(:new)
+
+      MessageQueue::Listener.new topic:     topic,
+                                 channel:   channel,
+                                 processor: TestMessageProcessor,
+                                 consumer:  nil
 
       expect(MessageQueue::Consumer).to have_received(:new).
         with(topic: topic, channel: channel)
     end
+  end
 
-    it 'processes the message' do
-      process_message = double(go: nil)
-      allow(MessageProcessor).to receive(:new).and_return(process_message)
-      message_body = { data: 'value' }.to_json
-      message = double('Message', finish: nil, body: message_body)
-      connection = double('Connection', pop: message, terminate: nil)
-      consumer = double('Consumer', connection: connection)
-      allow(MessageQueue::Consumer).to receive(:new).and_return(consumer)
-      topic = 'testing_topic'
-      channel = 'testing_channel'
+  describe 'when processing next message' do
+    before(:each) { TestMessageProcessor.clear }
 
-      MessageQueue::Listener.new(topic: topic, channel: channel).
-        process_next_message
+    it 'processes the next message' do
+      allow(consumer).to receive(:pop).and_return(message)
+      listener.process_next_message
 
-      expect(MessageProcessor).to have_received(:new).
-        with(topic: topic, message_body: message_body)
-      expect(process_message).to have_received(:go)
+      expect(messages_processed).to eql(expected_messages)
     end
 
     it 'finishes the message' do
-      allow(SampleMessageProcessor).to receive_message_chain(:new, :go)
-      message = double('Message', finish: nil, body: nil)
-      connection = double('Connection', pop: message, terminate: nil)
-      consumer = double('Consumer', connection: connection)
-      allow(MessageQueue::Consumer).to receive(:new).and_return(consumer)
-      topic = 'testing_topic'
-      channel = 'testing_channel'
+      allow(consumer).to receive(:pop).and_return(message)
+      allow(message).to receive(:finish)
 
-      MessageQueue::Listener.new(topic: topic, channel: channel).
-        process_next_message
+      listener.process_next_message
 
-      expect(message).to have_received(:finish)
+      expect(message).to have_received(:finish).once
     end
 
     context 'when using the fake queue and it is empty', fake_queue: true do
+      before do
+        FakeMessageQueue.delay = 0.1
+      end
+
       it 'blocks on the process for longer than the check cycle' do
-        topic = 'testing_topic'
-        channel = 'testing_channel'
-        delay = FakeMessageQueue::Consumer::SECONDS_BETWEEN_QUEUE_CHECKS + 0.1
+        delay = FakeMessageQueue.delay + 0.1
 
         expect do
           Timeout.timeout(delay) do
-            MessageQueue::Listener.new(topic: topic, channel: channel).
-              process_next_message
+            listener.process_next_message
           end
         end.to raise_error(Timeout::Error)
       end
@@ -71,14 +91,6 @@ RSpec.describe MessageQueue::Listener do
   describe '#go' do
     describe 'when a SIGTERM is received' do
       it 'closes the consumer connection' do
-        allow(SampleMessageProcessor).to receive_message_chain(:new, :go)
-        message = double(finish: nil, body: nil)
-        connection = double('Connection', pop: message, terminate: nil)
-        consumer = double('Consumer', connection: connection)
-        allow(MessageQueue::Consumer).to receive(:new).and_return(consumer)
-        topic = 'testing_topic'
-        channel = 'testing_channel'
-
         pid = fork do
           MessageQueue::Listener.new(topic: topic, channel: channel).go
         end

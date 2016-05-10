@@ -88,65 +88,55 @@ RSpec.describe FakeMessageQueue::Message do
 end
 
 RSpec.describe FakeMessageQueue::Consumer do
+  let(:topic)    { 'death_star' }
+  let(:channel)  { 'star_killer_base' }
+  let(:consumer) { FakeMessageQueue::Consumer.new topic: topic, channel: channel }
+
   after do
     FakeMessageQueue.reset!
   end
 
-  describe '#size' do
-    it 'tells you how many messages are in the queue' do
-      FakeMessageQueue.queue = ['hello']
-      topic = 'death_star'
-      channel = 'star_killer_base'
+  describe 'when there are no messages on the queue' do
+    it 'tells you there are 0 messages in the queue' do
+      expect(consumer.size).to eq 0
+    end
 
-      consumer = FakeMessageQueue::Consumer.new(
-        nsqlookupd: ENV.fetch('NSQLOOKUPD_HTTP_ADDRESS'),
-        topic: topic,
-        channel: channel,
-      )
-      queue_size = consumer.size
+    it 'blocks forever (until timeout) from #pop' do
+      FakeMessageQueue.delay = 0.1
+      delay = FakeMessageQueue.delay + 0.1
 
-      expect(queue_size).to eq 1
+      expect do
+        Timeout.timeout(delay) do
+          consumer.pop
+        end
+      end.to raise_error(Timeout::Error)
+    end
+
+    it 'returns nil from #pop_without_blocking' do
+      popped_message = consumer.pop_without_blocking
+
+      expect(popped_message).to be_nil
     end
   end
 
-  describe '#pop' do
-    context 'when there is a message on the queue' do
-      it 'returns the last message off of the queue' do
-        message = FakeMessageQueue::Message.new('hello')
-        FakeMessageQueue.queue = [message]
-        topic = 'death_star'
-        channel = 'star_killer_base'
+  describe 'when there is a message on the queue' do
+    let(:message) { FakeMessageQueue::Message.new 'hello' }
+    before { FakeMessageQueue.queue = [message] }
 
-        consumer = FakeMessageQueue::Consumer.new(
-          nsqlookupd: ENV.fetch('NSQLOOKUPD_HTTP_ADDRESS'),
-          topic: topic,
-          channel: channel,
-        )
-        popped_message = consumer.pop
-
-        expect(popped_message).to eq message
-      end
+    it 'tells you there are messages in the queue' do
+      expect(consumer.size).to eq 1
     end
 
-    context 'when there no message on the queue' do
-      it 'blocks for longer than the queue check cycle' do
-        FakeMessageQueue.queue = []
-        topic = 'death_star'
-        channel = 'star_killer_base'
-        delay = FakeMessageQueue::Consumer::SECONDS_BETWEEN_QUEUE_CHECKS + 0.1
+    it 'returns a message immediately from #pop' do
+      popped_message = consumer.pop
 
-        consumer = FakeMessageQueue::Consumer.new(
-          nsqlookupd: ENV.fetch('NSQLOOKUPD_HTTP_ADDRESS'),
-          topic: topic,
-          channel: channel,
-        )
+      expect(popped_message).to eq message
+    end
 
-        expect do
-          Timeout.timeout(delay) do
-            consumer.pop
-          end
-        end.to raise_error(Timeout::Error)
-      end
+    it 'returns a message immediately from #pop_without_blocking' do
+      popped_message = consumer.pop_without_blocking
+
+      expect(popped_message).to eq message
     end
   end
 
