@@ -21,7 +21,7 @@ module MessageQueue
     attr_reader :channel, :topic, :ssl_context
 
     def connection
-      Strategy.for_queue::Consumer.new(params)
+      @connection ||= Strategy.for_queue::Consumer.new(params)
     end
 
     def params
