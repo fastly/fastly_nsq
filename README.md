@@ -60,7 +60,7 @@ message_data = {
 producer = MessageQueue::Producer.new(
   nsqd: ENV.fetch('NSQD_TCP_ADDRESS'),
   topic: topic,
-).connection
+)
 
 producer.write(message_data.to_json)
 ```
