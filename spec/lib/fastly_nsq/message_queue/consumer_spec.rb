@@ -48,7 +48,7 @@ RSpec.describe MessageQueue::Consumer do
     end
 
     before do
-      allow(Strategy).to receive(:for_queue).and_return(TestStrategy)
+      allow(MessageQueue).to receive(:strategy).and_return(TestStrategy)
     end
 
     it 'instantiates a consumer via Strategy' do

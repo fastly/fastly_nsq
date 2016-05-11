@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 RSpec.describe MessageQueue do
-  TestStrategy = Class.new
+  module TestStrategy; end
 
   it 'allows the logger to be set and retrieved' do
     logger = Logger.new(STDOUT)
