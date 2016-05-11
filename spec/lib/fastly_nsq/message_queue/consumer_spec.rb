@@ -4,6 +4,7 @@ RSpec.describe MessageQueue::Consumer do
   let(:channel)  { 'star_killer_base' }
   let(:topic)    { 'death_star' }
   let(:consumer) { MessageQueue::Consumer.new(topic: topic, channel: channel) }
+  let(:backend)  { double 'Consumer' }
 
   describe 'when the ENV is set incorrectly' do
     it 'raises with a helpful error' do
@@ -13,41 +14,49 @@ RSpec.describe MessageQueue::Consumer do
     end
   end
 
-  describe 'when using the real queue', fake_queue: false do
-    before(:example) do
-      @fake_consumer = spy 'Consumer backend'
-      consumer.instance_variable_set('@connection', nil)
-      allow(Nsq::Consumer).to receive(:new).and_return(@fake_consumer)
+  describe 'when connector connects to a backend Consumer' do
+    let(:consumer) do
+      MessageQueue::Consumer.new topic: topic, channel: channel do
+        backend
+      end
     end
 
-    it 'forwards #pop to Nsq::Consumer' do
+    it 'forwards #pop' do
+      expect(backend).to receive(:pop)
       consumer.pop
-      expect(@fake_consumer).to have_received(:pop)
     end
 
-    it 'closes the connection' do
-      consumer.terminate
+    it 'forwards #pop_without_blocking' do
+      expect(backend).to receive(:pop_without_blocking)
+      consumer.pop_without_blocking
+    end
 
-      expect(@fake_consumer).to have_received(:terminate)
+    it 'forwards #size' do
+      expect(backend).to receive(:size)
+      consumer.size
+    end
+
+    it 'forwards #terminate' do
+      expect(backend).to receive(:terminate)
+      consumer.terminate
     end
   end
 
-  describe 'when using the fake queue', fake_queue: true do
-    before(:example) do
-      @fake_consumer = spy 'Consumer backend'
-      consumer.instance_variable_set('@connection', nil)
-      allow(FakeMessageQueue::Consumer).to receive(:new).and_return(@fake_consumer)
+  describe 'using the default connector' do
+    module TestStrategy
+      module Consumer
+        def self.new(*args); end
+      end
     end
 
-    it 'forwards #pop to FakeMessageQueue::Consumer' do
-      consumer.pop
-      expect(@fake_consumer).to have_received(:pop)
+    before do
+      allow(Strategy).to receive(:for_queue).and_return(TestStrategy)
     end
 
-    it 'closes the connection' do
+    it 'instantiates a consumer via Strategy' do
+      allow(backend).to receive(:terminate)
+      expect(TestStrategy::Consumer).to receive(:new).and_return(backend)
       consumer.terminate
-
-      expect(@fake_consumer).to have_received(:terminate)
     end
   end
 end
