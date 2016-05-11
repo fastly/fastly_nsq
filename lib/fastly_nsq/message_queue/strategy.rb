@@ -8,5 +8,8 @@ class Strategy
       message = "You must set ENV['FAKE_QUEUE'] to either true or false"
       raise InvalidParameterError, message
     end
+
+  FALSY_VALUES  = [false, 0, '0', 'false', 'FALSE', 'off', 'OFF', nil].freeze
+  TRUTHY_VALUES = [true, 1, '1', 'true', 'TRUE', 'on', 'ON'].freeze
   end
 end
