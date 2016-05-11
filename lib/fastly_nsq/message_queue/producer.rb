@@ -8,7 +8,7 @@ module MessageQueue
     def_delegator :connection, :terminate
     def_delegator :connection, :write
 
-    def initialize(topic:, ssl_context: nil, &connector)
+    def initialize(topic:, ssl_context: nil, connector: nil)
       @topic       = topic
       @ssl_context = SSLContext.new(ssl_context)
       @connector   = connector || DEFAULT_CONNECTOR

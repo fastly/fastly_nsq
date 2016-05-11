@@ -15,9 +15,7 @@ RSpec.describe MessageQueue::Producer do
 
   describe 'when connector connects to a backend Producer' do
     let(:producer) do
-      MessageQueue::Producer.new topic: topic do
-        backend
-      end
+      MessageQueue::Producer.new topic: topic, connector: ->(_) { backend }
     end
 
     it 'forwards #write' do
