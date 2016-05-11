@@ -16,7 +16,7 @@ module MessageQueue
 
     private
 
-    DEFAULT_CONNECTOR = ->(params) { Strategy.for_queue::Producer.new params }
+    DEFAULT_CONNECTOR = ->(params) { MessageQueue.strategy::Producer.new params }
 
     attr_reader :connector, :topic, :ssl_context
 

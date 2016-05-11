@@ -37,7 +37,7 @@ RSpec.describe MessageQueue::Producer do
     end
 
     before do
-      allow(Strategy).to receive(:for_queue).and_return(TestStrategy)
+      allow(MessageQueue).to receive(:strategy).and_return(TestStrategy)
     end
 
     it 'instantiates a producer via Strategy' do
