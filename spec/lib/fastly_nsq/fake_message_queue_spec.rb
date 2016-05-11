@@ -49,7 +49,7 @@ RSpec.describe FakeMessageQueue::Producer do
   end
 
   it 'has a `terminate` method which is a noop' do
-    expect(producer.respond_to?(:terminate)).to be_truthy
+    expect(producer).to respond_to(:terminate)
   end
 end
 
