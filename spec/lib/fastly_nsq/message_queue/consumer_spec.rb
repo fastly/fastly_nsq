@@ -45,7 +45,7 @@ RSpec.describe MessageQueue::Consumer do
   describe 'using the default connector' do
     module TestStrategy
       module Consumer
-        def self.new(*args); end
+        def self.new(*_); end
       end
     end
 
