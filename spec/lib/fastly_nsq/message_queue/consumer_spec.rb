@@ -3,7 +3,7 @@ require 'spec_helper'
 RSpec.describe MessageQueue::Consumer do
   let(:channel)  { 'star_killer_base' }
   let(:topic)    { 'death_star' }
-  let(:consumer) { MessageQueue::Consumer.new(topic: topic, channel: channel) }
+  let(:consumer) { MessageQueue::Consumer.new topic: topic, channel: channel }
   let(:backend)  { double 'Consumer' }
 
   describe 'when the ENV is set incorrectly' do
@@ -16,9 +16,7 @@ RSpec.describe MessageQueue::Consumer do
 
   describe 'when connector connects to a backend Consumer' do
     let(:consumer) do
-      MessageQueue::Consumer.new topic: topic, channel: channel do
-        backend
-      end
+      MessageQueue::Consumer.new topic: topic, channel: channel, connector: ->(_) { backend }
     end
 
     it 'forwards #pop' do

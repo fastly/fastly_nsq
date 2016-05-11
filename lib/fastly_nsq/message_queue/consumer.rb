@@ -10,7 +10,7 @@ module MessageQueue
     def_delegator :connection, :size
     def_delegator :connection, :terminate
 
-    def initialize(topic:, channel:, ssl_context: nil, &connector)
+    def initialize(topic:, channel:, ssl_context: nil, connector: nil)
       @topic       = topic
       @channel     = channel
       @ssl_context = SSLContext.new(ssl_context)
