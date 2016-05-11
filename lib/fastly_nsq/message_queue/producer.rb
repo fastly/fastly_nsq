@@ -20,7 +20,7 @@ module MessageQueue
     attr_reader :topic, :ssl_context
 
     def producer
-      Strategy.for_queue::Producer
+      MessageQueue.strategy::Producer
     end
 
     def params
