@@ -8,23 +8,26 @@ module MessageQueue
     def_delegator :connection, :terminate
     def_delegator :connection, :write
 
-    def initialize(topic:, ssl_context: nil)
-      @topic = topic
+    def initialize(topic:, ssl_context: nil, &connector)
+      @topic       = topic
       @ssl_context = SSLContext.new(ssl_context)
+      @connector   = connector || DEFAULT_CONNECTOR
     end
 
     private
 
-    attr_reader :topic, :ssl_context
+    DEFAULT_CONNECTOR = ->(params) { Strategy.for_queue::Producer.new params }
+
+    attr_reader :connector, :topic, :ssl_context
 
     def connection
-      Strategy.for_queue::Producer.new params
+      @connection ||= connector.call(params)
     end
 
     def params
       {
-        nsqd: ENV.fetch('NSQD_TCP_ADDRESS'),
-        topic: topic,
+        nsqd:        ENV.fetch('NSQD_TCP_ADDRESS'),
+        topic:       topic,
         ssl_context: ssl_context.to_h,
       }
     end
