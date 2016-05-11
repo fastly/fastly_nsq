@@ -54,10 +54,6 @@ RSpec.describe FakeMessageQueue::Producer do
 end
 
 RSpec.describe FakeMessageQueue::Message do
-  after do
-    FakeMessageQueue.reset!
-  end
-
   describe '#body' do
     it 'returns the body of the message' do
       topic = 'death_star'
@@ -80,10 +76,6 @@ RSpec.describe FakeMessageQueue::Consumer do
   let(:topic)    { 'death_star' }
   let(:channel)  { 'star_killer_base' }
   let(:consumer) { FakeMessageQueue::Consumer.new topic: topic, channel: channel }
-
-  after do
-    FakeMessageQueue.reset!
-  end
 
   describe 'when there are no messages on the queue' do
     it 'tells you there are 0 messages in the queue' do
