@@ -21,7 +21,7 @@ module MessageQueue
 
     attr_reader :channel, :connector, :topic, :ssl_context
 
-    DEFAULT_CONNECTOR = ->(params) { Strategy.for_queue::Consumer.new(params) }
+    DEFAULT_CONNECTOR = ->(params) { MessageQueue.strategy::Consumer.new(params) }
 
     def connection
       @connection ||= connector.call(params)
