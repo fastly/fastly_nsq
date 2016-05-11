@@ -11,10 +11,10 @@ module MessageQueue
     def_delegator :connection, :terminate
 
     def initialize(topic:, channel:, ssl_context: nil, &connector)
-      @topic = topic
-      @channel = channel
+      @topic       = topic
+      @channel     = channel
       @ssl_context = SSLContext.new(ssl_context)
-      @connector = connector || DEFAULT_CONNECTOR
+      @connector   = connector || DEFAULT_CONNECTOR
     end
 
     private
