@@ -37,8 +37,6 @@ RSpec.describe FakeMessageQueue do
 end
 
 RSpec.describe FakeMessageQueue::Producer do
-  after { FakeMessageQueue.reset! }
-
   let(:topic)    { 'death_star' }
   let(:producer) { FakeMessageQueue::Producer.new topic: topic }
 
