@@ -21,8 +21,8 @@ RSpec.describe MessageQueue::Producer do
     end
 
     it 'forwards #write' do
-      expect(backend).to receive(:write)
-      producer.write "message"
+      expect(backend).to receive(:write).with("it's a message")
+      producer.write "it's a message"
     end
 
     it 'forwards #terminate' do
