@@ -1,29 +1,35 @@
 require 'spec_helper'
 
-RSpec.describe Strategy do
-  describe '.for_queue' do
-    describe 'when using the fake queue', fake_queue: true do
-      it 'returns the strategy based on the ENV variable' do
-        strategy = Strategy.for_queue
+RSpec.describe MessageQueue::Strategy do
+  describe 'when FAKE_QUEUE is falsy' do
+    it 'returns the strategy based on the ENV variable' do
+      [false, 0, '0', 'false', 'FALSE', 'off', 'OFF', nil].each do |no|
+        allow(ENV).to receive(:[]).with('FAKE_QUEUE').and_return(no)
 
-        expect(strategy).to eq FakeMessageQueue
-      end
-    end
-
-    describe 'when using the real queue', fake_queue: false do
-      it 'returns the strategy based on the ENV variable' do
-        strategy = Strategy.for_queue
+        strategy = MessageQueue::Strategy.for_queue
 
         expect(strategy).to eq Nsq
       end
     end
+  end
 
-    describe 'when the ENV is set incorrectly' do
-      it 'raises with a helpful error' do
-        allow(ENV).to receive(:[]).with('FAKE_QUEUE').and_return('taco')
+  describe 'when FAKE_QUEUE is truthy' do
+    it 'returns the strategy based on the ENV variable' do
+      [true, 1, '1', 'true', 'TRUE', 'on', 'ON'].each do |yes|
+        allow(ENV).to receive(:[]).with('FAKE_QUEUE').and_return(yes)
 
-        expect { Strategy.for_queue }.to raise_error(InvalidParameterError)
+        strategy = MessageQueue::Strategy.for_queue
+
+        expect(strategy).to eq FakeMessageQueue
       end
+    end
+  end
+
+  describe 'when the ENV is set incorrectly' do
+    it 'raises with a helpful error' do
+      allow(ENV).to receive(:[]).with('FAKE_QUEUE').and_return('taco')
+
+      expect { MessageQueue::Strategy.for_queue }.to raise_error(InvalidParameterError)
     end
   end
 end
