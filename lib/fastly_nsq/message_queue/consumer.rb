@@ -10,18 +10,21 @@ module MessageQueue
     def_delegator :connection, :size
     def_delegator :connection, :terminate
 
-    def initialize(topic:, channel:, ssl_context: nil)
-      @topic = topic
-      @channel = channel
+    def initialize(topic:, channel:, ssl_context: nil, connector: nil)
+      @topic       = topic
+      @channel     = channel
       @ssl_context = SSLContext.new(ssl_context)
+      @connector   = connector || DEFAULT_CONNECTOR
     end
 
     private
 
-    attr_reader :channel, :topic, :ssl_context
+    attr_reader :channel, :connector, :topic, :ssl_context
+
+    DEFAULT_CONNECTOR = ->(params) { MessageQueue.strategy::Consumer.new(params) }
 
     def connection
-      MessageQueue.strategy::Consumer.new(params)
+      @connection ||= connector.call(params)
     end
 
     def params
