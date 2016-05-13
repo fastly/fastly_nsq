@@ -37,38 +37,21 @@ RSpec.describe FakeMessageQueue do
 end
 
 RSpec.describe FakeMessageQueue::Producer do
-  after do
-    FakeMessageQueue.reset!
+  let(:topic)    { 'death_star' }
+  let(:producer) { FakeMessageQueue::Producer.new topic: topic }
+
+  it 'adds a new message to the queue' do
+    producer.write('hello')
+
+    expect(FakeMessageQueue.queue.size).to eq 1
   end
 
-  describe '#write' do
-    it 'adds a new message to the queue' do
-      topic = 'death_star'
-
-      producer = FakeMessageQueue::Producer.new(
-        nsqd: ENV.fetch('NSQD_TCP_ADDRESS'),
-        topic: topic,
-      )
-      producer.write('hello')
-
-      expect(FakeMessageQueue.queue.size).to eq 1
-    end
-  end
-
-  describe '#terminate' do
-    it 'has a `terminate` method which is a noop' do
-      producer = instance_double('FakeMessageQueue::Producer')
-
-      allow(producer).to receive(:terminate)
-    end
+  it 'has a `terminate` method which is a noop' do
+    expect(producer).to respond_to(:terminate)
   end
 end
 
 RSpec.describe FakeMessageQueue::Message do
-  after do
-    FakeMessageQueue.reset!
-  end
-
   describe '#body' do
     it 'returns the body of the message' do
       topic = 'death_star'
@@ -91,10 +74,6 @@ RSpec.describe FakeMessageQueue::Consumer do
   let(:topic)    { 'death_star' }
   let(:channel)  { 'star_killer_base' }
   let(:consumer) { FakeMessageQueue::Consumer.new topic: topic, channel: channel }
-
-  after do
-    FakeMessageQueue.reset!
-  end
 
   describe 'when there are no messages on the queue' do
     it 'tells you there are 0 messages in the queue' do

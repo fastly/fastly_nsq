@@ -1,32 +1,33 @@
+require 'forwardable'
+
 class InvalidParameterError < StandardError; end
 
 module MessageQueue
   class Producer
-    def initialize(topic:, ssl_context: nil)
-      @topic = topic
+    extend Forwardable
+    def_delegator :connection, :terminate
+    def_delegator :connection, :write
+
+    def initialize(topic:, ssl_context: nil, connector: nil)
+      @topic       = topic
       @ssl_context = SSLContext.new(ssl_context)
-    end
-
-    def connection
-      @producer ||= producer.new(params)
-    end
-
-    def terminate
-      @producer.terminate
+      @connector   = connector || DEFAULT_CONNECTOR
     end
 
     private
 
-    attr_reader :topic, :ssl_context
+    DEFAULT_CONNECTOR = ->(params) { MessageQueue.strategy::Producer.new params }
 
-    def producer
-      MessageQueue.strategy::Producer
+    attr_reader :connector, :topic, :ssl_context
+
+    def connection
+      @connection ||= connector.call(params)
     end
 
     def params
       {
-        nsqd: ENV.fetch('NSQD_TCP_ADDRESS'),
-        topic: topic,
+        nsqd:        ENV.fetch('NSQD_TCP_ADDRESS'),
+        topic:       topic,
         ssl_context: ssl_context.to_h,
       }
     end
