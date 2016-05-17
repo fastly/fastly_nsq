@@ -1,9 +1,9 @@
 require 'spec_helper'
 
-RSpec.describe MessageQueue::Listener do
+RSpec.describe FastlyNsq::Listener do
   let(:topic)    { 'testing_topic' }
   let(:channel)  { 'testing_channel' }
-  let(:consumer) { FakeMessageQueue::Consumer.new topic: topic, channel: channel }
+  let(:consumer) { FastlyNsq::FakeBackend::Consumer.new topic: topic, channel: channel }
 
   module TestMessageProcessor
     @@messages_processed = []
@@ -27,10 +27,10 @@ RSpec.describe MessageQueue::Listener do
   end
 
   let(:listener) do
-    MessageQueue::Listener.new topic:     topic,
-                               channel:   channel,
-                               processor: TestMessageProcessor,
-                               consumer:  consumer
+    FastlyNsq::Listener.new topic:     topic,
+                            channel:   channel,
+                            processor: TestMessageProcessor,
+                            consumer:  consumer
   end
 
   let(:message)            { TestMessageProcessor::Message.new 'this is message body', topic }
@@ -40,14 +40,14 @@ RSpec.describe MessageQueue::Listener do
 
   describe 'instantiating without a consumer' do
     it 'instantiates a consumer, passing the topic and channel' do
-      allow(MessageQueue::Consumer).to receive(:new)
+      allow(FastlyNsq::Consumer).to receive(:new)
 
-      MessageQueue::Listener.new topic:     topic,
-                                 channel:   channel,
-                                 processor: TestMessageProcessor,
-                                 consumer:  nil
+      FastlyNsq::Listener.new topic:     topic,
+                              channel:   channel,
+                              processor: TestMessageProcessor,
+                              consumer:  nil
 
-      expect(MessageQueue::Consumer).to have_received(:new).
+      expect(FastlyNsq::Consumer).to have_received(:new).
         with(topic: topic, channel: channel)
     end
   end
@@ -73,11 +73,11 @@ RSpec.describe MessageQueue::Listener do
 
     context 'when using the fake queue and it is empty', fake_queue: true do
       before do
-        FakeMessageQueue.delay = 0.1
+        FastlyNsq::FakeBackend.delay = 0.1
       end
 
       it 'blocks on the process for longer than the check cycle' do
-        delay = FakeMessageQueue.delay + 0.1
+        delay = FastlyNsq::FakeBackend.delay + 0.1
 
         expect do
           Timeout.timeout(delay) do

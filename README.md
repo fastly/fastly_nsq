@@ -42,7 +42,7 @@ for this gem to work in your application.
 
 See more information below.
 
-### `MessageQueue::Producer`
+### `FastlyNsq::Producer`
 
 This is a class
 which provides an adapter to the
@@ -57,7 +57,7 @@ message_data = {
   }
 }
 
-producer = MessageQueue::Producer.new(
+producer = FastlyNsq::Producer.new(
   nsqd: ENV.fetch('NSQD_TCP_ADDRESS'),
   topic: topic,
 )
@@ -77,7 +77,7 @@ ENV['FAKE_QUEUE'] = true
 ENV['FAKE_QUEUE'] = false
 ```
 
-### `MessageQueue::Consumer`
+### `FastlyNsq::Consumer`
 This is a class
 which provides an adapter to the
 fake and real NSQ consumers.
@@ -85,7 +85,7 @@ These are used to
 read messages off of the queue:
 
 ```ruby
-consumer = MessageQueue::Consumer.new(
+consumer = FastlyNsq::Consumer.new(
   topic: 'topic',
   channel: 'channel'
 )
@@ -103,7 +103,7 @@ the mock/real strategy used
 can be switched by setting the
 `FAKE_QUEUE` environment variable appropriately.
 
-### `MessageQueue::Listener`
+### `FastlyNsq::Listener`
 
 To process the next message on the queue:
 
@@ -111,7 +111,7 @@ To process the next message on the queue:
 topic = 'user_created'
 channel = 'my_consuming_service'
 
-MessageQueue::Listener.new(topic: topic, channel: channel).process_next_message
+FastlyNsq::Listener.new(topic: topic, channel: channel).process_next_message
 ```
 
 This will pop the next message
@@ -125,7 +125,7 @@ To initiate a blocking loop to process messages continuously:
 topic = 'user_created'
 channel = 'my_consuming_service'
 
-MessageQueue::Listener.new(topic: topic, channel: channel).go
+FastlyNsq::Listener.new(topic: topic, channel: channel).go
 ```
 
 This will block until
@@ -134,9 +134,9 @@ there is a new message on the queue,
       off of the queue
       and send it to `MessageProcessor.new(message_body).go`.
 
-### `MessageQueue::RakeTask`
+### `FastlyNsq::RakeTask`
 
-To help facilitate running the `MessageQueue::Listener` in a blocking fashion
+To help facilitate running the `FastlyNsq::Listener` in a blocking fashion
 outside your application, a simple `RakeTask` is provided.
 
 NOTE: The rake task expects a
@@ -155,7 +155,7 @@ Using a block:
 ```ruby
 require 'fastly_nsq/rake_task'
 
-MessageQueue::RakeTask.new(:listen_task) do |task|
+FastlyNsq::RakeTask.new(:listen_task) do |task|
   task.channel = 'some_channel'
 end
 
@@ -167,7 +167,7 @@ or using passed in values:
 ```ruby
 require 'fastly_nsq/rake_task'
 
-MessageQueue::RakeTask.new(:listen_task, [:channel])
+FastlyNsq::RakeTask.new(:listen_task, [:channel])
 
 # usage:
 `rake listen_task['my_channel']`
@@ -206,7 +206,7 @@ This class needs to adhere to the following API:
 
 ```ruby
 class MessageProcessor
-  # This an instance of NSQ::Message or FakeMessageQueue::Message
+  # This an instance of NSQ::Message or FakeBackend::Message
   def initialize(message_body)
     @message_body = message_body
   end
@@ -262,7 +262,7 @@ FAKE_QUEUE=true
 ```
 
 Also be sure call
-`FakeMessageQueue.reset!`
+`FakeBackend.reset!`
 before each test in your app to ensure
 there are no leftover messages.
 

@@ -1,8 +1,8 @@
 require 'spec_helper'
 
-RSpec.describe MessageQueue::Producer do
+RSpec.describe FastlyNsq::Producer do
   let(:topic)    { 'death_star' }
-  let(:producer) { MessageQueue::Producer.new(topic: topic) }
+  let(:producer) { FastlyNsq::Producer.new(topic: topic) }
   let(:backend)  { double 'Producer' }
 
   describe 'when the ENV is set incorrectly' do
@@ -15,7 +15,7 @@ RSpec.describe MessageQueue::Producer do
 
   describe 'when connector connects to a backend Producer' do
     let(:producer) do
-      MessageQueue::Producer.new topic: topic, connector: ->(_) { backend }
+      FastlyNsq::Producer.new topic: topic, connector: ->(_) { backend }
     end
 
     it 'forwards #write' do
@@ -37,7 +37,7 @@ RSpec.describe MessageQueue::Producer do
     end
 
     before do
-      allow(MessageQueue).to receive(:strategy).and_return(TestStrategy)
+      allow(FastlyNsq).to receive(:strategy).and_return(TestStrategy)
     end
 
     it 'instantiates a producer via Strategy' do

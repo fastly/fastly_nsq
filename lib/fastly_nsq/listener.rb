@@ -1,10 +1,10 @@
-module MessageQueue
+module FastlyNsq
   class Listener
     def initialize(topic:, channel:, processor: nil, consumer: nil)
       @topic     = topic
       @channel   = channel
       @processor = processor || DEFAULT_PROCESSOR
-      @consumer  = consumer  || MessageQueue::Consumer.new(consumer_params)
+      @consumer  = consumer || FastlyNsq::Consumer.new(consumer_params)
     end
 
     def go

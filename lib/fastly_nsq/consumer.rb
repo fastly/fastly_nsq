@@ -2,7 +2,7 @@ require 'forwardable'
 
 class InvalidParameterError < StandardError; end
 
-module MessageQueue
+module FastlyNsq
   class Consumer
     extend Forwardable
     def_delegator :connection, :pop
@@ -21,7 +21,7 @@ module MessageQueue
 
     attr_reader :channel, :connector, :topic, :ssl_context
 
-    DEFAULT_CONNECTOR = ->(params) { MessageQueue.strategy::Consumer.new(params) }
+    DEFAULT_CONNECTOR = ->(params) { FastlyNsq.strategy::Consumer.new(params) }
 
     def connection
       @connection ||= connector.call(params)

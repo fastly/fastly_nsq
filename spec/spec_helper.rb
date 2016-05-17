@@ -28,12 +28,12 @@ RSpec.configure do |config|
   end
 
   config.before(:suite) do
-    MessageProcessor = SampleMessageProcessor
+    MessageProcessor = FastlyNsq::SampleMessageProcessor
   end
 
   config.before(:each) do
     load_sample_environment_variables
-    FakeMessageQueue.reset!
+    FastlyNsq::FakeBackend.reset!
   end
 
   config.around(:each, fake_queue: true) do |example|

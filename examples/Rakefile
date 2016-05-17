@@ -19,7 +19,7 @@ end
 
 desc 'Listen to the messaging queue with the given channel.'
 
-MessageQueue::RakeTask.new(:listen_task, [:channel])
+FastlyNsq::RakeTask.new(:listen_task, [:channel])
 
 # Call `rake listen_task[my_channel]`.
 # The topics will be ['customer_created', 'customer_deleted']
@@ -30,7 +30,7 @@ MessageQueue::RakeTask.new(:listen_task, [:channel])
 
 desc 'Listen to the messaging queue with the given channel.'
 
-MessageQueue::RakeTask.new(:listen_task, [:channel] => :environment)
+FastlyNsq::RakeTask.new(:listen_task, [:channel] => :environment)
 
 # Call `rake listen_task[your_channel]`.
 # The topics will be ['customer_created', 'customer_deleted']
@@ -42,7 +42,7 @@ MessageQueue::RakeTask.new(:listen_task, [:channel] => :environment)
 
 desc 'Listen to the messaging queue with the given channel.'
 
-MessageQueue::RakeTask.new(:listen_task) do |task|
+FastlyNsq::RakeTask.new(:listen_task) do |task|
   task.channel = 'some_channel'
 end
 
@@ -55,7 +55,7 @@ end
 
 desc 'Listen to the messaging queue with the given channel.'
 
-MessageQueue::RakeTask.new(:listen_task, [] => :environment) do |task|
+FastlyNsq::RakeTask.new(:listen_task, [] => :environment) do |task|
   task.channel = 'her_channel'
 end
 
@@ -68,7 +68,7 @@ end
 # to provide defaults
 # with the ability to override at time of Rake call:
 
-MessageQueue::RakeTask.new(:listen_task, [:channel]) do |task|
+FastlyNsq::RakeTask.new(:listen_task, [:channel]) do |task|
   task.channel = 'default_channel'
 end
 
@@ -79,7 +79,7 @@ end
 #-------------------------------------------------------------------------------
 # The same, but including the environment:
 
-MessageQueue::RakeTask.new(:listen_task, [:channel] => :environment) do |task|
+FastlyNsq::RakeTask.new(:listen_task, [:channel] => :environment) do |task|
   task.channel = 'default_channel'
 end
 

@@ -1,7 +1,7 @@
 require 'rake'
 require 'rake/tasklib'
 
-module MessageQueue
+module FastlyNsq
   class RakeTask < Rake::TaskLib
     attr_accessor :name, :channel
 
@@ -37,7 +37,7 @@ module MessageQueue
       topics.each do |topic|
         Thread.new do
           wrap_helpful_output(topic) do
-            MessageQueue::Listener.new(topic: topic, channel: channel).go
+            FastlyNsq::Listener.new(topic: topic, channel: channel).go
           end
         end
       end
@@ -76,7 +76,7 @@ module MessageQueue
     end
 
     def logger
-      MessageQueue.logger = Logger.new(STDOUT)
+      FastlyNsq.logger = Logger.new(STDOUT)
     end
   end
 end
