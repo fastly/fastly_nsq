@@ -6,14 +6,6 @@ RSpec.describe FastlyNsq::Consumer do
   let(:consumer) { FastlyNsq::Consumer.new topic: topic, channel: channel }
   let(:backend)  { double 'Consumer' }
 
-  describe 'when the ENV is set incorrectly' do
-    it 'raises with a helpful error' do
-      allow(ENV).to receive(:[]).with('FAKE_QUEUE').and_return('taco')
-
-      expect { consumer.terminate }.to raise_error(InvalidParameterError)
-    end
-  end
-
   describe 'when connector connects to a backend Consumer' do
     let(:consumer) do
       FastlyNsq::Consumer.new topic: topic, channel: channel, connector: ->(_) { backend }

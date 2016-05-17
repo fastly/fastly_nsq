@@ -5,14 +5,6 @@ RSpec.describe FastlyNsq::Producer do
   let(:producer) { FastlyNsq::Producer.new(topic: topic) }
   let(:backend)  { double 'Producer' }
 
-  describe 'when the ENV is set incorrectly' do
-    it 'raises with a helpful error' do
-      allow(ENV).to receive(:[]).with('FAKE_QUEUE').and_return('taco')
-
-      expect { producer.terminate }.to raise_error(InvalidParameterError)
-    end
-  end
-
   describe 'when connector connects to a backend Producer' do
     let(:producer) do
       FastlyNsq::Producer.new topic: topic, connector: ->(_) { backend }

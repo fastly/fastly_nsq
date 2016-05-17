@@ -1,6 +1,7 @@
 module FastlyNsq
   module Strategy
 
+    class InvalidParameterError < StandardError; end
 
     module_function
 

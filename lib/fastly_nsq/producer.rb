@@ -1,7 +1,5 @@
 require 'forwardable'
 
-class InvalidParameterError < StandardError; end
-
 module FastlyNsq
   class Producer
     extend Forwardable
