@@ -4,11 +4,13 @@ RSpec.describe FastlyNsq::Consumer do
   let(:channel)  { 'star_killer_base' }
   let(:topic)    { 'death_star' }
   let(:consumer) { FastlyNsq::Consumer.new topic: topic, channel: channel }
-  let(:backend)  { double 'Consumer' }
 
-  describe 'when connector connects to a backend Consumer' do
+  describe 'when connected to a backend Consumer' do
+    let(:backend)   { instance_double FastlyNsq::FakeBackend::Consumer, pop: nil, pop_without_blocking: nil, size: nil, terminate: nil }
+    let(:connector) { double 'Connector strategy', new: backend }
+
     let(:consumer) do
-      FastlyNsq::Consumer.new topic: topic, channel: channel, connector: ->(_) { backend }
+      FastlyNsq::Consumer.new topic: topic, channel: channel, connector: connector
     end
 
     it 'forwards #pop' do
@@ -32,10 +34,25 @@ RSpec.describe FastlyNsq::Consumer do
     end
   end
 
-  describe 'using the default connector' do
+  describe 'using strategy to determine the consumer' do
     module TestStrategy
       module Consumer
-        def self.new(*_); end
+        @@never_terminated = true
+
+        module_function
+
+        def new(*_)
+          self
+        end
+
+        def terminate
+          raise 'Already terminated once' unless @@never_terminated
+          @@never_terminated = false
+        end
+
+        def was_terminated
+          !@@never_terminated
+        end
       end
     end
 
@@ -44,9 +61,8 @@ RSpec.describe FastlyNsq::Consumer do
     end
 
     it 'instantiates a consumer via Strategy' do
-      allow(backend).to receive(:terminate)
-      expect(TestStrategy::Consumer).to receive(:new).and_return(backend)
       consumer.terminate
+      expect(TestStrategy::Consumer.was_terminated).to be_truthy
     end
   end
 end

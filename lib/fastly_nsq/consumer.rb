@@ -12,17 +12,19 @@ module FastlyNsq
       @topic       = topic
       @channel     = channel
       @ssl_context = SSLContext.new(ssl_context)
-      @connector   = connector || DEFAULT_CONNECTOR
+      @connector   = connector
     end
 
     private
 
-    attr_reader :channel, :connector, :topic, :ssl_context
-
-    DEFAULT_CONNECTOR = ->(params) { FastlyNsq.strategy::Consumer.new(params) }
+    attr_reader :channel, :topic, :ssl_context
 
     def connection
-      @connection ||= connector.call(params)
+      @connection ||= connector.new(params)
+    end
+
+    def connector
+      @connector || FastlyNsq.strategy::Consumer
     end
 
     def params
