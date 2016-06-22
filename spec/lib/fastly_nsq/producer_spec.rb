@@ -3,11 +3,12 @@ require 'spec_helper'
 RSpec.describe FastlyNsq::Producer do
   let(:topic)    { 'death_star' }
   let(:producer) { FastlyNsq::Producer.new(topic: topic) }
-  let(:backend)  { double 'Producer' }
 
   describe 'when connector connects to a backend Producer' do
+    let(:backend)   { instance_double FastlyNsq::FakeBackend::Producer, write: nil, terminate: nil }
+    let(:connector) { double 'Connector', new: backend }
     let(:producer) do
-      FastlyNsq::Producer.new topic: topic, connector: ->(_) { backend }
+      FastlyNsq::Producer.new topic: topic, connector: connector
     end
 
     it 'forwards #write' do
@@ -24,7 +25,22 @@ RSpec.describe FastlyNsq::Producer do
   describe 'using the default connector' do
     module TestStrategy
       module Producer
-        def self.new(*_); end
+        @@never_terminated = true
+
+        module_function
+
+        def new(*_)
+          self
+        end
+
+        def terminate
+          raise 'Already terminated once' unless @@never_terminated
+          @@never_terminated = false
+        end
+
+        def was_terminated
+          !@@never_terminated
+        end
       end
     end
 
@@ -33,9 +49,8 @@ RSpec.describe FastlyNsq::Producer do
     end
 
     it 'instantiates a producer via Strategy' do
-      allow(backend).to receive(:terminate)
-      expect(TestStrategy::Producer).to receive(:new).and_return(backend)
       producer.terminate
+      expect(TestStrategy::Producer.was_terminated).to be_truthy
     end
   end
 end
