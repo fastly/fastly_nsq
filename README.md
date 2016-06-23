@@ -37,11 +37,6 @@ and `bundle install`.
 
 ## Usage
 
-*IMPORTANT NOTE:* You must create your own `MessageProcessor` class
-for this gem to work in your application.
-
-See more information below.
-
 ### `FastlyNsq::Producer`
 
 This is a class
@@ -108,42 +103,38 @@ can be switched by setting the
 To process the next message on the queue:
 
 ```ruby
-topic = 'user_created'
-channel = 'my_consuming_service'
+topic     = 'user_created'
+channel   = 'my_consuming_service'
+processor = MessageProcessor
 
-FastlyNsq::Listener.new(topic: topic, channel: channel).process_next_message
+FastlyNsq::Listener.new(topic: topic, channel: channel, processor: processor).go(run_once: true)
 ```
 
 This will pop the next message
 off of the queue
 and send the JSON text body
-to `MessageProcessor.new(message_body: message_body, topic: topic).go`.
+to `MessageProcessor.process(message_body, topic)`.
 
 To initiate a blocking loop to process messages continuously:
 
 ```ruby
-topic = 'user_created'
-channel = 'my_consuming_service'
+topic     = 'user_created'
+channel   = 'my_consuming_service'
+processor = MessageProcessor
 
-FastlyNsq::Listener.new(topic: topic, channel: channel).go
+FastlyNsq::Listener.new(topic: topic, channel: channel, processor: processor).go
 ```
 
 This will block until
 there is a new message on the queue,
       pop the next message
       off of the queue
-      and send it to `MessageProcessor.new(message_body).go`.
+      and send it to `MessageProcessor.process(message_body, topic)`.
 
 ### `FastlyNsq::RakeTask`
 
 To help facilitate running the `FastlyNsq::Listener` in a blocking fashion
 outside your application, a simple `RakeTask` is provided.
-
-NOTE: The rake task expects a
-`MessageProcessor.topics` method,
-which must return an array of strings
-defining the topics to which
-we would like to listen and process messages.
 
 The task will listen
 to all specified topics,
@@ -157,6 +148,9 @@ require 'fastly_nsq/rake_task'
 
 FastlyNsq::RakeTask.new(:listen_task) do |task|
   task.channel = 'some_channel'
+  task.topics  = {
+    'some_topic' => SomeMessageProcessor
+  }
 end
 
 # usage:
@@ -194,34 +188,6 @@ as the real adapter.
 
 
 ## Configuration
-
-### Processing Messages
-
-This gem expects you to create a
-new class called `MessageProcessor`
-which will process messages
-once they are consumed off of the queue topic.
-
-This class needs to adhere to the following API:
-
-```ruby
-class MessageProcessor
-  # This an instance of NSQ::Message or FakeBackend::Message
-  def initialize(message_body)
-    @message_body = message_body
-  end
-
-  def start
-    # Do things
-  end
-
-  private
-
-  def message
-    JSON.parse(@message_body)
-  end
-end
-```
 
 ### Environment Variables
 
