@@ -56,7 +56,7 @@ RSpec.describe FastlyNsq::Listener do
 
     it 'processes the next message' do
       allow(consumer).to receive(:pop).and_return(message)
-      listener.go limit: true
+      listener.go run_once: true
 
       expect(messages_processed).to eql(expected_messages)
     end
@@ -65,7 +65,7 @@ RSpec.describe FastlyNsq::Listener do
       allow(consumer).to receive(:pop).and_return(message)
       allow(message).to receive(:finish)
 
-      listener.go limit: true
+      listener.go run_once: true
 
       expect(message).to have_received(:finish).once
     end
@@ -80,7 +80,7 @@ RSpec.describe FastlyNsq::Listener do
 
         expect do
           Timeout.timeout(delay) do
-            listener.go limit: true
+            listener.go run_once: true
           end
         end.to raise_error(Timeout::Error)
       end

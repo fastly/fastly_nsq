@@ -10,7 +10,7 @@ module FastlyNsq
       @consumer  = consumer || FastlyNsq::Consumer.new(topic: topic, channel: channel)
     end
 
-    def go(limit: false)
+    def go(run_once: false)
       exit_on 'INT'
       exit_on 'TERM'
 
@@ -19,7 +19,7 @@ module FastlyNsq
           processor.process(message.body, topic)
         end
 
-        break if limit
+        break if run_once
       end
 
       consumer.terminate
