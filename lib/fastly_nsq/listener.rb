@@ -11,15 +11,8 @@ module FastlyNsq
     end
 
     def go(limit: false)
-      Signal.trap('INT') do
-        consumer.terminate
-        exit
-      end
-
-      Signal.trap('TERM') do
-        consumer.terminate
-        exit
-      end
+      exit_on 'INT'
+      exit_on 'TERM'
 
       loop do
         next_message do |message|
@@ -40,6 +33,13 @@ module FastlyNsq
       message = consumer.pop # TODO: consumer.pop do |message|
       result  = yield message
       message.finish if result
+    end
+
+    def exit_on(signal)
+      Signal.trap(signal) do
+        consumer.terminate
+        exit
+      end
     end
   end
 end
