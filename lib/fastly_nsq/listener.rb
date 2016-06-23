@@ -1,49 +1,45 @@
 module FastlyNsq
   class Listener
-    def initialize(topic:, channel:, processor: nil, consumer: nil)
+    def self.listen_to(**args)
+      new(**args).go
+    end
+    
+    def initialize(topic:, processor:, channel: nil, consumer: nil)
       @topic     = topic
-      @channel   = channel
-      @processor = processor || DEFAULT_PROCESSOR
-      @consumer  = consumer || FastlyNsq::Consumer.new(consumer_params)
+      @processor = processor
+      @consumer  = consumer || FastlyNsq::Consumer.new(topic: topic, channel: channel)
     end
 
-    def go
+    def go(limit: false)
       Signal.trap('INT') do
-        shutdown
+        consumer.terminate
+        exit        
       end
 
       Signal.trap('TERM') do
-        shutdown
+        consumer.terminate
+        exit
       end
 
       loop do
-        process_one_message
-      end
-    end
+        next_message do |message|
+          processor.process(message.body, topic)
+        end
 
-    def process_next_message
-      process_one_message
+        break if limit
+      end
+      
       consumer.terminate
     end
 
     private
 
-    attr_reader :channel, :topic, :processor, :consumer
-    DEFAULT_PROCESSOR = ->(body, topic) { MessageProcessor.new(message_body: body, topic: topic).go }
+    attr_reader :topic, :consumer, :processor
 
-    def process_one_message
-      message = consumer.pop
-      processor.call(message.body, topic)
-      message.finish
-    end
-
-    def consumer_params
-      { topic: topic, channel: channel }
-    end
-
-    def shutdown
-      consumer.terminate
-      exit
+    def next_message
+      message = consumer.pop # TODO: consumer.pop do |message|
+      result  = yield message
+      message.finish if result
     end
   end
 end

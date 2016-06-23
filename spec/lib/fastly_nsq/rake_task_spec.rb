@@ -4,7 +4,12 @@ require 'fastly_nsq/rake_task'
 RSpec.describe FastlyNsq::RakeTask do
   before(:each) do
     Rake::Task.clear
-    allow_any_instance_of(FastlyNsq::RakeTask).to receive(:output) { nil }
+    @original_logger = FastlyNsq.logger
+    FastlyNsq.logger = Logger.new(nil)
+  end
+  
+  after do
+    FastlyNsq.logger = @original_logger 
   end
 
   describe 'when defining tasks' do
@@ -34,95 +39,69 @@ RSpec.describe FastlyNsq::RakeTask do
   end
 
   describe 'when running tasks' do
-    context 'when multiple topics are defined' do
-      it 'creates a listener for each' do
-        channel = 'clown_generating_service'
-        topics = %w(customer_created customer_now_awesome)
-        allow(FastlyNsq::SampleMessageProcessor).to receive(:topics).and_return(topics)
-        message_queue_listener = double('listener', go: nil)
-        allow(FastlyNsq::Listener).to receive(:new).
-          and_return(message_queue_listener)
-
-        FastlyNsq::RakeTask.new(:begin_listening, [:channel])
-        Rake::Task['begin_listening'].execute(channel: channel)
-
-        topics.each do |topic|
-          expect(FastlyNsq::Listener).to have_received(:new).
-            with(topic: topic, channel: channel)
-        end
-      end
-    end
-
-    it 'listens to the command-line-provided channel' do
-      channel = 'salesforce'
-      topics = ['customer_created']
-      allow(FastlyNsq::SampleMessageProcessor).to receive(:topics).and_return(topics)
-
-      message_queue_listener = double('listener', go: nil)
-      expect(FastlyNsq::Listener).to receive(:new).
-        with(topic: topics.first, channel: channel).
-        and_return(message_queue_listener)
-
-      FastlyNsq::RakeTask.new(:begin_listening, [:channel])
-      Rake::Task['begin_listening'].execute(channel: channel)
-    end
-
-    it 'runs with specified channel if a block is given' do
-      channel = 'send_new_customers_a_sticker_service'
-      topics = ['customer_created']
-      allow(FastlyNsq::SampleMessageProcessor).to receive(:topics).and_return(topics)
-
-      message_queue_listener = double('listener', go: nil)
-      expect(FastlyNsq::Listener).to receive(:new).
-        with(topic: topics.first, channel: channel).
-        and_return(message_queue_listener)
-
-      FastlyNsq::RakeTask.new do |task|
-        task.channel = channel
-      end
-      Rake::Task['begin_listening'].execute(channel: channel)
-    end
-
-    it 'prefers inline channel definition over block assignments' do
-      default_channel = 'throw_a_huge_pizza_party_service'
-      new_channel = 'send_balloons_to_customer_service'
-      topics = ['customer_created']
-      allow(FastlyNsq::SampleMessageProcessor).to receive(:topics).and_return(topics)
-
-      message_queue_listener = double('listener', go: nil)
-      expect(FastlyNsq::Listener).to receive(:new).
-        with(topic: topics.first, channel: new_channel).
-        and_return(message_queue_listener)
-
-      FastlyNsq::RakeTask.new(:begin_listening, [:channel]) do |task|
-        task.channel = default_channel
-      end
-      Rake::Task['begin_listening'].execute(channel: new_channel)
-    end
-
     context 'when no channel is provided' do
       it 'raises an error' do
-        topics = ['customer_created']
-        allow(FastlyNsq::SampleMessageProcessor).to receive(:topics).and_return(topics)
-
         expect do
           FastlyNsq::RakeTask.new(:begin_listening, [:channel])
           Rake::Task['begin_listening'].execute
-        end.to raise_error(ArgumentError, /channel is required/)
+        end.to raise_error(ArgumentError, /required.+channel/)
       end
     end
 
-    context 'when MessageProcessor.topics is not defined' do
+    context 'when no topics are provided' do
       it 'raises an error' do
         channel = 'best_server_number_1'
-        error_message = /MessageProcessor.topics is not defined/
-        allow(FastlyNsq::SampleMessageProcessor).to receive(:topics).
-          and_raise(NoMethodError, "undefined method `topics'")
 
         expect do
           FastlyNsq::RakeTask.new(:begin_listening, [:channel])
           Rake::Task['begin_listening'].execute(channel: channel)
-        end.to raise_error(ArgumentError, error_message)
+        end.to raise_error(ArgumentError, /required.+topics/)
+      end
+    end
+    
+    context 'when a channel and topics are defined' do
+      let(:channel)  { 'clown_generating_service' }
+      let(:topics)   { { customer_created: :fake_processor } }
+      let(:listener) { class_double FastlyNsq::Listener, listen_to: nil }
+      
+      it 'configures via a block if one is given' do
+        FastlyNsq::RakeTask.new(:begin_listening, [:channel, :topics]) do |task|
+          task.channel  = channel
+          task.topics   = topics
+          task.listener = listener
+        end
+      
+        Rake::Task['begin_listening'].execute()
+
+        expect(listener).to have_received(:listen_to).
+          with(topic: :customer_created, channel: channel, processor: :fake_processor)
+      end
+
+      it 'prefers inline channel definition over block assignments' do
+        new_channel = 'send_balloons_to_customer_service'
+
+        FastlyNsq::RakeTask.new(:begin_listening, [:channel, :topics]) do |task|
+          task.channel  = channel
+          task.topics   = topics
+          task.listener = listener
+        end
+        
+        Rake::Task['begin_listening'].execute(channel: new_channel, topics: topics, listener: listener)
+
+        expect(listener).to have_received(:listen_to).
+          with(topic: :customer_created, channel: channel, processor: :fake_processor)
+      end
+    
+      it 'configures a listener for each topic if there are multiple' do
+        topics = %w{foo bar baz quuz etc}
+        
+        FastlyNsq::RakeTask.new(:begin_listening, [:channel, :topics, :listener])
+        Rake::Task['begin_listening'].execute(channel: channel, topics: topics, listener: listener)
+
+        topics.each do |(topic, processor)|
+          expect(listener).to have_received(:listen_to).
+            with(topic: topic, channel: channel, processor: processor)
+        end
       end
     end
   end

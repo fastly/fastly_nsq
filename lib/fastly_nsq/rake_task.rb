@@ -3,7 +3,8 @@ require 'rake/tasklib'
 
 module FastlyNsq
   class RakeTask < Rake::TaskLib
-    attr_accessor :name, :channel
+    attr_accessor :name, :channel, :topics
+    attr_writer :listener
 
     def initialize(*args, &task_block)
       @name = args.shift || :begin_listening
@@ -15,17 +16,26 @@ module FastlyNsq
             yield(*[self, task_args].slice(0, task_block.arity))
           end
 
-          if task_args[:channel]
-            @channel = task_args[:channel]
-          end
+          @channel  ||= require_arg :channel, task_args 
+          @topics   ||= require_arg :topics, task_args
+          @listener ||= task_args[:listener]
 
-          guard_missing_channel
-          run_tasks
+          topic_per_thread do |topic, processor|
+            logger.info "Listening to queue, topic:'#{topic}' and channel: '#{channel}'"
+            listener.listen_to topic:     topic,
+                               channel:   channel,
+                               processor: processor
+            logger.info "... done listening on topic:'#{topic}' and channel: '#{channel}'."
+          end
         end
       end
     end
 
     private
+
+    def require_arg(arg, arg_list)
+      arg_list.fetch(arg) { raise ArgumentError, "required configuration '#{arg}' is missing." }
+    end
 
     def add_rake_task_description_if_one_needed
       unless ::Rake.application.last_description
@@ -33,50 +43,23 @@ module FastlyNsq
       end
     end
 
-    def run_tasks
-      topics.each do |topic|
+    def topic_per_thread
+      topics.each do |(topic, processor)|
         Thread.new do
-          wrap_helpful_output(topic) do
-            FastlyNsq::Listener.new(topic: topic, channel: channel).go
-          end
+          yield topic, processor
         end
       end
 
+      non_main_threads = (Thread.list - [Thread.main])
       non_main_threads.map(&:join)
     end
-
-    def non_main_threads
-      (Thread.list - [Thread.main])
-    end
-
-    def guard_missing_channel
-      unless channel
-        raise ArgumentError, "channel is required. Received channel: #{channel}"
-      end
-    end
-
-    def wrap_helpful_output(topic)
-      output "Listening to queue, topic:'#{topic}' and channel: '#{channel}'"
-      yield
-      output "... done listening on topic:'#{topic}' and channel: '#{channel}'."
-    end
-
-    def topics
-      MessageProcessor.topics
-    rescue NoMethodError => exception
-      if exception.message =~ /undefined method `topics'/
-        raise ArgumentError, 'MessageProcessor.topics is not defined.'
-      else
-        raise exception
-      end
-    end
-
-    def output(string)
-      logger.info(string)
+    
+    def listener
+      @listener || FastlyNsq::Listener
     end
 
     def logger
-      FastlyNsq.logger = Logger.new(STDOUT)
+      @logger || FastlyNsq.logger || Logger.new(STDOUT)
     end
   end
 end

@@ -13,7 +13,7 @@ RSpec.describe FastlyNsq::Listener do
       end
     end
 
-    def self.call(body, topic)
+    def self.process(body, topic)
       @@messages_processed.push Message.new(body, topic)
     end
 
@@ -28,7 +28,6 @@ RSpec.describe FastlyNsq::Listener do
 
   let(:listener) do
     FastlyNsq::Listener.new topic:     topic,
-                            channel:   channel,
                             processor: TestMessageProcessor,
                             consumer:  consumer
   end
@@ -57,7 +56,7 @@ RSpec.describe FastlyNsq::Listener do
 
     it 'processes the next message' do
       allow(consumer).to receive(:pop).and_return(message)
-      listener.process_next_message
+      listener.go limit: true
 
       expect(messages_processed).to eql(expected_messages)
     end
@@ -66,7 +65,7 @@ RSpec.describe FastlyNsq::Listener do
       allow(consumer).to receive(:pop).and_return(message)
       allow(message).to receive(:finish)
 
-      listener.process_next_message
+      listener.go limit: true
 
       expect(message).to have_received(:finish).once
     end
@@ -81,7 +80,7 @@ RSpec.describe FastlyNsq::Listener do
 
         expect do
           Timeout.timeout(delay) do
-            listener.process_next_message
+            listener.go limit: true
           end
         end.to raise_error(Timeout::Error)
       end

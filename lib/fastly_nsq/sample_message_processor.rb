@@ -16,6 +16,10 @@ module FastlyNsq
       'heartbeat' => HeartbeatWorker,
     }.freeze
 
+    def self.process(**args)
+      new(**args).go
+    end
+
     def self.topics
       TOPIC_TO_WORKER_MAP.keys
     end
