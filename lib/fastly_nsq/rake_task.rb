@@ -20,18 +20,22 @@ module FastlyNsq
           @topics   ||= require_arg :topics, task_args
           @listener ||= task_args[:listener]
 
-          topic_per_thread do |topic, processor|
-            logger.info "Listening to queue, topic:'#{topic}' and channel: '#{channel}'"
-            listener.listen_to topic:     topic,
-                               channel:   channel,
-                               processor: processor
-            logger.info "... done listening on topic:'#{topic}' and channel: '#{channel}'."
-          end
+          do_stuff
         end
       end
     end
 
     private
+
+    def do_stuff
+      topic_per_thread do |topic, processor|
+        logger.info "Listening to queue, topic:'#{topic}' and channel: '#{channel}'"
+        listener.listen_to topic:     topic,
+                           channel:   channel,
+                           processor: processor
+        logger.info "... done listening on topic:'#{topic}' and channel: '#{channel}'."
+      end
+    end
 
     def require_arg(arg, arg_list)
       arg_list.fetch(arg) { raise ArgumentError, "required configuration '#{arg}' is missing." }
