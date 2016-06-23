@@ -16,7 +16,7 @@ module FastlyNsq
             yield(*[self, task_args].slice(0, task_block.arity))
           end
 
-          @channel  ||= require_arg :channel, task_args 
+          @channel  ||= require_arg :channel, task_args
           @topics   ||= require_arg :topics, task_args
           @listener ||= task_args[:listener]
 
@@ -53,7 +53,7 @@ module FastlyNsq
       non_main_threads = (Thread.list - [Thread.main])
       non_main_threads.map(&:join)
     end
-    
+
     def listener
       @listener || FastlyNsq::Listener
     end

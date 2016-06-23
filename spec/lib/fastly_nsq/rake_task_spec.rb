@@ -7,9 +7,9 @@ RSpec.describe FastlyNsq::RakeTask do
     @original_logger = FastlyNsq.logger
     FastlyNsq.logger = Logger.new(nil)
   end
-  
+
   after do
-    FastlyNsq.logger = @original_logger 
+    FastlyNsq.logger = @original_logger
   end
 
   describe 'when defining tasks' do
@@ -58,20 +58,20 @@ RSpec.describe FastlyNsq::RakeTask do
         end.to raise_error(ArgumentError, /required.+topics/)
       end
     end
-    
+
     context 'when a channel and topics are defined' do
       let(:channel)  { 'clown_generating_service' }
       let(:topics)   { { customer_created: :fake_processor } }
       let(:listener) { class_double FastlyNsq::Listener, listen_to: nil }
-      
+
       it 'configures via a block if one is given' do
         FastlyNsq::RakeTask.new(:begin_listening, [:channel, :topics]) do |task|
           task.channel  = channel
           task.topics   = topics
           task.listener = listener
         end
-      
-        Rake::Task['begin_listening'].execute()
+
+        Rake::Task['begin_listening'].execute
 
         expect(listener).to have_received(:listen_to).
           with(topic: :customer_created, channel: channel, processor: :fake_processor)
@@ -85,16 +85,16 @@ RSpec.describe FastlyNsq::RakeTask do
           task.topics   = topics
           task.listener = listener
         end
-        
+
         Rake::Task['begin_listening'].execute(channel: new_channel, topics: topics, listener: listener)
 
         expect(listener).to have_received(:listen_to).
           with(topic: :customer_created, channel: channel, processor: :fake_processor)
       end
-    
+
       it 'configures a listener for each topic if there are multiple' do
-        topics = %w{foo bar baz quuz etc}
-        
+        topics = %w(foo bar baz quuz etc)
+
         FastlyNsq::RakeTask.new(:begin_listening, [:channel, :topics, :listener])
         Rake::Task['begin_listening'].execute(channel: channel, topics: topics, listener: listener)
 

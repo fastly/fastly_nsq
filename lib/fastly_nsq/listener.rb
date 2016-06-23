@@ -3,7 +3,7 @@ module FastlyNsq
     def self.listen_to(**args)
       new(**args).go
     end
-    
+
     def initialize(topic:, processor:, channel: nil, consumer: nil)
       @topic     = topic
       @processor = processor
@@ -13,7 +13,7 @@ module FastlyNsq
     def go(limit: false)
       Signal.trap('INT') do
         consumer.terminate
-        exit        
+        exit
       end
 
       Signal.trap('TERM') do
@@ -28,7 +28,7 @@ module FastlyNsq
 
         break if limit
       end
-      
+
       consumer.terminate
     end
 
