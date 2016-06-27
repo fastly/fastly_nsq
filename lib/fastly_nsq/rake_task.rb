@@ -37,19 +37,16 @@ module MessageQueue
       listener_threads = []
 
       topics.each do |topic|
-        listener_threads << Thread.new do
+        thread = Thread.new do
           wrap_helpful_output(topic) do
             MessageQueue::Listener.new(topic: topic, channel: channel).go
           end
         end
+        thread.abort_on_exception = true
+        listener_threads << thread
       end
 
-      loop do
-        listener_threads.each do |thread|
-          thread.join(1)
-        end
-        break unless listener_threads.any?(&:status)
-      end
+      listener_threads.map(&:join)
     end
 
     def guard_missing_channel
