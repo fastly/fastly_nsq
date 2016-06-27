@@ -44,7 +44,11 @@ module MessageQueue
         end
       end
 
-      listener_threads.map(&:join)
+      while listener_threads.any?(&:status) do
+        listener_threads.each do |thread|
+          thread.join(1)
+        end
+      end
     end
 
     def guard_missing_channel
