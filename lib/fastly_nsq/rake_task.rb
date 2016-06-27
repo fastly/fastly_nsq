@@ -44,7 +44,7 @@ module MessageQueue
         end
       end
 
-      while listener_threads.any?(&:status) do
+      while listener_threads.any?(&:status)
         listener_threads.each do |thread|
           thread.join(1)
         end
