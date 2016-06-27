@@ -44,10 +44,11 @@ module MessageQueue
         end
       end
 
-      while listener_threads.any?(&:status)
+      loop do
         listener_threads.each do |thread|
           thread.join(1)
         end
+        break unless listener_threads.any?(&:status)
       end
     end
 
