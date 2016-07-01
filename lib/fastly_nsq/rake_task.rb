@@ -62,7 +62,7 @@ module MessageQueue
     end
 
     def topics
-      MessageProcessor.topics
+      ::MessageProcessor.topics
     rescue NoMethodError => exception
       if exception.message =~ /undefined method `topics'/
         raise ArgumentError, 'MessageProcessor.topics is not defined.'
