@@ -2,7 +2,6 @@ require 'fastly_nsq'
 require 'awesome_print'
 require 'pry-byebug'
 
-require_relative '../lib/fastly_nsq/sample_message_processor'
 require_relative 'support/env_helpers'
 
 RSpec.configure do |config|
