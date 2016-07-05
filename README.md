@@ -153,23 +153,6 @@ FastlyNsq::RakeTask.new(:listen_task) do |task|
   }
 end
 
-# usage:
-`rake listen_task`
-```
-
-or using passed in values:
-```ruby
-require 'fastly_nsq/rake_task'
-
-FastlyNsq::RakeTask.new(:listen_task, [:channel])
-
-# usage:
-`rake listen_task['my_channel']`
-```
-
-Both methods can be used at the same time with the passed in values taking
-priority over block assigned values
-
 See the [`Rakefile`](examples/Rakefile) file
 for more detail.
 
