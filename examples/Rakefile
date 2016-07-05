@@ -1,6 +1,6 @@
 require 'fastly_nsq/rake_task'
 
-# A list of topics and a channel will need to be passed in to the Rake task 
+# A list of topics and a channel will need to be passed in to the Rake task
 # when it is called.
 
 desc 'Listen to the messaging queue with the given channel.'
@@ -16,7 +16,7 @@ end
 FastlyNsq::RakeTask.new(:listen_task => :environment)
 
 #-------------------------------------------------------------------------------
-# It's also possible to define the rake task to allow for overriding channel 
+# It's also possible to define the rake task to allow for overriding channel
 # and topics when calling the rake task:
 
 FastlyNsq::RakeTask.new(:listen_task, [:channel, :topics])
