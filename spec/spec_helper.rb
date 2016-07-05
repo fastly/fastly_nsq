@@ -27,10 +27,6 @@ RSpec.configure do |config|
     config.default_formatter = 'doc'
   end
 
-  config.before(:suite) do
-    MessageProcessor = FastlyNsq::SampleMessageProcessor
-  end
-
   config.before(:each) do
     load_sample_environment_variables
     FastlyNsq::FakeBackend.reset!
