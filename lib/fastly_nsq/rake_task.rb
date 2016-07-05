@@ -20,14 +20,14 @@ module FastlyNsq
           @topics   ||= require_arg :topics, task_args
           @listener ||= task_args[:listener]
 
-          do_stuff
+          listen_to_configured_topics
         end
       end
     end
 
     private
 
-    def do_stuff
+    def listen_to_configured_topics
       topic_per_thread do |topic, processor|
         logger.info "Listening to queue, topic:'#{topic}' and channel: '#{channel}'"
         listener.listen_to topic:     topic,
