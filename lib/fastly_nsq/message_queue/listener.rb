@@ -29,7 +29,7 @@ module MessageQueue
     private
 
     attr_reader :channel, :topic, :processor, :consumer
-    DEFAULT_PROCESSOR = ->(body, topic) { MessageProcessor.new(message_body: body, topic: topic).go }
+    DEFAULT_PROCESSOR = ->(body, topic) { ::MessageProcessor.new(message_body: body, topic: topic).go }
 
     def process_one_message
       message = consumer.pop
