@@ -70,17 +70,17 @@ RSpec.describe FastlyNsq::Listener do
       expect(message).to have_received(:finish).once
     end
 
-    context 'when preprocessing is provided' do
+    context 'when preprocessor is provided' do
       it 'calls the preprocessor' do
         allow(consumer).to receive(:pop).and_return(message)
         
         preprocessor_was_called = false
         preprocessor = ->(*args) { preprocessor_was_called = true }
 
-        listener = FastlyNsq::Listener.new topic:         topic,
-                                           processor:     TestMessageProcessor,
-                                           consumer:      consumer,
-                                           preprocessing: preprocessor
+        listener = FastlyNsq::Listener.new topic:        topic,
+                                           processor:    TestMessageProcessor,
+                                           consumer:     consumer,
+                                           preprocessor: preprocessor
         
         listener.go run_once: true
         expect(preprocessor_was_called).to be_truthy
