@@ -48,14 +48,16 @@ module FastlyNsq
     end
 
     def topic_per_thread
+      listener_threads = []
       topics.each do |(topic, processor)|
-        Thread.new do
+        thread = Thread.new do
           yield topic, processor
         end
+        thread.abort_on_exception = true
+        listener_threads << thread
       end
 
-      non_main_threads = (Thread.list - [Thread.main])
-      non_main_threads.map(&:join)
+      listener_threads.map(&:join)
     end
 
     def listener
