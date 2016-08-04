@@ -13,8 +13,8 @@ RSpec.describe FastlyNsq::Listener do
       end
     end
 
-    def self.process(body, topic)
-      @@messages_processed.push Message.new(body, topic)
+    def self.process(incoming_message, topic)
+      @@messages_processed.push Message.new(incoming_message.to_s, topic)
     end
 
     def self.messages_processed

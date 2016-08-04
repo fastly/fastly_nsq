@@ -1,3 +1,5 @@
+require 'fastly_nsq/message'
+
 module FastlyNsq
   class Listener
     def self.listen_to(**args)
@@ -17,8 +19,8 @@ module FastlyNsq
 
       loop do
         next_message do |message|
-          preprocessor.call(message.body) if preprocessor
-          processor.process(message.body, topic)
+          preprocessor.call(message) if preprocessor
+          processor.process(message, topic)
         end
 
         break if run_once
@@ -33,7 +35,7 @@ module FastlyNsq
 
     def next_message
       message = consumer.pop # TODO: consumer.pop do |message|
-      result  = yield message
+      result  = yield FastlyNsq::Message.new(message.body)
       message.finish if result
     end
 

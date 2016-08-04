@@ -1,16 +1,18 @@
 require 'json'
 
-module FastlyNsq
-  class Message
-    def initialize
-    end
+class FastlyNsq::Message
+  attr_reader :raw_body
+  alias :to_s :raw_body
 
-    def message_data
-      parsed_message_body['data']
-    end
+  def initialize(raw_body)
+    @raw_body = raw_body
+  end
 
-    def parsed_message_body
-      JSON.parse(message_body)
-    end
+  def data
+    @data ||= body['data']
+  end
+
+  def body
+    @body ||= JSON.parse(raw_body)
   end
 end
