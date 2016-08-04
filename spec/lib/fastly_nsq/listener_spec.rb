@@ -70,6 +70,23 @@ RSpec.describe FastlyNsq::Listener do
       expect(message).to have_received(:finish).once
     end
 
+    context 'when preprocessing is provided' do
+      it 'calls the preprocessor' do
+        allow(consumer).to receive(:pop).and_return(message)
+        
+        preprocessor_was_called = false
+        preprocessor = ->(*args) { preprocessor_was_called = true }
+
+        listener = FastlyNsq::Listener.new topic:         topic,
+                                           processor:     TestMessageProcessor,
+                                           consumer:      consumer,
+                                           preprocessing: preprocessor
+        
+        listener.go run_once: true
+        expect(preprocessor_was_called).to be_truthy
+      end
+    end
+
     context 'when using the fake queue and it is empty', fake_queue: true do
       before do
         FastlyNsq::FakeBackend.delay = 0.1

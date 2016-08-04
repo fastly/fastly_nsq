@@ -3,7 +3,7 @@ require 'rake/tasklib'
 
 module FastlyNsq
   class RakeTask < Rake::TaskLib
-    attr_accessor :name, :channel, :topics
+    attr_accessor :name, :channel, :topics, :preprocessing
     attr_writer :listener
 
     def initialize(*args, &task_block)
@@ -16,9 +16,10 @@ module FastlyNsq
             yield(*[self, task_args].slice(0, task_block.arity))
           end
 
-          @channel  ||= require_arg :channel, task_args
-          @topics   ||= require_arg :topics, task_args
-          @listener ||= task_args[:listener]
+          @channel       ||= require_arg :channel, task_args
+          @topics        ||= require_arg :topics, task_args
+          @listener      ||= task_args[:listener]
+          @preprocessing ||= task_args[:preprocessing]
 
           listen_to_configured_topics
         end
@@ -30,9 +31,13 @@ module FastlyNsq
     def listen_to_configured_topics
       topic_per_thread do |topic, processor|
         logger.info "Listening to queue, topic:'#{topic}' and channel: '#{channel}'"
-        listener.listen_to topic:     topic,
-                           channel:   channel,
-                           processor: processor
+        args = {
+          topic:         topic,
+          channel:       channel,
+          processor:     processor,
+        }
+        args[:preprocessing] = preprocessing if preprocessing
+        listener.listen_to **args
         logger.info "... done listening on topic:'#{topic}' and channel: '#{channel}'."
       end
     end

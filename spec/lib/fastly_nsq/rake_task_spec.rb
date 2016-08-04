@@ -103,6 +103,28 @@ RSpec.describe FastlyNsq::RakeTask do
             with(topic: topic, channel: channel, processor: processor)
         end
       end
+
+      context 'and preprocessing is defined' do
+        it 'passes preprocessing to the listener' do
+          FastlyNsq::RakeTask.new(:begin_listening) do |task|
+            task.channel       = channel
+            task.topics        = topics
+            task.listener      = listener
+            task.preprocessing = :noop
+          end
+
+          Rake::Task['begin_listening'].execute
+
+          expect(listener).to have_received(:listen_to).
+            with(
+              topic: :customer_created, 
+              channel: channel, 
+              processor: :fake_processor,
+              preprocessing: :noop
+            )
+        end
+      end
+      
     end
   end
 end
