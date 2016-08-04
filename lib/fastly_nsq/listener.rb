@@ -29,7 +29,7 @@ module FastlyNsq
 
     private
 
-    attr_reader :topic, :consumer, :processor
+    attr_reader :topic, :consumer, :preprocessing, :processor
 
     def next_message
       message = consumer.pop # TODO: consumer.pop do |message|
