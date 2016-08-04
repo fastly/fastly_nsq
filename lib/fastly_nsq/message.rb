@@ -2,7 +2,7 @@ require 'json'
 
 module FastlyNsq
   class Message
-    def initialize()
+    def initialize
     end
 
     def message_data
