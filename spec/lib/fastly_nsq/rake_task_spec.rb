@@ -75,10 +75,10 @@ RSpec.describe FastlyNsq::RakeTask do
 
         expect(listener).to have_received(:listen_to).
           with(
-            topic: :customer_created, 
-            channel: channel, 
+            topic: :customer_created,
+            channel: channel,
             processor: :fake_processor,
-            preprocessor: nil
+            preprocessor: nil,
           )
       end
 
@@ -95,10 +95,10 @@ RSpec.describe FastlyNsq::RakeTask do
 
         expect(listener).to have_received(:listen_to).
           with(
-            topic: :customer_created, 
-            channel: channel, 
+            topic: :customer_created,
+            channel: channel,
             processor: :fake_processor,
-            preprocessor: nil
+            preprocessor: nil,
           )
       end
 
@@ -112,9 +112,9 @@ RSpec.describe FastlyNsq::RakeTask do
           expect(listener).to have_received(:listen_to).
             with(
               topic: topic,
-              channel: channel, 
+              channel: channel,
               processor: processor,
-              preprocessor: nil
+              preprocessor: nil,
             )
         end
       end
@@ -132,14 +132,13 @@ RSpec.describe FastlyNsq::RakeTask do
 
           expect(listener).to have_received(:listen_to).
             with(
-              topic: :customer_created, 
-              channel: channel, 
+              topic: :customer_created,
+              channel: channel,
               processor: :fake_processor,
-              preprocessor: :noop
+              preprocessor: :noop,
             )
         end
       end
-      
     end
   end
 end

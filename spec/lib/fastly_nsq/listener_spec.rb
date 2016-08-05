@@ -89,11 +89,11 @@ RSpec.describe FastlyNsq::Listener do
 
       expect(message).to have_received(:finish).once
     end
-    
+
     it 'logs info for the message body' do
       allow(logger).to receive(:info)
       listener.go run_once: true
-      
+
       expect(logger).to have_received(:info).once.with \
         /\[NSQ\] Message Received: #{message.body}/
     end
@@ -101,14 +101,14 @@ RSpec.describe FastlyNsq::Listener do
     context 'when preprocessor is provided' do
       it 'calls the preprocessor' do
         preprocessor_was_called = false
-        preprocessor = ->(*args) { preprocessor_was_called = true }
+        preprocessor = ->(*_args) { preprocessor_was_called = true }
 
         listener = FastlyNsq::Listener.new topic:        topic,
                                            processor:    TestMessageProcessor,
                                            consumer:     consumer,
                                            logger:       logger,
                                            preprocessor: preprocessor
-        
+
         listener.go run_once: true
         expect(preprocessor_was_called).to be_truthy
       end

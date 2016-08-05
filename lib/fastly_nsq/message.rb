@@ -2,7 +2,7 @@ require 'json'
 
 class FastlyNsq::Message
   attr_reader :raw_body
-  alias :to_s :raw_body
+  alias to_s raw_body
 
   def initialize(raw_body)
     @raw_body = raw_body
