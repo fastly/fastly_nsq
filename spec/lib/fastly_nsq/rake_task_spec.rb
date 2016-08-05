@@ -74,7 +74,12 @@ RSpec.describe FastlyNsq::RakeTask do
         Rake::Task['begin_listening'].execute
 
         expect(listener).to have_received(:listen_to).
-          with(topic: :customer_created, channel: channel, processor: :fake_processor)
+          with(
+            topic: :customer_created, 
+            channel: channel, 
+            processor: :fake_processor,
+            preprocessor: nil
+          )
       end
 
       it 'prefers inline channel definition over block assignments' do
@@ -89,7 +94,12 @@ RSpec.describe FastlyNsq::RakeTask do
         Rake::Task['begin_listening'].execute(channel: new_channel, topics: topics, listener: listener)
 
         expect(listener).to have_received(:listen_to).
-          with(topic: :customer_created, channel: channel, processor: :fake_processor)
+          with(
+            topic: :customer_created, 
+            channel: channel, 
+            processor: :fake_processor,
+            preprocessor: nil
+          )
       end
 
       it 'configures a listener for each topic if there are multiple' do
@@ -100,7 +110,12 @@ RSpec.describe FastlyNsq::RakeTask do
 
         topics.each do |(topic, processor)|
           expect(listener).to have_received(:listen_to).
-            with(topic: topic, channel: channel, processor: processor)
+            with(
+              topic: topic,
+              channel: channel, 
+              processor: processor,
+              preprocessor: nil
+            )
         end
       end
 

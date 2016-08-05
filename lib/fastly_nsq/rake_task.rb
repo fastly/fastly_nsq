@@ -31,13 +31,10 @@ module FastlyNsq
     def listen_to_configured_topics
       topic_per_thread do |topic, processor|
         logger.info "Listening to queue, topic:'#{topic}' and channel: '#{channel}'"
-        args = {
-          topic:         topic,
-          channel:       channel,
-          processor:     processor,
-        }
-        args[:preprocessor] = preprocessor if preprocessor
-        listener.listen_to **args
+        listener.listen_to topic:        topic,
+                           channel:      channel,
+                           processor:    processor,
+                           preprocessor: preprocessor
         logger.info "... done listening on topic:'#{topic}' and channel: '#{channel}'."
       end
     end
