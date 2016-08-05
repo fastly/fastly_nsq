@@ -6,11 +6,12 @@ module FastlyNsq
       new(**args).go
     end
 
-    def initialize(topic:, processor:, channel: nil, consumer: nil, preprocessor: nil)
+    def initialize(topic:, processor:, channel: nil, consumer: nil, logger: nil, preprocessor: nil)
       @topic        = topic
-      @preprocessor = preprocessor
       @processor    = processor
       @consumer     = consumer || FastlyNsq::Consumer.new(topic: topic, channel: channel)
+      @logger       = logger || FastlyNsq.logger
+      @preprocessor = preprocessor
     end
 
     def go(run_once: false)
@@ -19,6 +20,7 @@ module FastlyNsq
 
       loop do
         next_message do |message|
+          logger.info "[NSQ] Message Received: #{message}"
           preprocessor.call(message) if preprocessor
           processor.process(message, topic)
         end
@@ -31,7 +33,7 @@ module FastlyNsq
 
     private
 
-    attr_reader :topic, :consumer, :preprocessor, :processor
+    attr_reader :topic, :consumer, :preprocessor, :processor, :logger
 
     def next_message
       message = consumer.pop # TODO: consumer.pop do |message|
