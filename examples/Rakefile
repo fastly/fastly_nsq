@@ -17,10 +17,9 @@ desc 'Listen to the messaging queue with the given channel.'
 FastlyNsq::RakeTask.new(:listen_task) do |task|
   task.channel      = 'some_channel'
   task.topics       = { 'a_topic' => RespondsToProcess }
-  task.preprocessor = ->(message) { StatsClient.increment_counter }
+  task.preprocessor = ->(message) { StatsClient.log(message) }
   task.logger       = Logger.new(STDERR)
 end
-
 
 #-------------------------------------------------------------------------------
 # In Rails, you can include the application environment. The task looks like:

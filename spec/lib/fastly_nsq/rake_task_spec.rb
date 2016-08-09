@@ -119,10 +119,10 @@ RSpec.describe FastlyNsq::RakeTask do
             with(hash_including(preprocessor: :noop))
         end
       end
-      
+
       context 'and logger is defined' do
         let(:logger) { double 'Logger', info: nil }
-        
+
         it 'passes logger to the listener' do
           FastlyNsq::RakeTask.new(:begin_listening) do |task|
             task.channel  = channel
