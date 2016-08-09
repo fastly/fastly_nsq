@@ -153,6 +153,8 @@ FastlyNsq::RakeTask.new(:listen_task) do |task|
   }
 end
 
+The task can also define a `call`-able "preprocessor" (called before any `Processor.process`) and a custom `logger`.
+
 See the [`Rakefile`](examples/Rakefile) file
 for more detail.
 
