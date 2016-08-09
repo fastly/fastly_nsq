@@ -74,12 +74,7 @@ RSpec.describe FastlyNsq::RakeTask do
         Rake::Task['begin_listening'].execute
 
         expect(listener).to have_received(:listen_to).
-          with(
-            topic: :customer_created,
-            channel: channel,
-            processor: :fake_processor,
-            preprocessor: nil,
-          )
+          with(hash_including(topic: :customer_created, channel: channel))
       end
 
       it 'prefers inline channel definition over block assignments' do
@@ -94,12 +89,7 @@ RSpec.describe FastlyNsq::RakeTask do
         Rake::Task['begin_listening'].execute(channel: new_channel, topics: topics, listener: listener)
 
         expect(listener).to have_received(:listen_to).
-          with(
-            topic: :customer_created,
-            channel: channel,
-            processor: :fake_processor,
-            preprocessor: nil,
-          )
+          with(hash_including(topic: :customer_created, channel: channel))
       end
 
       it 'configures a listener for each topic if there are multiple' do
@@ -110,12 +100,7 @@ RSpec.describe FastlyNsq::RakeTask do
 
         topics.each do |(topic, processor)|
           expect(listener).to have_received(:listen_to).
-            with(
-              topic: topic,
-              channel: channel,
-              processor: processor,
-              preprocessor: nil,
-            )
+            with(hash_including(topic: topic, channel: channel, processor: processor))
         end
       end
 
@@ -131,12 +116,25 @@ RSpec.describe FastlyNsq::RakeTask do
           Rake::Task['begin_listening'].execute
 
           expect(listener).to have_received(:listen_to).
-            with(
-              topic: :customer_created,
-              channel: channel,
-              processor: :fake_processor,
-              preprocessor: :noop,
-            )
+            with(hash_including(preprocessor: :noop))
+        end
+      end
+      
+      context 'and logger is defined' do
+        let(:logger) { double 'Logger', info: nil }
+        
+        it 'passes logger to the listener' do
+          FastlyNsq::RakeTask.new(:begin_listening) do |task|
+            task.channel  = channel
+            task.topics   = topics
+            task.listener = listener
+            task.logger   = logger
+          end
+
+          Rake::Task['begin_listening'].execute
+
+          expect(listener).to have_received(:listen_to).
+            with(hash_including(logger: logger))
         end
       end
     end

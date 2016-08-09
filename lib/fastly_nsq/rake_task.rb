@@ -4,7 +4,7 @@ require 'rake/tasklib'
 module FastlyNsq
   class RakeTask < Rake::TaskLib
     attr_accessor :name, :channel, :topics, :preprocessor
-    attr_writer :listener
+    attr_writer :listener, :logger
 
     def initialize(*args, &task_block)
       @name = args.shift || :begin_listening
@@ -29,6 +29,7 @@ module FastlyNsq
         logger.info "Listening to queue, topic:'#{topic}' and channel: '#{channel}'"
         listener.listen_to topic:        topic,
                            channel:      channel,
+                           logger:       logger,
                            processor:    processor,
                            preprocessor: preprocessor
         logger.info "... done listening on topic:'#{topic}' and channel: '#{channel}'."
@@ -70,6 +71,7 @@ module FastlyNsq
       @channel      ||= require_arg :channel, task_args
       @topics       ||= require_arg :topics, task_args
       @listener     ||= task_args[:listener]
+      @logger       ||= task_args[:logger]
       @preprocessor ||= task_args[:preprocessor]
     end
   end
