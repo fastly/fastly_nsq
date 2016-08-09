@@ -22,7 +22,7 @@ module FastlyNsq
         next_message do |message|
           log message
           preprocess message
-          processor.process message, topic
+          processor.process message
         end
 
         break if run_once

@@ -14,8 +14,8 @@ RSpec.describe FastlyNsq::Listener do
       end
     end
 
-    def self.process(incoming_message, topic)
-      @@messages_processed.push Message.new(incoming_message.to_s, topic)
+    def self.process(incoming_message)
+      @@messages_processed.push Message.new(incoming_message.to_s)
     end
 
     def self.messages_processed
@@ -34,9 +34,9 @@ RSpec.describe FastlyNsq::Listener do
                             logger:    logger
   end
 
-  let(:message)            { TestMessageProcessor::Message.new 'this is message body', topic }
+  let(:message)            { TestMessageProcessor::Message.new 'this is message body' }
   let(:messages_processed) { TestMessageProcessor.messages_processed }
-  let(:expected_message)   { TestMessageProcessor::Message.new('this is message body', topic) }
+  let(:expected_message)   { TestMessageProcessor::Message.new('this is message body') }
   let(:expected_messages)  { [expected_message] }
 
   describe 'instantiating without a consumer' do
