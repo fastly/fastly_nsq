@@ -37,12 +37,7 @@ and `bundle install`.
 
 ## Usage
 
-*IMPORTANT NOTE:* You must create your own `MessageProcessor` class
-for this gem to work in your application.
-
-See more information below.
-
-### `MessageQueue::Producer`
+### `FastlyNsq::Producer`
 
 This is a class
 which provides an adapter to the
@@ -57,7 +52,7 @@ message_data = {
   }
 }
 
-producer = MessageQueue::Producer.new(
+producer = FastlyNsq::Producer.new(
   nsqd: ENV.fetch('NSQD_TCP_ADDRESS'),
   topic: topic,
 )
@@ -77,7 +72,7 @@ ENV['FAKE_QUEUE'] = true
 ENV['FAKE_QUEUE'] = false
 ```
 
-### `MessageQueue::Consumer`
+### `FastlyNsq::Consumer`
 This is a class
 which provides an adapter to the
 fake and real NSQ consumers.
@@ -85,7 +80,7 @@ These are used to
 read messages off of the queue:
 
 ```ruby
-consumer = MessageQueue::Consumer.new(
+consumer = FastlyNsq::Consumer.new(
   topic: 'topic',
   channel: 'channel'
 )
@@ -103,47 +98,43 @@ the mock/real strategy used
 can be switched by setting the
 `FAKE_QUEUE` environment variable appropriately.
 
-### `MessageQueue::Listener`
+### `FastlyNsq::Listener`
 
 To process the next message on the queue:
 
 ```ruby
-topic = 'user_created'
-channel = 'my_consuming_service'
+topic     = 'user_created'
+channel   = 'my_consuming_service'
+processor = MessageProcessor
 
-MessageQueue::Listener.new(topic: topic, channel: channel).process_next_message
+FastlyNsq::Listener.new(topic: topic, channel: channel, processor: processor).go(run_once: true)
 ```
 
 This will pop the next message
 off of the queue
 and send the JSON text body
-to `MessageProcessor.new(message_body: message_body, topic: topic).go`.
+to `MessageProcessor.process(message_body, topic)`.
 
 To initiate a blocking loop to process messages continuously:
 
 ```ruby
-topic = 'user_created'
-channel = 'my_consuming_service'
+topic     = 'user_created'
+channel   = 'my_consuming_service'
+processor = MessageProcessor
 
-MessageQueue::Listener.new(topic: topic, channel: channel).go
+FastlyNsq::Listener.new(topic: topic, channel: channel, processor: processor).go
 ```
 
 This will block until
 there is a new message on the queue,
       pop the next message
       off of the queue
-      and send it to `MessageProcessor.new(message_body).go`.
+      and send it to `MessageProcessor.process(message_body, topic)`.
 
-### `MessageQueue::RakeTask`
+### `FastlyNsq::RakeTask`
 
-To help facilitate running the `MessageQueue::Listener` in a blocking fashion
+To help facilitate running the `FastlyNsq::Listener` in a blocking fashion
 outside your application, a simple `RakeTask` is provided.
-
-NOTE: The rake task expects a
-`MessageProcessor.topics` method,
-which must return an array of strings
-defining the topics to which
-we would like to listen and process messages.
 
 The task will listen
 to all specified topics,
@@ -155,26 +146,14 @@ Using a block:
 ```ruby
 require 'fastly_nsq/rake_task'
 
-MessageQueue::RakeTask.new(:listen_task) do |task|
+FastlyNsq::RakeTask.new(:listen_task) do |task|
   task.channel = 'some_channel'
+  task.topics  = {
+    'some_topic' => SomeMessageProcessor
+  }
 end
 
-# usage:
-`rake listen_task`
-```
-
-or using passed in values:
-```ruby
-require 'fastly_nsq/rake_task'
-
-MessageQueue::RakeTask.new(:listen_task, [:channel])
-
-# usage:
-`rake listen_task['my_channel']`
-```
-
-Both methods can be used at the same time with the passed in values taking
-priority over block assigned values
+The task can also define a `call`-able "preprocessor" (called before any `Processor.process`) and a custom `logger`.
 
 See the [`Rakefile`](examples/Rakefile) file
 for more detail.
@@ -194,34 +173,6 @@ as the real adapter.
 
 
 ## Configuration
-
-### Processing Messages
-
-This gem expects you to create a
-new class called `MessageProcessor`
-which will process messages
-once they are consumed off of the queue topic.
-
-This class needs to adhere to the following API:
-
-```ruby
-class MessageProcessor
-  # This an instance of NSQ::Message or FakeMessageQueue::Message
-  def initialize(message_body)
-    @message_body = message_body
-  end
-
-  def start
-    # Do things
-  end
-
-  private
-
-  def message
-    JSON.parse(@message_body)
-  end
-end
-```
 
 ### Environment Variables
 
@@ -262,7 +213,7 @@ FAKE_QUEUE=true
 ```
 
 Also be sure call
-`FakeMessageQueue.reset!`
+`FakeBackend.reset!`
 before each test in your app to ensure
 there are no leftover messages.
 

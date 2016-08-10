@@ -1,8 +1,6 @@
 require 'forwardable'
 
-class InvalidParameterError < StandardError; end
-
-module MessageQueue
+module FastlyNsq
   class Producer
     extend Forwardable
     def_delegator :connection, :terminate
@@ -11,17 +9,19 @@ module MessageQueue
     def initialize(topic:, ssl_context: nil, connector: nil)
       @topic       = topic
       @ssl_context = SSLContext.new(ssl_context)
-      @connector   = connector || DEFAULT_CONNECTOR
+      @connector   = connector
     end
 
     private
 
-    DEFAULT_CONNECTOR = ->(params) { MessageQueue.strategy::Producer.new params }
-
-    attr_reader :connector, :topic, :ssl_context
+    attr_reader :topic, :ssl_context
 
     def connection
-      @connection ||= connector.call(params)
+      @connection ||= connector.new(params)
+    end
+
+    def connector
+      @connector || FastlyNsq.strategy::Producer
     end
 
     def params

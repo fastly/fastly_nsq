@@ -1,49 +1,49 @@
 require 'spec_helper'
 
-RSpec.describe FakeMessageQueue do
+RSpec.describe FastlyNsq::FakeBackend do
   describe '@@queue' do
     it 'is initalized as an empty array' do
-      expect(FakeMessageQueue.queue).to eq []
+      expect(FastlyNsq::FakeBackend.queue).to eq []
     end
   end
 
   describe '@@logger' do
     after do
-      FakeMessageQueue.logger = Logger.new(nil)
+      FastlyNsq::FakeBackend.logger = Logger.new(nil)
     end
 
     it 'is initalized as an empty Ruby Logger' do
-      expect(FakeMessageQueue.logger).to be_a Logger
+      expect(FastlyNsq::FakeBackend.logger).to be_a Logger
     end
 
     it 'can be set and retrieved' do
       logger = double('some logger')
-      FakeMessageQueue.logger = logger
+      FastlyNsq::FakeBackend.logger = logger
 
-      expect(FakeMessageQueue.logger).to eq logger
+      expect(FastlyNsq::FakeBackend.logger).to eq logger
     end
   end
 
   describe '.reset!' do
     it 'resets the fake message queue' do
-      FakeMessageQueue.queue = ['hello']
-      expect(FakeMessageQueue.queue.size).to eq 1
+      FastlyNsq::FakeBackend.queue = ['hello']
+      expect(FastlyNsq::FakeBackend.queue.size).to eq 1
 
-      FakeMessageQueue.reset!
+      FastlyNsq::FakeBackend.reset!
 
-      expect(FakeMessageQueue.queue).to be_empty
+      expect(FastlyNsq::FakeBackend.queue).to be_empty
     end
   end
 end
 
-RSpec.describe FakeMessageQueue::Producer do
+RSpec.describe FastlyNsq::FakeBackend::Producer do
   let(:topic)    { 'death_star' }
-  let(:producer) { FakeMessageQueue::Producer.new topic: topic }
+  let(:producer) { FastlyNsq::FakeBackend::Producer.new topic: topic }
 
   it 'adds a new message to the queue' do
     producer.write('hello')
 
-    expect(FakeMessageQueue.queue.size).to eq 1
+    expect(FastlyNsq::FakeBackend.queue.size).to eq 1
   end
 
   it 'has a `terminate` method which is a noop' do
@@ -51,18 +51,18 @@ RSpec.describe FakeMessageQueue::Producer do
   end
 end
 
-RSpec.describe FakeMessageQueue::Message do
+RSpec.describe FastlyNsq::FakeBackend::Message do
   describe '#body' do
     it 'returns the body of the message' do
       topic = 'death_star'
       content = 'hello'
-      producer = FakeMessageQueue::Producer.new(
+      producer = FastlyNsq::FakeBackend::Producer.new(
         nsqd: ENV.fetch('NSQD_TCP_ADDRESS'),
         topic: topic,
       )
       producer.write(content)
 
-      message = FakeMessageQueue.queue.pop
+      message = FastlyNsq::FakeBackend.queue.pop
       body = message.body
 
       expect(content).to eq body
@@ -70,10 +70,10 @@ RSpec.describe FakeMessageQueue::Message do
   end
 end
 
-RSpec.describe FakeMessageQueue::Consumer do
+RSpec.describe FastlyNsq::FakeBackend::Consumer do
   let(:topic)    { 'death_star' }
   let(:channel)  { 'star_killer_base' }
-  let(:consumer) { FakeMessageQueue::Consumer.new topic: topic, channel: channel }
+  let(:consumer) { FastlyNsq::FakeBackend::Consumer.new topic: topic, channel: channel }
 
   describe 'when there are no messages on the queue' do
     it 'tells you there are 0 messages in the queue' do
@@ -81,8 +81,8 @@ RSpec.describe FakeMessageQueue::Consumer do
     end
 
     it 'blocks forever (until timeout) from #pop' do
-      FakeMessageQueue.delay = 0.1
-      delay = FakeMessageQueue.delay + 0.1
+      FastlyNsq::FakeBackend.delay = 0.1
+      delay = FastlyNsq::FakeBackend.delay + 0.1
 
       expect do
         Timeout.timeout(delay) do
@@ -99,8 +99,8 @@ RSpec.describe FakeMessageQueue::Consumer do
   end
 
   describe 'when there is a message on the queue' do
-    let(:message) { FakeMessageQueue::Message.new 'hello' }
-    before { FakeMessageQueue.queue = [message] }
+    let(:message) { FastlyNsq::FakeBackend::Message.new 'hello' }
+    before { FastlyNsq::FakeBackend.queue = [message] }
 
     it 'tells you there are messages in the queue' do
       expect(consumer.size).to eq 1
@@ -121,7 +121,7 @@ RSpec.describe FakeMessageQueue::Consumer do
 
   describe '#terminate' do
     it 'has a terminate method which is a noop' do
-      consumer = instance_double('FakeMessageQueue::Consumer')
+      consumer = instance_double('FastlyNsq::FakeBackend::Consumer')
       allow(consumer).to receive(:terminate)
     end
   end

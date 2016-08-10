@@ -1,10 +1,10 @@
 require 'spec_helper'
 
-RSpec.describe SSLContext do
+RSpec.describe FastlyNsq::SSLContext do
   describe 'when SSL ENV variables are not set' do
     describe '.to_h' do
       it 'returns nil when initialized without parameters' do
-        context = SSLContext.new
+        context = FastlyNsq::SSLContext.new
 
         expect(context.to_h).to be_nil
       end
@@ -15,7 +15,7 @@ RSpec.describe SSLContext do
           certificate: 'certificate',
           ca_certificate: 'ca_certificate',
         }
-        context = SSLContext.new(ssl_context_hash)
+        context = FastlyNsq::SSLContext.new(ssl_context_hash)
 
         expect(context.to_h).to eq(ssl_context_hash)
       end
@@ -25,7 +25,7 @@ RSpec.describe SSLContext do
           key: 'key',
           certificate: 'certificate',
         }
-        context = SSLContext.new(ssl_context_hash)
+        context = FastlyNsq::SSLContext.new(ssl_context_hash)
         ca_certificate = context.to_h[:ca_certificate]
 
         expect(ca_certificate).to be_nil
@@ -53,7 +53,7 @@ RSpec.describe SSLContext do
           certificate: ENV['NSQ_SSL_CERTIFICATE'],
           ca_certificate: ENV['NSQ_SSL_CA_CERTIFICATE'],
         }
-        context = SSLContext.new
+        context = FastlyNsq::SSLContext.new
 
         expect(context.to_h).to eq(expected_hash)
       end
@@ -65,7 +65,7 @@ RSpec.describe SSLContext do
           certificate: passed_certificate,
           ca_certificate: ENV['NSQ_SSL_CA_CERTIFICATE'],
         }
-        context = SSLContext.new(certificate: passed_certificate)
+        context = FastlyNsq::SSLContext.new(certificate: passed_certificate)
 
         expect(context.to_h).to eq(expected_hash)
       end
