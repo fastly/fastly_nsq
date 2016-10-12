@@ -29,7 +29,7 @@ module FastlyNsq
 
     def params
       {
-        nsqlookupd: ENV.fetch('NSQLOOKUPD_HTTP_ADDRESS'),
+        nsqlookupd: ENV.fetch('NSQLOOKUPD_HTTP_ADDRESS').split(',').map(&:strip),
         topic: topic,
         channel: channel,
         ssl_context: ssl_context.to_h,
