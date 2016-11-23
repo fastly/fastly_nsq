@@ -5,7 +5,7 @@ require 'fastly_nsq/listener'
 require 'fastly_nsq/message'
 require 'fastly_nsq/producer'
 require 'fastly_nsq/strategy'
-require 'fastly_nsq/ssl_context'
+require 'fastly_nsq/tls_options'
 require 'fastly_nsq/version'
 
 module FastlyNsq

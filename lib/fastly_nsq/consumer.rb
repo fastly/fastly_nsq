@@ -11,13 +11,13 @@ module FastlyNsq
     def initialize(topic:, channel:, ssl_context: nil, connector: nil)
       @topic       = topic
       @channel     = channel
-      @ssl_context = SSLContext.new(ssl_context)
+      @tls_options = TlsOptions.new(ssl_context).to_h
       @connector   = connector
     end
 
     private
 
-    attr_reader :channel, :topic, :ssl_context
+    attr_reader :channel, :topic, :tls_options
 
     def connection
       @connection ||= connector.new(params)
@@ -32,8 +32,7 @@ module FastlyNsq
         nsqlookupd: ENV.fetch('NSQLOOKUPD_HTTP_ADDRESS').split(',').map(&:strip),
         topic: topic,
         channel: channel,
-        ssl_context: ssl_context.to_h,
-      }
+      }.merge(tls_options)
     end
   end
 end
