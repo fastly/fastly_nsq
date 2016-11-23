@@ -33,7 +33,7 @@ module FastlyNsq
     end
 
     class Producer
-      def initialize(topic:, nsqd: nil, ssl_context: nil)
+      def initialize(topic:, nsqd: nil, tls_v1: nil, tls_options: nil)
       end
 
       def write(string)
@@ -53,7 +53,7 @@ module FastlyNsq
     end
 
     class Consumer
-      def initialize(nsqlookupd: nil, topic:, channel:, ssl_context: nil)
+      def initialize(nsqlookupd: nil, topic:, channel:, tls_v1: nil, tls_options: nil)
       end
 
       def pop(delay = FakeBackend.delay)
