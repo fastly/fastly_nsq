@@ -8,7 +8,7 @@ module FastlyNsq
 
     def initialize(topic:, ssl_context: nil, connector: nil)
       @topic       = topic
-      @tls_options = TlsOptions.new(ssl_context).to_h
+      @tls_options = TlsOptions.as_hash(ssl_context)
       @connector   = connector
     end
 

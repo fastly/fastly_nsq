@@ -11,7 +11,7 @@ module FastlyNsq
     def initialize(topic:, channel:, ssl_context: nil, connector: nil)
       @topic       = topic
       @channel     = channel
-      @tls_options = TlsOptions.new(ssl_context).to_h
+      @tls_options = TlsOptions.as_hash(ssl_context)
       @connector   = connector
     end
 

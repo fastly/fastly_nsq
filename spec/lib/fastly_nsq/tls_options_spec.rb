@@ -105,13 +105,13 @@ RSpec.describe FastlyNsq::TlsOptions do
 
   describe 'as_hash' do
     it 'returns an tls_options hash' do
-        expected_hash = {
-          tls_v1: true,
-          tls_options: {
-            key: 'joe',
-            certificate: 'biden',
-          },
-        }
+      expected_hash = {
+        tls_v1: true,
+        tls_options: {
+          key: 'joe',
+          certificate: 'biden',
+        },
+      }
       output_hash = FastlyNsq::TlsOptions.as_hash(key: 'joe', certificate: 'biden')
       expect(output_hash).to eq(expected_hash)
     end
