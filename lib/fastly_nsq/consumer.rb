@@ -8,10 +8,10 @@ module FastlyNsq
     def_delegator :connection, :size
     def_delegator :connection, :terminate
 
-    def initialize(topic:, channel:, ssl_context: nil, connector: nil)
+    def initialize(topic:, channel:, tls_options: nil, connector: nil)
       @topic       = topic
       @channel     = channel
-      @tls_options = TlsOptions.as_hash(ssl_context)
+      @tls_options = TlsOptions.as_hash(tls_options)
       @connector   = connector
     end
 
