@@ -6,7 +6,7 @@ module FastlyNsq
 
     def to_h
       merge_contexts
-      if empty_context?
+      if @context.empty?
         {}
       else
         {
@@ -45,10 +45,6 @@ module FastlyNsq
 
     def merge_contexts
       @context = env_default_hash.merge(@context).delete_if { |_, v| v.nil? }
-    end
-
-    def empty_context?
-      @context.all? { |_key, value| value.nil? }
     end
   end
 end
