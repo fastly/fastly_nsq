@@ -1,15 +1,22 @@
 module FastlyNsq
-  class SSLContext
+  class TlsOptions
+    def self.as_hash(context = nil)
+      new(context).to_h
+    end
+
     def initialize(context = nil)
       @context = context || {}
     end
 
     def to_h
       merge_contexts
-      if empty_context?
-        nil
+      if @context.empty?
+        {}
       else
-        @context
+        {
+          tls_v1: true,
+          tls_options: @context,
+        }
       end
     end
 
@@ -27,20 +34,21 @@ module FastlyNsq
       ENV.fetch('NSQ_SSL_CA_CERTIFICATE', nil)
     end
 
+    def verify_mode
+      ENV.fetch('NSQ_SSL_VERIFY_MODE', nil)
+    end
+
     def env_default_hash
       {
         key: env_key,
         certificate: env_certificate,
         ca_certificate: env_ca_certificate,
+        verify_mode: verify_mode,
       }
     end
 
     def merge_contexts
-      @context = env_default_hash.merge(@context)
-    end
-
-    def empty_context?
-      @context.all? { |_key, value| value.nil? }
+      @context = env_default_hash.merge(@context).delete_if { |_, v| v.nil? }
     end
   end
 end

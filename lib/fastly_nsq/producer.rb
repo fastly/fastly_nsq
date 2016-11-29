@@ -6,15 +6,15 @@ module FastlyNsq
     def_delegator :connection, :terminate
     def_delegator :connection, :write
 
-    def initialize(topic:, ssl_context: nil, connector: nil)
+    def initialize(topic:, tls_options: nil, connector: nil)
       @topic       = topic
-      @ssl_context = SSLContext.new(ssl_context)
+      @tls_options = TlsOptions.as_hash(tls_options)
       @connector   = connector
     end
 
     private
 
-    attr_reader :topic, :ssl_context
+    attr_reader :topic, :tls_options
 
     def connection
       @connection ||= connector.new(params)
@@ -28,8 +28,7 @@ module FastlyNsq
       {
         nsqd:        ENV.fetch('NSQD_TCP_ADDRESS'),
         topic:       topic,
-        ssl_context: ssl_context.to_h,
-      }
+      }.merge(tls_options)
     end
   end
 end
