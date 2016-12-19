@@ -1,11 +1,7 @@
+module FastlyNsq::Messenger
+  @producers = Hash.new { |hash, topic| hash[topic] = FastlyNsq::Producer.new(topic: topic) }
 
-class FastlyNsq::Messenger
-  def initialize(originating_service:, producer: nil)
-    @originating_service = originating_service
-    @producer = producer
-  end
-
-  def deliver(message:, on_topic:)
+  def self.deliver(message:, on_topic:, originating_service:)
     payload = {
       data: message,
       meta: {
@@ -13,23 +9,30 @@ class FastlyNsq::Messenger
       },
     }
 
-    queue = nil
     producer_for(topic: on_topic) do |producer|
-      queue = producer.write payload.to_json
+      producer.write payload.to_json
     end
+  end
 
-  ensure
-    queue.close if queue
+  def self.terminate_producer(topic:)
+    producer_for(topic).terminate
+    @producers.delete(topic)
+  end
+
+  def self.terminate_all_producers
+    @producers.each do |_topic, producer|
+      producer.terminate
+    end
+    @producers = {}
   end
 
   private
 
-  attr_reader :originating_service
+  def self.producer_for(topic:)
+    producer = @producers[topic]
 
-  def producer_for(topic:)
-    producer = @producer || FastlyNsq::Producer.new(topic: topic)
-    yield producer
-  ensure
-    producer.terminate
+    yield producer if block_given?
+
+    producer
   end
 end
