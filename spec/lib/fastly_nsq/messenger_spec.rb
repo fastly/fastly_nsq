@@ -9,19 +9,18 @@ RSpec.describe FastlyNsq::Messenger do
 
   let(:expected_attributes) do
     {
-      data: {
-        sample: 'sample',
-        message: 'message',
-      },
+      data: message,
       meta: {
         originating_service: 'originating_service',
       },
-    }.to_json
+    }
   end
 
   subject { FastlyNsq::Messenger }
 
-
+  before do
+    FastlyNsq::Messenger.instance_variable_set(:@producers, nil)
+  end
 
   describe '#deliver' do
     it 'writes a single message on a producer' do
@@ -29,7 +28,32 @@ RSpec.describe FastlyNsq::Messenger do
 
       subject.deliver message: message, on_topic: 'topic', originating_service: origin
 
-      expect(producer).to have_received(:write).with(expected_attributes)
+      expect(producer).to have_received(:write).with(expected_attributes.to_json)
+    end
+
+    it 'uses a Unknown for the default originating_service' do
+      subject.producers['topic'] = producer
+      expected_attributes[:meta][:originating_service] = 'Unknown'
+
+      subject.deliver message: message, on_topic: 'topic'
+
+      expect(producer).to have_received(:write).with(expected_attributes.to_json)
+    end
+  end
+
+  describe '#originating_service=' do
+    it "set's the default originating service" do
+      subject.producers['nanotopic'] = producer
+      service = 'nano service'
+      subject.originating_service = service
+      expected_attributes[:meta][:originating_service] = service
+
+      subject.deliver message: message, on_topic: 'nanotopic'
+
+      expect(producer).to have_received(:write).with(expected_attributes.to_json)
+
+      # reset
+      subject.originating_service = nil
     end
   end
 
@@ -40,7 +64,7 @@ RSpec.describe FastlyNsq::Messenger do
     end
 
     it 'persists producers' do
-      subject.instance_variable_get(:@producers)['topic'] = producer
+      subject.producers['topic'] = producer
 
       my_producer = subject.producer_for(topic: 'topic')
 
@@ -75,7 +99,6 @@ RSpec.describe FastlyNsq::Messenger do
       expect(producer).to have_received(:terminate)
       expect(producer_2).to have_received(:terminate)
       expect(subject.producers).to be_empty
-
     end
   end
 end

@@ -1,9 +1,9 @@
 module FastlyNsq::Messenger
-  def self.deliver(message:, on_topic:, originating_service:)
+  def self.deliver(message:, on_topic:, originating_service: nil)
     payload = {
       data: message,
       meta: {
-        originating_service: originating_service,
+        originating_service: originating_service || self.originating_service,
       },
     }
 
@@ -11,6 +11,11 @@ module FastlyNsq::Messenger
       producer.write payload.to_json
     end
   end
+
+  def self.originating_service=(service)
+    @originating_service = service
+  end
+
   def self.producer_for(topic:)
     producer = producers[topic]
 
@@ -33,5 +38,11 @@ module FastlyNsq::Messenger
       producer.terminate
       producers.delete(topic)
     end
+  end
+
+  private
+
+  def self.originating_service
+    @originating_service || 'Unknown'.freeze
   end
 end
