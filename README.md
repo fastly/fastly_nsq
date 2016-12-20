@@ -158,6 +158,40 @@ The task can also define a `call`-able "preprocessor" (called before any `Proces
 See the [`Rakefile`](examples/Rakefile) file
 for more detail.
 
+### FastlyNsq::Messgener
+
+Wrapper around a producer for sending messages and persisting producer objects.
+
+```ruby
+FastlyNsq::Messenger.deliver(message: msg, on_topic: 'my_topic', originating_service: 'my service')
+```
+
+This will use a FastlyNsq::Producer for the given topic or create on if it isn't
+already persisted. Then it will write the passed message to the queue. If you don't set
+the originating service it will use `unknown`
+
+You can also set the originating service for all `deliver` calls:
+
+```ruby
+FastlyNsq::Messenger.originating_service = 'some awesome service'
+```
+
+`FastlyNsq::Messenger` can also be used to manage Producer connections
+
+```ruby
+# get a producer:
+producer = FastlyNsq::Messenger.producer_for(topic: 'hot_topic')
+
+# get a hash of all persisted producers:
+producers = FastlyNsq::Messenger.producers
+
+# terminate a producer
+FastlyNsq::Messenger.terminate_producer(topic: 'hot_topic')
+
+# terminate all producers
+FastlyNsq::Messenger.terminate_all_producers
+```
+
 ### Real vs. Fake
 
 The real strategy
