@@ -257,16 +257,20 @@ You can also refer to the latter
 as an example of how
 you might write your own processor.
 
+## Contributors
+
+* Adarsh Pandit ([@adarsh](https://github.com/adarsh))
+* Thomas O'Neil ([@alieander](https://github.com/alieander))
+* Joshua Wehner ([@jaw6](https://github.com/jaw6))
+* Lukas Eklund  ([@leklund](https://github.com/leklund))
+
 ## Acknowledgements
 
-* Documentation inspired by [Steve Losh's "Teach Don't Tell"] post.
-* Thanks to Wistia for `nsq-ruby`.
-
-[Steve Losh's "Teach Don't Tell"]: http://stevelosh.com/blog/2013/09/teach-dont-tell/
-
+* Documentation inspired by [Steve Losh's "Teach Don't Tell"](http://stevelosh.com/blog/2013/09/teach-dont-tell/) post.
+* Thanks to Wistia for [`nsq-ruby`](https://github.com/wistia/nsq-ruby).
 
 ## Copyright
 
-Copyright (c) 2016 Fastly, Inc under an MIT license.
+Copyright (c) 2016 [Fastly, Inc](https://fastly.com) under an MIT license.
 
 See [LICENSE.txt](LICENSE.txt) for details.
