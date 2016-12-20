@@ -40,7 +40,7 @@ module FastlyNsq::Messenger
     end
   end
 
-  private
+  private_class_method
 
   def self.originating_service
     @originating_service || 'Unknown'.freeze
