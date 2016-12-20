@@ -1,3 +1,7 @@
+### 0.9.0 / 2016-12-20
+
+* Add FastlyNsq::Messenger to persist Producers
+
 ### 0.8.0 / 2016-11-23
 
 * Upgrade nsq-ruby to version 2.0.3
