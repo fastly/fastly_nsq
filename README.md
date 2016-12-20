@@ -152,6 +152,7 @@ FastlyNsq::RakeTask.new(:listen_task) do |task|
     'some_topic' => SomeMessageProcessor
   }
 end
+```
 
 The task can also define a `call`-able "preprocessor" (called before any `Processor.process`) and a custom `logger`.
 
