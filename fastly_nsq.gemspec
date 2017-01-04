@@ -31,5 +31,5 @@ Gem::Specification.new do |gem|
   gem.add_development_dependency 'rubocop', '~> 0.39.0'
   gem.add_development_dependency 'rubygems-tasks', '~> 0.2'
 
-  gem.add_dependency 'nsq-ruby', '~> 2.0', '>= 2.0.3'
+  gem.add_dependency 'nsq-ruby', '~> 2.0', '>= 2.0.5'
 end
