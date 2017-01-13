@@ -33,7 +33,7 @@ module FastlyNsq
     end
 
     class Producer
-      def initialize(topic:, nsqd: nil, tls_v1: nil, tls_options: nil)
+      def initialize(topic:, nsqlookupd: nil, tls_v1: nil, tls_options: nil)
       end
 
       def write(string)

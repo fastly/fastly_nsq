@@ -57,7 +57,7 @@ RSpec.describe FastlyNsq::FakeBackend::Message do
       topic = 'death_star'
       content = 'hello'
       producer = FastlyNsq::FakeBackend::Producer.new(
-        nsqd: ENV.fetch('NSQD_TCP_ADDRESS'),
+        nsqlookupd: ENV.fetch('NSQLOOKUPD_HTTP_ADDRESS'),
         topic: topic,
       )
       producer.write(content)

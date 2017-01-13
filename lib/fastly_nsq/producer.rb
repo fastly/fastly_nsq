@@ -26,7 +26,7 @@ module FastlyNsq
 
     def params
       {
-        nsqd:        ENV.fetch('NSQD_TCP_ADDRESS'),
+        nsqlookupd:  ENV.fetch('NSQLOOKUPD_HTTP_ADDRESS').split(',').map(&:strip),
         topic:       topic,
       }.merge(tls_options)
     end
