@@ -10,7 +10,9 @@ module FastlyNsq
       @topic       = topic
       @tls_options = TlsOptions.as_hash(tls_options)
       @connector   = connector
-      sleep(0.1) until connection.connected?
+      Timeout.timeout(5) do
+        sleep(0.1) until connection.connected?
+      end
     end
 
     private
