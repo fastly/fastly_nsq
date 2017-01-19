@@ -36,6 +36,10 @@ module FastlyNsq
       def initialize(topic:, nsqlookupd: nil, tls_v1: nil, tls_options: nil)
       end
 
+      def connected?
+        true
+      end
+
       def write(string)
         message = Message.new(string)
         queue.push(message)

@@ -5,7 +5,7 @@ RSpec.describe FastlyNsq::Producer do
   let(:producer) { FastlyNsq::Producer.new(topic: topic) }
 
   describe 'when connector connects to a backend Producer' do
-    let(:backend)   { instance_double FastlyNsq::FakeBackend::Producer, write: nil, terminate: nil }
+    let(:backend)   { instance_double FastlyNsq::FakeBackend::Producer, write: nil, terminate: nil, connected?: true }
     let(:connector) { double 'Connector', new: backend }
     let(:producer) do
       FastlyNsq::Producer.new topic: topic, connector: connector
@@ -31,6 +31,10 @@ RSpec.describe FastlyNsq::Producer do
 
         def new(*_)
           self
+        end
+
+        def connected?
+          true
         end
 
         def terminate
