@@ -15,7 +15,7 @@ module FastlyNsq
       end
     rescue Timeout::Error => error
       logger.error "Producer for #{topic} failed to connect!"
-      @connection.terminate
+      connection.terminate
       raise error
     end
 
