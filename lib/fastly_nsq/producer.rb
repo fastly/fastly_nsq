@@ -13,6 +13,10 @@ module FastlyNsq
       Timeout.timeout(5) do
         sleep(0.1) until connection.connected?
       end
+    rescue Timeout::Error => error
+      logger.error "Producer for #{topic} failed to connect!"
+      @connection.terminate
+      raise error
     end
 
     private
