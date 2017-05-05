@@ -1,0 +1,18 @@
+#!/usr/bin/env ruby
+
+require 'pry'
+require 'fastly_nsq/cli'
+require 'dotenv'
+
+Dotenv.load('.env.test')
+
+begin
+  cli = FastlyNsq::CLI.instance
+  cli.parse_options
+  cli.run
+rescue => e
+  raise e if $DEBUG
+  STDERR.puts e.message
+  STDERR.puts e.backtrace.join("\n")
+  exit 1
+end
