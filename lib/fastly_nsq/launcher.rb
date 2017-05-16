@@ -36,21 +36,19 @@ class FastlyNsq::Launcher
   private
 
   def heartbeat
-    begin
-      FastlyNsq.logger.debug do
-        [
-          'HEARTBEAT:',
-          'thread_status:', @manager.listeners.map(&:status).join(','),
-          'listener_count:', @manager.listeners.count,
-        ].join(' ')
-      end
-    rescue => e
-      FastlyNsq.logger.error("heartbeat error: #{e.message}")
+    FastlyNsq.logger.debug do
+      [
+        'HEARTBEAT:',
+        'thread_status:', @manager.listeners.map(&:status).join(','),
+        'listener_count:', @manager.listeners.count
+      ].join(' ')
     end
+  rescue => e
+    FastlyNsq.logger.error("heartbeat error: #{e.message}")
   end
 
   def start_heartbeat
-    while true
+    loop do
       heartbeat
       sleep 5
     end

@@ -13,7 +13,7 @@ class FastlyNsq::CLI
 
   attr_reader :options, :launcher
 
-  def parse_options(args=ARGV)
+  def parse_options(args = ARGV)
     parse(args)
     setup_logger
     check_pid
@@ -31,7 +31,7 @@ class FastlyNsq::CLI
     # Before this point, the process is initializing with just the main thread.
     # Starting here the process will now have multiple threads running.
 
-    if !options[:daemon]
+    unless options[:daemon]
       FastlyNsq.logger.info 'Starting processing, hit Ctrl-C to stop'
     end
 
@@ -51,7 +51,7 @@ class FastlyNsq::CLI
       launcher.stop
       # Explicitly exit so busy Processor threads can't block
       # process shutdown.
-      FastlyNsq.logger.info "Bye!"
+      FastlyNsq.logger.info 'Bye!'
       exit(0)
     end
   end
@@ -83,7 +83,7 @@ class FastlyNsq::CLI
       end
     end
 
-    @parser.banner = "fastly_nsq [options]"
+    @parser.banner = 'fastly_nsq [options]'
     @parser.parse!(args)
 
     @options = opts
@@ -102,7 +102,7 @@ class FastlyNsq::CLI
   end
 
   def pid_status(pidfile)
-    return :exited unless File.exists?(pidfile)
+    return :exited unless File.exist?(pidfile)
     pid = ::File.read(pidfile).to_i
     return :dead if pid == 0
     Process.kill(0, pid) # check process status
@@ -122,8 +122,10 @@ class FastlyNsq::CLI
   def write_pid
     if pidfile?
       begin
-        File.open(pidfile, ::File::CREAT | ::File::EXCL | ::File::WRONLY){|f| f.write("#{Process.pid}") }
-        at_exit { File.delete(pidfile) if File.exists?(pidfile) }
+        File.open(pidfile, ::File::CREAT | ::File::EXCL | ::File::WRONLY) do |f|
+          f.write Process.pid.to_s
+        end
+        at_exit { File.delete(pidfile) if File.exist?(pidfile) }
       rescue Errno::EEXIST
         check_pid
         retry
@@ -198,7 +200,7 @@ class FastlyNsq::CLI
     end
     $stdin.reopen('/dev/null')
 
-   setup_logger
+    setup_logger
   end
 
   def logfile?

@@ -16,16 +16,24 @@ module FastlyNsq
     @channel ||= channel
   end
 
-  def channel
-    @channel
-  end
-
   def logger=(logger)
     strategy.logger = logger
   end
 
+  def self.preprocessor=(preprocessor)
+    @preprocessor ||= preprocessor
+  end
+
+  def channel
+    @channel
+  end
+
   def logger
     strategy.logger
+  end
+
+  def self.preprocessor
+    @preprocessor
   end
 
   def strategy
@@ -34,14 +42,6 @@ module FastlyNsq
 
   def configure
     yield self if defined?(FastlyNsq::CLI)
-  end
-
-  def self.preprocessor=(preprocessor)
-    @preprocessor ||= preprocessor
-  end
-
-  def self.preprocessor
-    @preprocessor
   end
 
   def listeners

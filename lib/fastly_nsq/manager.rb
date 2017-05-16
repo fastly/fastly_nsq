@@ -3,33 +3,18 @@ require 'set'
 class FastlyNsq::Manager
   attr_reader :listeners, :options
 
-  def initialize(options={})
+  def initialize(options = {})
     @options = options
     @done = false
     @listeners = Set.new
 
-    FastlyNsq.logger.debug { "options #{options.inspect}" }
-    FastlyNsq.logger.debug { "starting listeners: #{FastlyNsq.listeners.inspect}" }
+    setup_listeners
 
-    FastlyNsq.listeners.each do |listener|
-      topic = listener[:topic]
-      FastlyNsq.logger.info "Listening to topic:'#{topic}' on channel: '#{FastlyNsq.channel}'"
-      @listeners << FastlyNsq::Listener.setup({
-        topic:        topic,
-        channel:      FastlyNsq.channel,
-        logger:       FastlyNsq.logger,
-        processor:    listener[:klass],
-        preprocessor: FastlyNsq.preprocessor,
-        manager:      self,
-      })
-    end
     @plock = Mutex.new
   end
 
   def start
-    @listeners.each do |x|
-      x.start
-    end
+    @listeners.each(&:start)
   end
 
   def quiet
@@ -37,9 +22,7 @@ class FastlyNsq::Manager
     @done = true
 
     FastlyNsq.logger.info { 'Terminating quiet listeners' }
-    @listeners.each do |listener|
-      listener.terminate
-    end
+    @listeners.each(&:terminate)
   end
 
   PAUSE_TIME = 0.5
@@ -72,7 +55,7 @@ class FastlyNsq::Manager
     @plock.synchronize do
       @listeners.delete listener
       unless @done
-        l = FastlyNsq::Listener.setup *listener.full_args
+        l = FastlyNsq::Listener.setup(*listener.full_args)
         @listeners << l
         l.start
       end
@@ -85,18 +68,38 @@ class FastlyNsq::Manager
 
   private
 
+  def setup_listeners
+    FastlyNsq.logger.debug "options #{options.inspect}"
+    FastlyNsq.logger.debug "starting listeners: #{FastlyNsq.listeners.inspect}"
+
+    FastlyNsq.listeners.each do |listener|
+      @listeners << setup_listener(listener)
+    end
+  end
+
+  def setup_listener(listener)
+    FastlyNsq.logger.info "Listening to topic:'#{listener[:topic]}' on channel: '#{FastlyNsq.channel}'"
+    FastlyNsq::Listener.setup(
+      {
+        topic:        listener[:topic],
+        channel:      FastlyNsq.channel,
+        processor:    listener[:klass],
+        preprocessor: FastlyNsq.preprocessor,
+        manager:      self,
+      },
+    )
+  end
+
   def hard_shutdown
     cleanup = nil
     @plock.synchronize do
       cleanup = @listeners.dup
     end
 
-    if cleanup.size > 0
+    unless cleanup.empty?
       FastlyNsq.logger.warn { "Terminating #{cleanup.size} busy worker threads" }
     end
 
-    cleanup.each do |listener|
-      listener.kill
-    end
+    cleanup.each(&:kill)
   end
 end

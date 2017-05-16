@@ -10,7 +10,7 @@ module FastlyNsq
       end
 
       def add(topic_name, klass)
-        FastlyNsq.logger.info("topic: #{topic_name} : klass #{klass.to_s}")
+        FastlyNsq.logger.info("topic: #{topic_name} : klass #{klass}")
         listeners << { topic: topic_name, klass: klass }
       end
     end
@@ -27,7 +27,7 @@ module FastlyNsq
       new_listener
     end
 
-    def initialize(topic:, processor:, channel: nil, consumer: nil, manager: nil, **options)
+    def initialize(topic:, processor:, channel: nil, consumer: nil, **options)
       @done         = false
       @thread       = nil
       @topic        = topic
@@ -35,7 +35,7 @@ module FastlyNsq
       @consumer     = consumer || FastlyNsq::Consumer.new(topic: topic, channel: channel)
       @logger       = options.fetch :logger, FastlyNsq.logger
       @preprocessor = options[:preprocessor]
-      @manager      = manager
+      @manager      = otpions[:manager]
     end
 
     def start
@@ -44,7 +44,7 @@ module FastlyNsq
     end
 
     def go(run_once: false)
-      while !@done
+      until @done
         next_message do |message|
           log message
           preprocess message
