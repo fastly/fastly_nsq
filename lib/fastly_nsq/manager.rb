@@ -77,7 +77,7 @@ class FastlyNsq::Manager
 
   def setup_listener(listener)
     FastlyNsq.logger.info "Listening to topic:'#{listener[:topic]}' on channel: '#{FastlyNsq.channel}'"
-    FastlyNsq::Listener.setup(
+    FastlyNsq::Listener.new(
       {
         topic:        listener[:topic],
         channel:      FastlyNsq.channel,
