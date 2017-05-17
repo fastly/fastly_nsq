@@ -7,13 +7,11 @@ class FastlyNsq::Manager
     @options = options
     @done = false
     @listeners = Set.new
-
-    setup_listeners
-
     @plock = Mutex.new
   end
 
   def start
+    setup_listeners
     @listeners.each(&:start)
   end
 
@@ -55,9 +53,9 @@ class FastlyNsq::Manager
     @plock.synchronize do
       @listeners.delete listener
       unless @done
-        l = FastlyNsq::Listener.setup(*listener.full_args)
-        @listeners << l
-        l.start
+        new_listener = listener.dup
+        @listeners << new_listener
+        new_listener.start
       end
     end
   end

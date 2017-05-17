@@ -1,4 +1,5 @@
 require 'fastly_nsq/message'
+require 'fastly_nsq/manager'
 
 module FastlyNsq
   class Listener
@@ -15,16 +16,8 @@ module FastlyNsq
       end
     end
 
-    attr_accessor :full_args
-
     def self.listen_to(*args)
       new(*args).go
-    end
-
-    def self.setup(*args)
-      new_listener = new(*args)
-      new_listener.full_args = *args
-      new_listener
     end
 
     def initialize(topic:, processor:, channel: nil, consumer: nil, **options)
@@ -35,7 +28,18 @@ module FastlyNsq
       @consumer     = consumer || FastlyNsq::Consumer.new(topic: topic, channel: channel)
       @logger       = options.fetch :logger, FastlyNsq.logger
       @preprocessor = options[:preprocessor]
-      @manager      = otpions[:manager]
+      @manager      = options[:manager] || FastlyNsq::Manager.new
+    end
+
+    def dup
+      duplicate = super
+      duplicate.reset
+    end
+
+    def reset
+      @done = false
+      @thread = nil
+      self
     end
 
     def start
@@ -51,7 +55,7 @@ module FastlyNsq
           processor.process message
         end
 
-        break if run_once
+        @done = true if run_once
       end
 
       @manager.listener_stopped(self)

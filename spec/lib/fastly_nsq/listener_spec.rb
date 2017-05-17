@@ -4,7 +4,7 @@ RSpec.describe FastlyNsq::Listener do
   let(:topic)    { 'testing_topic' }
   let(:channel)  { 'testing_channel' }
   let(:consumer) { FastlyNsq::FakeBackend::Consumer.new topic: topic, channel: channel }
-  let(:logger)   { double 'Logger', info: nil }
+  let(:logger)   { double 'Logger', info: nil, debug: nil, error: nil }
 
   module TestMessageProcessor
     @@messages_processed = []
