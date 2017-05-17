@@ -101,4 +101,6 @@ module FastlyNsq
   end
 end
 
+class FastlyNsq::Shutdown < StandardError; end
+
 require 'fastly_nsq/listener/config'
