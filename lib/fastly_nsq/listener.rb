@@ -1,20 +1,11 @@
+# frozen_string_literal: true
 require 'fastly_nsq/message'
 require 'fastly_nsq/manager'
+require 'fastly_nsq/safe_thread'
 
 module FastlyNsq
   class Listener
-    class Config
-      attr_reader :listeners
-
-      def initialize
-        @listeners = []
-      end
-
-      def add(topic_name, klass)
-        FastlyNsq.logger.info("topic: #{topic_name} : klass #{klass}")
-        listeners << { topic: topic_name, klass: klass }
-      end
-    end
+    include FastlyNsq::SafeThread
 
     def self.listen_to(*args)
       new(*args).go
@@ -59,7 +50,9 @@ module FastlyNsq
       end
 
       @manager.listener_stopped(self)
-    rescue Exception => ex
+    rescue FastlyNsq::Shutdown
+      @manager.listener_stopped(self)
+    rescue Exception => ex # rubocop:disable Lint/RescueException
       logger.error ex.inspect
       @manager.listener_killed(self)
     ensure
@@ -71,14 +64,16 @@ module FastlyNsq
     end
 
     def terminate
-      logger.info "< Listener TERM: topic #{topic}"
       @done = true
+      return unless @thread
+      logger.info "< Listener TERM: topic #{topic}"
     end
 
     def kill
-      logger.info "< Listener KILL: topic #{topic}"
       @done = true
-      @thread.raise Exception # SHOULD BE MORE SPECIFIC
+      return unless @thread
+      logger.info "< Listener KILL: topic #{topic}"
+      @thread.raise FastlyNsq::Shutdown
     end
 
     private
@@ -103,21 +98,7 @@ module FastlyNsq
     def preprocess(message)
       preprocessor.call(message) if preprocessor
     end
-
-    def safe_thread(name, &block)
-      Thread.new do
-        Thread.current['fastly_nsq_label'] = name
-        watchdog(name, &block)
-      end
-    end
-
-    def watchdog(last_words)
-      yield
-    rescue Exception => ex
-      FastlyNsq.logger.error ex
-      FastlyNsq.logger.error last_words
-      FastlyNsq.logger.error ex.backtrace.join("\n") unless ex.backtrace.nil?
-      raise ex
-    end
   end
 end
+
+require 'fastly_nsq/listener/config'

@@ -3,6 +3,8 @@ $stdout.sync = true
 
 require 'erb'
 require 'fastly_nsq'
+require 'fastly_nsq/launcher'
+require 'fastly_nsq/manager'
 require 'fileutils'
 require 'optparse'
 require 'singleton'
@@ -11,7 +13,7 @@ require 'yaml'
 class FastlyNsq::CLI
   include Singleton
 
-  attr_reader :options, :launcher
+  attr_reader :options
 
   def parse_options(args = ARGV)
     parse(args)
@@ -22,30 +24,12 @@ class FastlyNsq::CLI
   end
 
   def run
-    require options[:require] if options[:require]
-
-    read_io = trap_signals
-
-    FastlyNsq.logger.info "Running in #{RUBY_DESCRIPTION}"
-
-    # Before this point, the process is initializing with just the main thread.
-    # Starting here the process will now have multiple threads running.
-
-    unless options[:daemon]
-      FastlyNsq.logger.info 'Starting processing, hit Ctrl-C to stop'
-    end
-
-    require 'fastly_nsq/launcher'
-    require 'fastly_nsq/manager'
-    @launcher = FastlyNsq::Launcher.new(options)
-
+    startup
     begin
+      # Multithreading begins here ----
       launcher.run
 
-      while readable_io = IO.select([read_io])
-        signal = readable_io.first[0].gets.strip
-        handle_signal signal
-      end
+      read_loop
     rescue Interrupt
       FastlyNsq.logger.info 'Shutting down'
       launcher.stop
@@ -57,6 +41,26 @@ class FastlyNsq::CLI
   end
 
   private
+
+  def launcher
+    @launcher ||= FastlyNsq::Launcher.new(options)
+  end
+
+  def read_loop
+    trapped_read_io = trap_signals
+    loop do
+      readable_io = IO.select([trapped_read_io])
+      break unless readable_io
+      signal = readable_io.first[0].gets.strip
+      handle_signal signal
+    end
+  end
+
+  def startup
+    require options[:require] if options[:require]
+    FastlyNsq.logger.info "Running in #{RUBY_DESCRIPTION}"
+    FastlyNsq.logger.info 'Starting processing, hit Ctrl-C to stop' unless options[:daemon]
+  end
 
   def parse(args)
     opts = {}
@@ -163,13 +167,17 @@ class FastlyNsq::CLI
       FastlyNsq.logger.info 'Received USR1, no longer accepting new work'
       launcher.quiet
     when 'TTIN'
-      Thread.list.each do |thread|
-        FastlyNsq.logger.warn "Thread TID-#{thread.object_id.to_s(36)} #{thread['fastly_nsq_label']}"
-        if thread.backtrace
-          FastlyNsq.logger.warn thread.backtrace.join("\n")
-        else
-          FastlyNsq.logger.warn '<no backtrace available>'
-        end
+      handle_ttin
+    end
+  end
+
+  def handle_ttin
+    Thread.list.each do |thread|
+      FastlyNsq.logger.warn "Thread TID-#{thread.object_id.to_s(36)} #{thread['fastly_nsq_label']}"
+      if thread.backtrace
+        FastlyNsq.logger.warn thread.backtrace.join("\n")
+      else
+        FastlyNsq.logger.warn '<no backtrace available>'
       end
     end
   end
@@ -184,13 +192,7 @@ class FastlyNsq::CLI
 
     ::Process.daemon(true, true)
 
-    files_to_reopen.each do |file|
-      begin
-        file.reopen file.path, 'a+'
-        file.sync = true
-      rescue ::Exception
-      end
-    end
+    reopen(files_to_reopen)
 
     [$stdout, $stderr].each do |io|
       File.open(options.fetch(:logfile, '/dev/null'), 'ab') do |f|
@@ -201,6 +203,19 @@ class FastlyNsq::CLI
     $stdin.reopen('/dev/null')
 
     setup_logger
+  end
+
+  def reopen(files)
+    files.each do |file|
+      begin
+        file.reopen file.path, 'a+'
+        file.sync = true
+      rescue IOError => e
+        FastlyNsq.logger.warn "IOError reopening file:  #{e.message}"
+      rescue StandardError => e
+        FastlyNsq.logger.error "Non IOError reopening file:  #{e.message}"
+      end
+    end
   end
 
   def logfile?

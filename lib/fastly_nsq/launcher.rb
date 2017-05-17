@@ -1,5 +1,9 @@
 # frozen_string_literal: true
+require 'fastly_nsq/safe_thread'
+
 class FastlyNsq::Launcher
+  include FastlyNsq::SafeThread
+
   attr_accessor :manager
 
   def initialize(options)
@@ -53,21 +57,5 @@ class FastlyNsq::Launcher
       sleep 5
     end
     FastlyNsq.logger.info('Heartbeat stopping...')
-  end
-
-  def safe_thread(name, &block)
-    Thread.new do
-      Thread.current['fastly_nsq_label'] = name
-      watchdog(name, &block)
-    end
-  end
-
-  def watchdog(last_words)
-    yield
-  rescue Exception => ex
-    FastlyNsq.logger.error ex
-    FastlyNsq.logger.error last_words
-    FastlyNsq.logger.error ex.backtrace.join("\n") unless ex.backtrace.nil?
-    raise ex
   end
 end
