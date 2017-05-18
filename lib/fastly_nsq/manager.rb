@@ -21,7 +21,7 @@ class FastlyNsq::Manager
     @done = true
 
     FastlyNsq.logger.info { 'Terminating quiet listeners' }
-    @listeners.each &:terminate
+    @listeners.each(&:terminate)
   end
 
   PAUSE_TIME = 0.5
@@ -99,6 +99,6 @@ class FastlyNsq::Manager
       FastlyNsq.logger.warn { "Terminating #{cleanup.size} busy worker threads" }
     end
 
-    cleanup.each &:kill
+    cleanup.each(&:kill)
   end
 end

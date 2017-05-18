@@ -36,7 +36,7 @@ RSpec.describe FastlyNsq::Listener do
 
   let(:message)            { TestMessageProcessor::Message.new 'this is message body' }
   let(:messages_processed) { TestMessageProcessor.messages_processed }
-  let(:expected_message)   { TestMessageProcessor::Message.new 'this is message body'  }
+  let(:expected_message)   { TestMessageProcessor::Message.new 'this is message body' }
   let(:expected_messages)  { [expected_message] }
 
   describe 'instantiating without a consumer' do
@@ -121,7 +121,7 @@ RSpec.describe FastlyNsq::Listener do
 
     context 'when running as a thread' do
       let(:manager) { double 'Manager', listener_stopped: nil, listener_killed: nil }
-      let(:thread)  { double 'FakeThread', raise: nil, kill: nil, status: 'fake_thread'}
+      let(:thread)  { double 'FakeThread', raise: nil, kill: nil, status: 'fake_thread' }
       let(:listener) do
         FastlyNsq::Listener.new topic:     topic,
                                 processor: TestMessageProcessor,
@@ -136,10 +136,6 @@ RSpec.describe FastlyNsq::Listener do
 
           expect(manager).to have_received(:listener_stopped).with(listener)
         end
-      end
-
-      describe 'exception' do
-        it 'informs the manager it has died'
       end
 
       before do

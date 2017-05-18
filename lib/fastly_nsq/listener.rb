@@ -24,12 +24,12 @@ module FastlyNsq
 
     def identity
       {
-        consumer:     consumer,
-        logger:       logger,
-        manager:      manager,
-        preprocessor: preprocessor,
-        processor:    processor,
-        topic:        topic,
+        consumer:     @consumer,
+        logger:       @logger,
+        manager:      @manager,
+        preprocessor: @preprocessor,
+        processor:    @processor,
+        topic:        @topic,
       }
     end
 
@@ -39,70 +39,67 @@ module FastlyNsq
     end
 
     def start
-      logger.info { "> Listener Started: topic #{topic}" }
+      @logger.info { "> Listener Started: topic #{@topic}" }
       @thread ||= safe_thread('listener', &method(:go))
     end
 
     def go(run_once: false)
-      until done
+      until @done
         next_message do |message|
           log message
           preprocess message
-          processor.process message
+          @processor.process message
         end
 
-        @done = true if run_once
+        terminate if run_once
       end
 
-      manager.listener_stopped(self)
+      @manager.listener_stopped(self)
     rescue FastlyNsq::Shutdown
-      manager.listener_stopped(self)
+      @manager.listener_stopped(self)
     rescue Exception => ex # rubocop:disable Lint/RescueException
-      logger.error ex.inspect
-      manager.listener_killed(self)
+      @logger.error ex.inspect
+      @manager.listener_killed(self)
     ensure
       cleanup
     end
 
     def status
-      thread.status if thread
+      @thread.status if @thread
     end
 
     def terminate
       @done = true
-      return unless thread
-      logger.info "< Listener TERM: topic #{topic}"
+      return unless @thread
+      @logger.info "< Listener TERM: topic #{@topic}"
     end
 
     def kill
       @done = true
-      return unless thread
-      logger.info "< Listener KILL: topic #{topic}"
-      thread.raise FastlyNsq::Shutdown
+      return unless @thread
+      @logger.info "< Listener KILL: topic #{@topic}"
+      @thread.raise FastlyNsq::Shutdown
     end
 
     private
 
-    attr_reader :consumer, :done, :logger, :manager, :preprocessor, :processor, :thread, :topic
-
-
     def log(message)
-      logger.info "[NSQ] Message Received: #{message}" if logger
+      @logger.info "[NSQ] Message Received: #{message}" if @logger
     end
 
     def cleanup
-      consumer.terminate
-      logger.info '< Consumer terminated'
+      @consumer.terminate
+      @logger.info '< Consumer terminated'
     end
 
     def next_message
-      message = consumer.pop # TODO: consumer.pop do |message|
+      message = @consumer.pop # TODO: consumer.pop do |message|
       result  = yield FastlyNsq::Message.new(message.body)
       message.finish if result
     end
 
     def preprocess(message)
-      preprocessor.call(message) if preprocessor
+      @preprocessor.call(message) if @preprocessor
     end
 
     def reset
