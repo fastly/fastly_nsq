@@ -30,7 +30,7 @@ class FastlyNsq::Launcher
 
     @done = true
     @manager.quiet
-    @manager.stop(deadline)
+    @manager.stop deadline
   end
 
   def stopping?
@@ -48,7 +48,7 @@ class FastlyNsq::Launcher
       ].join(' ')
     end
   rescue => e
-    FastlyNsq.logger.error("heartbeat error: #{e.message}")
+    FastlyNsq.logger.error "heartbeat error: #{e.message}"
   end
 
   def start_heartbeat

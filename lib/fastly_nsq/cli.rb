@@ -1,14 +1,12 @@
 # frozen_string_literal: true
 $stdout.sync = true
 
-require 'erb'
 require 'fastly_nsq'
 require 'fastly_nsq/launcher'
 require 'fastly_nsq/manager'
 require 'fileutils'
 require 'optparse'
 require 'singleton'
-require 'yaml'
 
 class FastlyNsq::CLI
   include Singleton

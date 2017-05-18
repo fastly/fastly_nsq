@@ -36,7 +36,7 @@ RSpec.describe FastlyNsq::Listener do
 
   let(:message)            { TestMessageProcessor::Message.new 'this is message body' }
   let(:messages_processed) { TestMessageProcessor.messages_processed }
-  let(:expected_message)   { TestMessageProcessor::Message.new('this is message body') }
+  let(:expected_message)   { TestMessageProcessor::Message.new 'this is message body'  }
   let(:expected_messages)  { [expected_message] }
 
   describe 'instantiating without a consumer' do
@@ -50,6 +50,12 @@ RSpec.describe FastlyNsq::Listener do
 
       expect(FastlyNsq::Consumer).to have_received(:new).
         with(topic: topic, channel: channel)
+    end
+  end
+
+  context 'when not passed a manager' do
+    it 'creates a blank manager' do
+      expect(listener.identity[:manager]).to_not be_nil
     end
   end
 
@@ -110,6 +116,79 @@ RSpec.describe FastlyNsq::Listener do
 
         listener.go run_once: true
         expect(preprocessor_was_called).to be_truthy
+      end
+    end
+
+    context 'when running as a thread' do
+      let(:manager) { double 'Manager', listener_stopped: nil, listener_killed: nil }
+      let(:thread)  { double 'FakeThread', raise: nil, kill: nil, status: 'fake_thread'}
+      let(:listener) do
+        FastlyNsq::Listener.new topic:     topic,
+                                processor: TestMessageProcessor,
+                                logger:    logger,
+                                consumer:  consumer,
+                                manager:   manager
+      end
+
+      describe 'shutdown' do
+        it 'informs the manager of a shutdown when run once' do
+          listener.go run_once: true
+
+          expect(manager).to have_received(:listener_stopped).with(listener)
+        end
+      end
+
+      describe 'exception' do
+        it 'informs the manager it has died'
+      end
+
+      before do
+        allow(listener).to receive(:safe_thread).and_return(thread)
+      end
+
+      it 'starts and provide status' do
+        listener.start
+        expect(logger).to have_received(:info)
+        expect(listener.status).to eq 'fake_thread'
+      end
+
+      it 'can describe itself' do
+        id = listener.identity
+        expect(id[:consumer]).to_not be_nil
+        expect(id[:logger]).to be logger
+        expect(id[:manager]).to be manager
+        expect(id[:preprocessor]).to be_nil
+        expect(id[:processor]).to_not be_nil
+        expect(id[:topic]).to_not be_nil
+      end
+
+      it 'can be cleanly duplicated' do
+        new_listener = listener.clean_dup
+
+        expect(listener.identity).to eq new_listener.identity
+      end
+
+      it 'can be terminated' do
+        listener.start
+        state = listener.instance_variable_get(:@done)
+        expect(state).to eq false
+        listener.terminate
+
+        state = listener.instance_variable_get(:@done)
+        expect(logger).to have_received(:info).twice
+        expect(state).to eq true
+      end
+
+      it 'can be killed' do
+        listener.start
+        state = listener.instance_variable_get(:@done)
+        expect(state).to eq false
+        listener.kill
+
+        state = listener.instance_variable_get(:@done)
+        expect(logger).to have_received(:info).twice
+        expect(thread).to have_received(:raise).with(FastlyNsq::Shutdown)
+        expect(state).to eq true
       end
     end
   end
