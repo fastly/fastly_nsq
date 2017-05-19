@@ -2,7 +2,7 @@
 require 'set'
 
 class FastlyNsq::Manager
-  attr_reader :listeners, :options
+  attr_reader :listeners
 
   def initialize(options = {})
     @options = options
@@ -12,7 +12,7 @@ class FastlyNsq::Manager
   end
 
   def start
-    setup_listeners
+    setup_configured_listeners
     @listeners.each(&:start)
   end
 
@@ -67,8 +67,8 @@ class FastlyNsq::Manager
 
   private
 
-  def setup_listeners
-    FastlyNsq.logger.debug { "options #{options.inspect}" }
+  def setup_configured_listeners
+    FastlyNsq.logger.debug { "options #{@options.inspect}" }
     FastlyNsq.logger.debug { "starting listeners: #{FastlyNsq.listeners.inspect}" }
 
     FastlyNsq.listeners.each do |listener|

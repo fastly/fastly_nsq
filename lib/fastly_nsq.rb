@@ -41,7 +41,7 @@ module FastlyNsq
   end
 
   def configure
-    yield self if defined?(FastlyNsq::CLI)
+    yield self
   end
 
   def listeners
@@ -52,5 +52,9 @@ module FastlyNsq
     @listener_config ||= FastlyNsq::Listener::Config.new
     yield @listener_config if block_given?
     @listener_config
+  end
+
+  def reset_config
+    @listener_config = nil
   end
 end
