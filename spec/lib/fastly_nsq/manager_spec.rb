@@ -8,12 +8,11 @@ RSpec.describe FastlyNsq::Manager do
     end
   end
 
-  let(:logger)   { double 'Logger', info: nil, debug: nil, error: nil }
-  let(:manager)  { FastlyNsq::Manager.new options }
-  let(:listener_1) { instance_double 'Listener1', new: nil, start: nil, terminate: nil, kill: nil, clean_dup: listener_dup }
-  let(:listener_2) { instance_double 'Listener2', new: nil, start: nil, terminate: nil, kill: nil, clean_dup: listener_dup }
+  let(:listener_1)   { instance_double 'Listener1', new: nil, start: nil, terminate: nil, kill: nil, clean_dup: listener_dup }
+  let(:listener_2)   { instance_double 'Listener2', new: nil, start: nil, terminate: nil, kill: nil, clean_dup: listener_dup }
   let(:listener_dup) { instance_double 'ListenerDup', start: nil }
-  let(:options)  { { joe: 'biden' } }
+  let(:manager)      { FastlyNsq::Manager.new options }
+  let(:options)      { { joe: 'biden' } }
 
   let(:configed_topics) do
     [
@@ -23,8 +22,12 @@ RSpec.describe FastlyNsq::Manager do
   end
 
   before do
+    logger = Logger.new(STDOUT)
+    logger.level = Logger::FATAL
+
     FastlyNsq.configure do |config|
       config.channel = 'william'
+      config.logger = logger
       config.listen_to do |topics|
         configed_topics.each do |t|
           topics.add(t[:topic], t[:klass])
@@ -43,13 +46,15 @@ RSpec.describe FastlyNsq::Manager do
   describe '#start' do
     it 'sets up each configured listener' do
       configed_topics.each do |t|
-        expect(FastlyNsq::Listener).to have_received(:new).with({
-          topic:        t[:topic],
-          channel:      FastlyNsq.channel,
-          processor:    t[:klass],
-          preprocessor: FastlyNsq.preprocessor,
-          manager:      manager,
-        })
+        expect(FastlyNsq::Listener).to have_received(:new).with(
+          {
+            channel:      FastlyNsq.channel,
+            manager:      manager,
+            preprocessor: FastlyNsq.preprocessor,
+            processor:    t[:klass],
+            topic:        t[:topic],
+          },
+        )
       end
     end
 
