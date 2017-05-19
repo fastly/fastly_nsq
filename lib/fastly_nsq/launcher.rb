@@ -4,11 +4,9 @@ require 'fastly_nsq/safe_thread'
 class FastlyNsq::Launcher
   include FastlyNsq::SafeThread
 
-  attr_accessor :manager
-
   def initialize(options)
-    @manager = FastlyNsq::Manager.new options
     @done = false
+    @manager = FastlyNsq::Manager.new options
     @options = options
   end
 
@@ -27,9 +25,7 @@ class FastlyNsq::Launcher
   # It can take up to the timeout to complete.
   def stop
     deadline = Time.now + @options.fetch(:timeout, 10)
-
-    @done = true
-    @manager.quiet
+    quiet
     @manager.stop deadline
   end
 
@@ -43,10 +39,13 @@ class FastlyNsq::Launcher
     FastlyNsq.logger.debug do
       [
         'HEARTBEAT:',
-        'thread_status:', @manager.listeners.map(&:status).join(','),
+        'thread_status:', @manager.listeners.map(&:status).join(', '),
         'listener_count:', @manager.listeners.count
       ].join(' ')
     end
+
+    # TODO: Check the health of the system overall and kill it if needed
+    #       ::Process.kill('dieing because...', $$)
   rescue => e
     FastlyNsq.logger.error "heartbeat error: #{e.message}"
   end
