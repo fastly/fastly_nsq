@@ -13,6 +13,13 @@ module FastlyNsq
       @channel     = channel
       @tls_options = TlsOptions.as_hash(tls_options)
       @connector   = connector
+      Timeout.timeout(5) do
+        sleep(0.1) until connection.connected?
+      end
+    rescue Timeout::Error => error
+      FastlyNsq.logger.error "Consumer for #{topic} failed to connect!"
+      connection.terminate
+      raise error
     end
 
     private
