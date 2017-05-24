@@ -2,9 +2,6 @@
 
 require 'pry'
 require 'fastly_nsq/cli'
-require 'dotenv'
-
-Dotenv.load('.env.test')
 
 begin
   cli = FastlyNsq::CLI.instance
