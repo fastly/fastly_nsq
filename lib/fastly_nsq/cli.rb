@@ -17,7 +17,7 @@ class FastlyNsq::CLI
     parse(args)
     setup_logger
     check_pid
-    damonize if damonize?
+    daemonize if daemonize?
     write_pid
   end
 
@@ -180,7 +180,7 @@ class FastlyNsq::CLI
     end
   end
 
-  def damonize
+  def daemonize
     return unless options[:daemonize]
 
     files_to_reopen = []
@@ -224,7 +224,7 @@ class FastlyNsq::CLI
     !pidfile.nil?
   end
 
-  def damonize?
+  def daemonize?
     options[:daemonize]
   end
 
