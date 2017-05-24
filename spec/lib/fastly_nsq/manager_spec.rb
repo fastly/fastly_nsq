@@ -28,9 +28,9 @@ RSpec.describe FastlyNsq::Manager do
     FastlyNsq.configure do |config|
       config.channel = 'william'
       config.logger = logger
-      config.listen_to do |topics|
+      config.listener_config do |lc|
         configed_topics.each do |t|
-          topics.add(t[:topic], t[:klass])
+          lc.add_topic t[:topic], t[:klass]
         end
       end
     end

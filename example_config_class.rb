@@ -7,10 +7,10 @@ end
 
 FastlyNsq.configure do |config|
   config.channel = 'william'
-  # config.logger = Logger.new
-  # config.preprocessor = ->(message) { FastlyNsq.logger.info 'PREPROCESSESES' }
+  config.logger = Logger.new
+  config.preprocessor = ->(_) { FastlyNsq.logger.info 'PREPROCESSESES' }
 
-  config.listen_to do |topics|
-    topics.add('assign_supplemental_plans', ThingWorker)
+  config.listener_config do |lc|
+    lc.adld_topic('assign_supplemental_plans', ThingWorker)
   end
 end

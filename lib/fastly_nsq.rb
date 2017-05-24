@@ -44,11 +44,11 @@ module FastlyNsq
     yield self
   end
 
-  def listeners
-    @listener_config.listeners
+  def topic_map
+    @listener_config.topic_map
   end
 
-  def listen_to
+  def listener_config
     @listener_config ||= FastlyNsq::Listener::Config.new
     yield @listener_config if block_given?
     @listener_config

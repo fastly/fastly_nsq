@@ -58,6 +58,7 @@ class FastlyNsq::Manager
     @plock.synchronize do
       @listeners.delete listener
       unless @done
+        FastlyNsq.logger.info { "recreating listener for: #{listener.identity}" }
         new_listener = listener.clean_dup
         @listeners << new_listener
         new_listener.start
@@ -69,20 +70,20 @@ class FastlyNsq::Manager
 
   def setup_configured_listeners
     FastlyNsq.logger.debug { "options #{@options.inspect}" }
-    FastlyNsq.logger.debug { "starting listeners: #{FastlyNsq.listeners.inspect}" }
+    FastlyNsq.logger.debug { "starting listeners: #{FastlyNsq.topic_map.inspect}" }
 
-    FastlyNsq.listeners.each do |listener|
-      @listeners << setup_listener(listener)
+    FastlyNsq.topic_map.each_pair do |topic, processor|
+      @listeners << setup_listener(topic, processor)
     end
   end
 
-  def setup_listener(listener)
-    FastlyNsq.logger.info { "Listening to topic:'#{listener[:topic]}' on channel: '#{FastlyNsq.channel}'" }
+  def setup_listener(topic, processor)
+    FastlyNsq.logger.info { "Listening to topic:'#{topic}' on channel: '#{FastlyNsq.channel}'" }
     FastlyNsq::Listener.new(
       {
-        topic:        listener[:topic],
+        topic:        topic,
         channel:      FastlyNsq.channel,
-        processor:    listener[:klass],
+        processor:    processor,
         preprocessor: FastlyNsq.preprocessor,
         manager:      self,
       },
