@@ -59,7 +59,7 @@ class FastlyNsq::Manager
       @listeners.delete listener
       unless @done
         FastlyNsq.logger.info { "recreating listener for: #{listener.identity}" }
-        new_listener = listener.clean_dup
+        new_listener = listener.reset_then_dup
         @listeners << new_listener
         new_listener.start
       end

@@ -159,7 +159,7 @@ RSpec.describe FastlyNsq::Listener do
       end
 
       it 'can be cleanly duplicated' do
-        new_listener = listener.clean_dup
+        new_listener = listener.reset_then_dup
 
         expect(listener.identity).to eq new_listener.identity
       end

@@ -33,7 +33,7 @@ module FastlyNsq
       }
     end
 
-    def clean_dup
+    def reset_then_dup
       reset
       dup
     end

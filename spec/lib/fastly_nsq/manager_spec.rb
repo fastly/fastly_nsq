@@ -8,8 +8,8 @@ RSpec.describe FastlyNsq::Manager do
     end
   end
 
-  let(:listener_1)   { instance_double 'Listener1', new: nil, start: nil, terminate: nil, kill: nil, clean_dup: listener_dup }
-  let(:listener_2)   { instance_double 'Listener2', new: nil, start: nil, terminate: nil, kill: nil, clean_dup: listener_dup }
+  let(:listener_1)   { instance_double 'Listener1', new: nil, start: nil, terminate: nil, kill: nil, reset_then_dup: listener_dup }
+  let(:listener_2)   { instance_double 'Listener2', new: nil, start: nil, terminate: nil, kill: nil, reset_then_dup: listener_dup }
   let(:listener_dup) { instance_double 'ListenerDup', start: nil }
   let(:manager)      { FastlyNsq::Manager.new options }
   let(:options)      { { joe: 'biden' } }
