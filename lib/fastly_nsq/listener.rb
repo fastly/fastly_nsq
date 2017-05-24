@@ -2,6 +2,7 @@
 require 'fastly_nsq/message'
 require 'fastly_nsq/manager'
 require 'fastly_nsq/safe_thread'
+require 'fastly_nsq/listener/config'
 
 module FastlyNsq
   class Listener
@@ -111,5 +112,3 @@ module FastlyNsq
 end
 
 class FastlyNsq::Shutdown < StandardError; end
-
-require 'fastly_nsq/listener/config'
