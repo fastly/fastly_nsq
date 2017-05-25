@@ -6,7 +6,7 @@ RSpec.describe FastlyNsq::Consumer do
   let(:consumer) { FastlyNsq::Consumer.new topic: topic, channel: channel }
 
   describe 'when connected to a backend Consumer' do
-    let(:backend)   { instance_double FastlyNsq::FakeBackend::Consumer, pop: nil, pop_without_blocking: nil, size: nil, terminate: nil }
+    let(:backend)   { instance_double FastlyNsq::FakeBackend::Consumer, pop: nil, pop_without_blocking: nil, size: nil, terminate: nil, connected?: true }
     let(:connector) { double 'Connector strategy', new: backend }
 
     let(:consumer) do
@@ -43,6 +43,10 @@ RSpec.describe FastlyNsq::Consumer do
 
         def new(*_)
           self
+        end
+
+        def connected?
+          true
         end
 
         def terminate
