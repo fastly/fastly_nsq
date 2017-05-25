@@ -60,6 +60,10 @@ module FastlyNsq
       def initialize(nsqlookupd: nil, topic:, channel:, tls_v1: nil, tls_options: nil)
       end
 
+      def connected?
+        true
+      end
+
       def pop(delay = FakeBackend.delay)
         message = nil
 
