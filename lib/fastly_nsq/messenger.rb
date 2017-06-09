@@ -42,8 +42,6 @@ module FastlyNsq::Messenger
     end
   end
 
-  private_class_method
-
   def self.originating_service
     @originating_service
   end

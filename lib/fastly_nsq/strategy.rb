@@ -8,8 +8,6 @@ module FastlyNsq
       real_queue || fake_queue || error
     end
 
-    private_class_method
-
     ERR_MESSAGE = "You must set ENV['FAKE_QUEUE'] to either true or false".freeze
 
     def error
