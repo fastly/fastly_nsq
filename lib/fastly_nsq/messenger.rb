@@ -1,4 +1,6 @@
 module FastlyNsq::Messenger
+  @originating_service = 'Unknown'.freeze
+
   def self.deliver(message:, on_topic:, originating_service: nil)
     payload = {
       data: message,
@@ -43,6 +45,6 @@ module FastlyNsq::Messenger
   private_class_method
 
   def self.originating_service
-    @originating_service || 'Unknown'.freeze
+    @originating_service
   end
 end

@@ -12,6 +12,8 @@ require 'fastly_nsq/version'
 module FastlyNsq
   module_function
 
+  @preprocessor = nil
+
   def channel=(channel)
     @channel ||= channel
   end
