@@ -22,7 +22,7 @@ module FastlyNsq
     strategy.logger = logger
   end
 
-  def self.preprocessor=(preprocessor)
+  def preprocessor=(preprocessor)
     @preprocessor ||= preprocessor
   end
 
@@ -34,7 +34,7 @@ module FastlyNsq
     strategy.logger
   end
 
-  def self.preprocessor
+  def preprocessor
     @preprocessor
   end
 
