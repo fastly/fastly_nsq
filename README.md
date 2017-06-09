@@ -159,6 +159,20 @@ The task can also define a `call`-able "preprocessor" (called before any `Proces
 See the [`Rakefile`](examples/Rakefile) file
 for more detail.
 
+### `FastlyNsq::CLI`
+
+To help facilitate running the `FastlyNsq::Listener` in a blocking fashion
+outside your application, a `CLI` and bin script [`fastly_nsq`](bin/fastly_nsq)
+are provided.
+
+This can be setup ahead of time by calling `FastlyNsq.configure` and passing
+block. An exmaple of this can be found here: [`Example Config`](exmaple_config_class.rb)
+
+An example of using the cli:
+```bash
+./bin/fastly_nsq -r ./example_config_class.rb -L ./test.log -P ./fastly_nsq.pid -v -d
+```
+
 ### FastlyNsq::Messgener
 
 Wrapper around a producer for sending messages and persisting producer objects.
