@@ -85,7 +85,7 @@ module FastlyNsq
     private
 
     def log(message)
-      @logger.info "[NSQ] Message Received: #{message}" if @logger
+      @logger.info "[NSQ] Message received on topic [#{@topic}]: #{message}" if @logger
     end
 
     def cleanup

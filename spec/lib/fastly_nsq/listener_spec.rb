@@ -100,7 +100,7 @@ RSpec.describe FastlyNsq::Listener do
       allow(logger).to receive(:info)
       listener.go run_once: true
 
-      expect(logger).to have_received(:info).once.with(/\[NSQ\] Message Received: #{message.body}/)
+      expect(logger).to have_received(:info).once.with(/\[NSQ\] Message received on topic \[#{topic}\]: #{message.body}/)
     end
 
     context 'when preprocessor is provided' do
