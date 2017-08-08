@@ -1,5 +1,6 @@
 module FastlyNsq::Messenger
-  @originating_service = 'Unknown'.freeze
+  DEFAULT_ORIGIN = 'Unknown'.freeze
+  @originating_service = DEFAULT_ORIGIN
 
   module_function
 
@@ -45,6 +46,6 @@ module FastlyNsq::Messenger
   end
 
   def originating_service
-    @originating_service
+    @originating_service || DEFAULT_ORIGIN
   end
 end
