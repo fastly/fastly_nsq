@@ -12,6 +12,8 @@ require 'fastly_nsq/version'
 module FastlyNsq
   module_function
 
+  @preprocessor = nil
+
   def channel=(channel)
     @channel ||= channel
   end
@@ -20,7 +22,7 @@ module FastlyNsq
     strategy.logger = logger
   end
 
-  def self.preprocessor=(preprocessor)
+  def preprocessor=(preprocessor)
     @preprocessor ||= preprocessor
   end
 
@@ -32,7 +34,7 @@ module FastlyNsq
     strategy.logger
   end
 
-  def self.preprocessor
+  def preprocessor
     @preprocessor
   end
 

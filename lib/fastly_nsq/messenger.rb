@@ -1,5 +1,10 @@
 module FastlyNsq::Messenger
-  def self.deliver(message:, on_topic:, originating_service: nil)
+  DEFAULT_ORIGIN = 'Unknown'.freeze
+  @originating_service = DEFAULT_ORIGIN
+
+  module_function
+
+  def deliver(message:, on_topic:, originating_service: nil)
     payload = {
       data: message,
       meta: {
@@ -12,11 +17,11 @@ module FastlyNsq::Messenger
     end
   end
 
-  def self.originating_service=(service)
+  def originating_service=(service)
     @originating_service = service
   end
 
-  def self.producer_for(topic:)
+  def producer_for(topic:)
     producer = producers[topic]
 
     yield producer if block_given?
@@ -24,25 +29,23 @@ module FastlyNsq::Messenger
     producer
   end
 
-  def self.producers
+  def producers
     @producers ||= Hash.new { |hash, topic| hash[topic] = FastlyNsq::Producer.new(topic: topic) }
   end
 
-  def self.terminate_producer(topic:)
+  def terminate_producer(topic:)
     producer_for(topic: topic).terminate
     producers.delete(topic)
   end
 
-  def self.terminate_all_producers
+  def terminate_all_producers
     producers.each do |topic, producer|
       producer.terminate
       producers.delete(topic)
     end
   end
 
-  private_class_method
-
-  def self.originating_service
-    @originating_service || 'Unknown'.freeze
+  def originating_service
+    @originating_service || DEFAULT_ORIGIN
   end
 end
