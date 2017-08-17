@@ -22,14 +22,16 @@ class FastlyNsq::Message
   end
 
   def finish
-    result = nsq_message.finish unless managed
-    @managed = true
-    result
+    return managed if managed
+
+    @managed = :finished
+    nsq_message.finish
   end
 
   def requeue(*args)
-    result = nsq_message.requeue(*args) unless managed
-    @managed = true
-    result
+    return managed if managed
+
+    @managed = :requeued
+    nsq_message.requeue(*args)
   end
 end

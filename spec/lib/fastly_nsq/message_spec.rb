@@ -39,7 +39,7 @@ RSpec.describe FastlyNsq::Message do
     subject.requeue(1000)
     subject.finish
 
-    expect(subject.managed).to be(true)
+    expect(subject.managed).to eq(:requeued)
   end
 
   it 'does not requeue if the message was finished' do
@@ -49,6 +49,6 @@ RSpec.describe FastlyNsq::Message do
     subject.finish
     subject.requeue
 
-    expect(subject.managed).to be(true)
+    expect(subject.managed).to eq(:finished)
   end
 end
