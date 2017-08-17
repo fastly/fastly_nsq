@@ -94,8 +94,9 @@ module FastlyNsq
     end
 
     def next_message
-      message = @consumer.pop # TODO: consumer.pop do |message|
-      result  = yield FastlyNsq::Message.new(message)
+      nsq_message = @consumer.pop # TODO: consumer.pop do |message|
+      message = FastlyNsq::Message.new(nsq_message)
+      result  = yield message
       message.finish if result
     end
 
