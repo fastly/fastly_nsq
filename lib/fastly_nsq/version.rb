@@ -1,3 +1,3 @@
 module FastlyNsq
-  VERSION = '0.91.0'.freeze
+  VERSION = '0.12.0'.freeze
 end
