@@ -25,9 +25,30 @@ RSpec.describe FastlyNsq::Message do
 
   it 'delegates methods to the nsq_message object' do
     %w(attempts finish requeue touch timestamp).each do |method|
+      subject = FastlyNsq::Message.new nsq_message
       expect(nsq_message).to receive(method)
 
       subject.send(method)
     end
+  end
+
+  it 'does not finish if the message was requeued' do
+    expect(nsq_message).to receive(:requeue).with(1000)
+    expect(nsq_message).not_to receive(:finish)
+
+    subject.requeue(1000)
+    subject.finish
+
+    expect(subject.managed).to be(true)
+  end
+
+  it 'does not requeue if the message was finished' do
+    expect(nsq_message).to receive(:finish)
+    expect(nsq_message).not_to receive(:requeue)
+
+    subject.finish
+    subject.requeue
+
+    expect(subject.managed).to be(true)
   end
 end
