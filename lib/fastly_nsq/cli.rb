@@ -55,9 +55,18 @@ class FastlyNsq::CLI
   end
 
   def startup
+    boot_rails
     require options[:require] if options[:require]
     FastlyNsq.logger.info "Running in #{RUBY_DESCRIPTION}"
     FastlyNsq.logger.info 'Starting processing, hit Ctrl-C to stop' unless options[:daemon]
+  end
+
+  def boot_rails
+    return unless ENV['RAILS_ENV']
+
+    require 'rails'
+    require File.expand_path('./config/application.rb')
+    require File.expand_path('./config/environment.rb')
   end
 
   def parse(args)
