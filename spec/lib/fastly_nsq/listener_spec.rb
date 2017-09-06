@@ -171,7 +171,7 @@ RSpec.describe FastlyNsq::Listener do
         listener.terminate
 
         state = listener.instance_variable_get(:@done)
-        expect(logger).to have_received(:info).twice
+        expect(logger).to have_received(:info).thrice
         expect(state).to eq true
       end
 
@@ -182,7 +182,7 @@ RSpec.describe FastlyNsq::Listener do
         listener.kill
 
         state = listener.instance_variable_get(:@done)
-        expect(logger).to have_received(:info).twice
+        expect(logger).to have_received(:info).thrice
         expect(thread).to have_received(:raise).with(FastlyNsq::Shutdown)
         expect(state).to eq true
       end

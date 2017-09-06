@@ -61,8 +61,6 @@ module FastlyNsq
     rescue Exception => ex # rubocop:disable Lint/RescueException
       @logger.error ex.inspect
       @manager.listener_killed(self)
-    ensure
-      cleanup
     end
 
     def status
@@ -71,12 +69,14 @@ module FastlyNsq
 
     def terminate
       @done = true
+      cleanup
       return unless @thread
       @logger.info "< Listener TERM: topic #{@topic}"
     end
 
     def kill
       @done = true
+      cleanup
       return unless @thread
       @logger.info "< Listener KILL: topic #{@topic}"
       @thread.raise FastlyNsq::Shutdown
@@ -90,7 +90,7 @@ module FastlyNsq
 
     def cleanup
       @consumer.terminate
-      @logger.info '< Consumer terminated'
+      @logger.info "< Consumer terminated: topic [#{@topic}]"
     end
 
     def next_message
