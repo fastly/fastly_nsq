@@ -168,10 +168,13 @@ RSpec.describe FastlyNsq::Listener do
         listener.start
         state = listener.instance_variable_get(:@done)
         expect(state).to eq false
+        consumer = listener.instance_variable_get(:@consumer)
+        allow(consumer).to receive(:terminate)
         listener.terminate
 
         state = listener.instance_variable_get(:@done)
         expect(logger).to have_received(:info).thrice
+        expect(consumer).to have_received(:terminate)
         expect(state).to eq true
       end
 
@@ -179,10 +182,13 @@ RSpec.describe FastlyNsq::Listener do
         listener.start
         state = listener.instance_variable_get(:@done)
         expect(state).to eq false
+        consumer = listener.instance_variable_get(:@consumer)
+        allow(consumer).to receive(:terminate)
         listener.kill
 
         state = listener.instance_variable_get(:@done)
         expect(logger).to have_received(:info).thrice
+        expect(consumer).to have_received(:terminate)
         expect(thread).to have_received(:raise).with(FastlyNsq::Shutdown)
         expect(state).to eq true
       end
