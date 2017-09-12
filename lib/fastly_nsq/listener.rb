@@ -72,6 +72,7 @@ module FastlyNsq
       cleanup
       return unless @thread
       @logger.info "< Listener TERM: topic #{@topic}"
+      @thread.raise FastlyNsq::Shutdown
     end
 
     def kill
