@@ -22,6 +22,10 @@ module FastlyNsq
       raise error
     end
 
+    def empty?
+      @connection.size == 0 # rubocop:disable ZeroLengthPredicate
+    end
+
     private
 
     attr_reader :channel, :topic, :tls_options
