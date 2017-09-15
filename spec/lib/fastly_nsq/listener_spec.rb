@@ -178,6 +178,23 @@ RSpec.describe FastlyNsq::Listener do
         expect(state).to eq true
       end
 
+      it 'raise in terminate to interupt blocking on an empty queue' do
+        listener.start
+        listener.terminate
+
+        expect(consumer.empty?).to be true
+        expect(thread).to have_received(:raise)
+      end
+
+      it 'terminate allows messages to be completed' do
+        100.times { FastlyNsq::Messenger.deliver(on_topic: topic, message: 'test_message') }
+        listener.start
+        listener.terminate
+
+        expect(consumer.empty?).to be false
+        expect(thread).to_not have_received(:raise)
+      end
+
       it 'can be killed' do
         listener.start
         state = listener.instance_variable_get(:@done)

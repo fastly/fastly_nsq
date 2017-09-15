@@ -72,7 +72,8 @@ module FastlyNsq
       cleanup
       return unless @thread
       @logger.info "< Listener TERM: topic #{@topic}"
-      @thread.raise FastlyNsq::Shutdown
+      # Interrupt a Consumer blocking in pop with no messages otherwise it will never shutdown
+      @thread.raise FastlyNsq::Shutdown if @consumer.empty?
     end
 
     def kill
