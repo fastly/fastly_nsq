@@ -1,3 +1,7 @@
+### 0.12.3 / 2017-11-02
+
+* Remove initialization Timeout on Consumer Connections
+
 ### 0.9.0 / 2016-12-20
 
 * Add FastlyNsq::Messenger to persist Producers
