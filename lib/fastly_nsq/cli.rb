@@ -92,6 +92,10 @@ class FastlyNsq::CLI
       o.on '-v', '--verbose', 'enable verbose logging output' do |arg|
         opts[:verbose] = arg
       end
+
+      o.on '-t', '--timeout SECONDS', 'shutdown deadline timeout' do |arg|
+        opts[:timeout] = arg
+      end
     end
 
     @parser.banner = 'fastly_nsq [options]'

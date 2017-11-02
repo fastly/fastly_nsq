@@ -24,7 +24,7 @@ class FastlyNsq::Launcher
   # return until all work is complete and cleaned up.
   # It can take up to the timeout to complete.
   def stop
-    deadline = Time.now + @options.fetch(:timeout, 10)
+    deadline = Time.now + @options.fetch(:timeout, 5)
     quiet
     @manager.stop deadline
   end

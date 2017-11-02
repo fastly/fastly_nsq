@@ -5,7 +5,7 @@ RSpec.describe FastlyNsq::Launcher do
   let(:launcher) { FastlyNsq::Launcher.new options }
   let(:manager)  { instance_double 'Manager', start: nil, quiet: nil, stop: nil }
   let(:thread)   { instance_double 'Thread' }
-  let(:options)  { { joe: 'biden' } }
+  let(:options)  { { joe: 'biden', timeout: 9 } }
 
   before do
     allow(FastlyNsq::Manager).to receive(:new).and_return(manager)
@@ -44,7 +44,7 @@ RSpec.describe FastlyNsq::Launcher do
       now = Time.now
       allow(Time).to receive(:now).and_return(now)
       launcher.stop
-      expect(manager).to have_received(:stop).with(now + 10)
+      expect(manager).to have_received(:stop).with(now + options[:timeout])
     end
 
     it 'quites the manager' do

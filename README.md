@@ -170,7 +170,7 @@ block. An exmaple of this can be found here: [`Example Config`](exmaple_config_c
 
 An example of using the cli:
 ```bash
-./bin/fastly_nsq -r ./example_config_class.rb -L ./test.log -P ./fastly_nsq.pid -v -d
+./bin/fastly_nsq -r ./example_config_class.rb -L ./test.log -P ./fastly_nsq.pid -v -d -t 4
 ```
 
 ### FastlyNsq::Messgener

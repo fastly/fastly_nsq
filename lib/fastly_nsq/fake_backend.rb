@@ -83,6 +83,10 @@ module FastlyNsq
         queue.size
       end
 
+      def empty?
+        queue.empty?
+      end
+
       def terminate
         # noop
       end
