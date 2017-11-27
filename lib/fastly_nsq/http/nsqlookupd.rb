@@ -45,12 +45,12 @@ class FastlyNsq::Http::Nsqlookupd
     new(request_uri: '/info').get
   end
 
-  def initialize(request_uri:, base_uri: nil, requester: nil)
-    @requester = requester || FastlyNsq::Http
+  def initialize(request_uri:, base_uri: nil, adapter: nil)
+    @adapter = adapter || FastlyNsq::Http
     @base_uri = base_uri || BASE_NSQLOOKUPD_URL
     uri = URI.join(@base_uri, request_uri)
 
-    @client = @requester.new(uri: uri)
+    @client = @adapter.new(uri: uri)
   end
 
   private
