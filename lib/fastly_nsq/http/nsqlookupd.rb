@@ -13,36 +13,36 @@ class FastlyNsq::Http
     # List of producers for a given topic
     #
     # @param topic [String] the topic for which to list producers
-    def self.lookup(topic:)
-      new(request_uri: '/lookup').get(topic: topic)
+    def self.lookup(topic:, **args)
+      new(request_uri: '/lookup', **args).get(topic: topic)
     end
 
     ##
     # List of all known topics
-    def self.topics
-      new(request_uri: '/topics').get
+    def self.topics(**args)
+      new(request_uri: '/topics', **args).get
     end
 
     ##
     # List of channels for a given topic
     #
     # @param topic [String] the topic for which to list channels
-    def self.channels(topic:)
-      new(request_uri: '/channels').get(topic: topic)
+    def self.channels(topic:, **args)
+      new(request_uri: '/channels', **args).get(topic: topic)
     end
 
     ##
     # List all known nsqd nodes
-    def self.nodes
-      new(request_uri: '/nodes').get
+    def self.nodes(**args)
+      new(request_uri: '/nodes', **args).get
     end
 
     ##
     # Deletes an existing topic
     #
     # @param topic [String] the exsiting topic to delete
-    def self.delete_topic(topic:)
-      new(request_uri: '/delete_topic').get(topic: topic)
+    def self.delete_topic(topic:, **args)
+      new(request_uri: '/delete_topic', **args).get(topic: topic)
     end
 
     ##
@@ -50,8 +50,8 @@ class FastlyNsq::Http
     #
     # @param topic [String] an exsiting topic
     # @param channel [String] the exsiting channel to delete
-    def self.delete_channel(topic:, channel:)
-      new(request_uri: '/delete_channel').get(topic: topic, channel: channel)
+    def self.delete_channel(topic:, channel:, **args)
+      new(request_uri: '/delete_channel', **args).get(topic: topic, channel: channel)
     end
 
     ##
@@ -61,21 +61,20 @@ class FastlyNsq::Http
     #
     # @param topic [String] the existing topic
     # @param node [String] the producer (nsqd) to tombstone (identified by <broadcast_address>:<http_port>)
-    def self.tombstone_topic_producer(topic:, node:)
-      # node identified by <broadcast_address>:<http_port>
-      new(request_uri: '/tombstone_topic_producer').get(topic: topic, node: node)
+    def self.tombstone_topic_producer(topic:, node:, **args)
+      new(request_uri: '/tombstone_topic_producer', **args).get(topic: topic, node: node)
     end
 
     ##
     # Monitoring endpoint, should return +OK+
-    def self.ping
-      new(request_uri: '/ping').get
+    def self.ping(**args)
+      new(request_uri: '/ping', **args).get
     end
 
     ##
     # Returns nsqlookupd version information
-    def self.info
-      new(request_uri: '/info').get
+    def self.info(**args)
+      new(request_uri: '/info', **args).get
     end
 
     ##
@@ -85,9 +84,9 @@ class FastlyNsq::Http
     # @attr [String] request_uri the request you would like to call ie: '/thing'
     # @attr [String] base_uri the host, port, and protocol of your nsqd
     # @attr [Object] adapter the http adapter you would like to use...
-    def initialize(request_uri:, base_uri: nil, adapter: nil)
-      @adapter = adapter || FastlyNsq::Http
-      @base_uri = base_uri || BASE_NSQLOOKUPD_URL
+    def initialize(request_uri:, base_uri: BASE_NSQLOOKUPD_URL, adapter: FastlyNsq::Http)
+      @adapter = adapter
+      @base_uri = base_uri
       uri = URI.join(@base_uri, request_uri)
 
       @client = @adapter.new(uri: uri)
