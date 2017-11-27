@@ -178,7 +178,6 @@ class FastlyNsq::Http::Nsqd
   # @attr [String] request_uri the request you would like to call ie: '/thing'
   # @attr [String] base_uri the host, port, and protocol of your nsqd
   # @attr [Object] adapter the http adapter you would like to use...
-
   def initialize(request_uri:, base_uri: BASE_NSQD_URL, adapter: FastlyNsq::Http)
     @base_uri = base_uri
     @adapter = adapter
