@@ -9,12 +9,12 @@ class FastlyNsq::Http
     def_delegator :client, :post
 
     BASE_NSQD_URL = ENV.fetch 'NSQD_URL', "https://#{ENV.fetch('NSQD_HTTPS_ADDRESS', '')}"
-    VALID_FORMATS = %w[text json].freeze
+    VALID_FORMATS = %w(text json).freeze
 
     ##
     # Monitoring endpoint, should return 200 OK. It returns an HTTP 500 if it is not healthy.
     #
-    # NOTE: The only “unhealthy” state is if nsqd failed to write messages to disk when overflow occurred.
+    # NOTE: The only "unhealthy" state is if nsqd failed to write messages to disk when overflow occurred.
     def self.ping(**args)
       new(request_uri: '/ping', **args).get
     end
@@ -73,9 +73,9 @@ class FastlyNsq::Http
     # @param binary [Boolean] enables binary mode
     # @param message the messages to send with \n used to seperate messages
     def self.mpub(topic:, binary: false, message:, **args)
-      binary_param = binary ? 'true': 'false'
+      binary_param = binary ? 'true' : 'false'
       raise NotImplementedError, 'binary mode has yet to be implemented' if binary
-      params = { topic: topic, binary: binary_param}
+      params = { topic: topic, binary: binary_param }
       new(request_uri: '/mpub', **args).post(params, message)
     end
 

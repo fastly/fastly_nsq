@@ -7,10 +7,10 @@ RSpec.describe FastlyNsq::Http::Nsqd do
   let(:base_uri) { 'http://example.com' }
 
   it 'makes simple get requests' do
-    %w[ping info config/nsqlookupd_tcp_addresses].each do |api|
+    %w(ping info config/nsqlookupd_tcp_addresses).each do |api|
       url = "#{base_uri}/#{api}"
       stub_request(:get, url)
-      FastlyNsq::Http::Nsqd.send(api.gsub('/', '_').to_sym, base_uri: base_uri)
+      FastlyNsq::Http::Nsqd.send(api.tr('/', '_').to_sym, base_uri: base_uri)
 
       expect(a_request(:get, url)).to have_been_requested
     end
@@ -28,9 +28,9 @@ RSpec.describe FastlyNsq::Http::Nsqd do
     end
 
     it 'raises InvaildFormatError if provided format is not in list' do
-      expect {
+      expect do
         FastlyNsq::Http::Nsqd.stats(format: 'foo')
-      }.to raise_error(FastlyNsq::Http::Nsqd::InvalidFormatError)
+      end.to raise_error(FastlyNsq::Http::Nsqd::InvalidFormatError)
     end
   end
 
@@ -56,7 +56,7 @@ RSpec.describe FastlyNsq::Http::Nsqd do
   end
 
   it 'can create, delete, empty, pause and unpause topics and channels' do
-    verbs = %w[create delete empty pause unpause]
+    verbs = %w(create delete empty pause unpause)
 
     verbs.each do |verb|
       url = "#{base_uri}/topic/#{verb}?topic=lol"
@@ -69,7 +69,7 @@ RSpec.describe FastlyNsq::Http::Nsqd do
 
       url = "#{base_uri}/channel/#{verb}?topic=lol&channel=foo"
       stub_request(:post, url)
-      data = { topic: 'lol', channel: 'foo'}
+      data = { topic: 'lol', channel: 'foo' }
 
       FastlyNsq::Http::Nsqd.send("channel_#{verb}".to_sym, topic: 'lol', channel: 'foo', base_uri: base_uri)
 
