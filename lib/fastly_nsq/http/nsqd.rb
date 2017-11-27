@@ -39,8 +39,8 @@ class FastlyNsq::Http::Nsqd
     new(request_uri: '/mpub').post({format: 'json'}, message)
   end
 
-  def self.config
-    # TODO
+  def self.config_nsqlookupd_tcp_addresses
+    new(request_uri: '/config/nsqlookupd_tcp_addresses').get
   end
 
   def self.topic_create(topic:)
