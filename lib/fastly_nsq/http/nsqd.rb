@@ -17,7 +17,7 @@ class FastlyNsq::Http::Nsqd
     new(request_uri: '/info').get
   end
 
-  def self.stats(topic: nil, format: 'json', channel: nil)
+  def self.stats(topic: nil, channel: nil, format: 'json')
     # format can be 'text' or 'json'
     # topic and channel are for filtering
     params = { format: 'json' }
