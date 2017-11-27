@@ -1,6 +1,7 @@
 require 'fastly_nsq'
 require 'awesome_print'
 require 'pry-byebug'
+require 'webmock/rspec'
 
 require_relative 'support/env_helpers'
 
@@ -29,6 +30,7 @@ RSpec.configure do |config|
   config.before(:each) do
     load_sample_environment_variables
     FastlyNsq::FakeBackend.reset!
+    WebMock.reset!
   end
 
   config.around(:each, fake_queue: true) do |example|
