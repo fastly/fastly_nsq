@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 require 'net/https'
+require 'fastly_nsq/http/nsqd'
+require 'fastly_nsq/http/nsqlookupd'
 
 class FastlyNsq::Http
   def initialize(uri:)

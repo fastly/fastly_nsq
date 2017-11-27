@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'fastly_nsq/http'
+
 class FastlyNsq::Http::Nsqlookupd
   extend Forwardable
   def_delegator :client, :get
