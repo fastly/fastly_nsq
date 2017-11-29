@@ -41,9 +41,16 @@ RSpec.describe FastlyNsq::FakeBackend::Producer do
   let(:producer) { FastlyNsq::FakeBackend::Producer.new topic: topic }
 
   it 'adds a new message to the queue' do
-    producer.write('hello')
+    body = 'hello'
 
-    expect(FastlyNsq::FakeBackend.queue.size).to eq 1
+    expect do
+      producer.write(body)
+    end.to change { FastlyNsq::FakeBackend.queue.size }.by(1)
+
+    message = FastlyNsq::FakeBackend.queue.shift
+
+    expect(message.topic).to eq(topic)
+    expect(message.body).to eq(body)
   end
 
   it 'has a `terminate` method which is a noop' do

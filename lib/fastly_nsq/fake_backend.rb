@@ -33,7 +33,10 @@ module FastlyNsq
     end
 
     class Producer
-      def initialize(topic:, nsqlookupd: nil, tls_v1: nil, tls_options: nil)
+      attr_reader :topic
+
+      def initialize(topic:, **)
+        @topic = topic
       end
 
       def connected?
@@ -41,7 +44,7 @@ module FastlyNsq
       end
 
       def write(string)
-        message = Message.new(string)
+        message = Message.new(string, topic: topic)
         queue.push(message)
       end
 
@@ -57,8 +60,7 @@ module FastlyNsq
     end
 
     class Consumer
-      def initialize(nsqlookupd: nil, topic:, channel:, tls_v1: nil, tls_options: nil)
-      end
+      def initialize(nsqlookupd: nil, topic:, channel:, tls_v1: nil, tls_options: nil); end
 
       def connected?
         true
@@ -99,14 +101,14 @@ module FastlyNsq
     end
 
     class Message
-      attr_reader :body
+      attr_reader :topic, :body
 
-      def initialize(body)
+      def initialize(body, topic: nil)
+        @topic = topic
         @body = body
       end
 
-      def finish
-      end
+      def finish; end
     end
   end
 end
