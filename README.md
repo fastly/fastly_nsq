@@ -173,7 +173,7 @@ An example of using the cli:
 ./bin/fastly_nsq -r ./example_config_class.rb -L ./test.log -P ./fastly_nsq.pid -v -d -t 4
 ```
 
-### FastlyNsq::Messgener
+### `FastlyNsq::Messenger`
 
 Wrapper around a producer for sending messages and persisting producer objects.
 
@@ -207,7 +207,39 @@ FastlyNsq::Messenger.terminate_producer(topic: 'hot_topic')
 FastlyNsq::Messenger.terminate_all_producers
 ```
 
-### Real vs. Fake
+### `FastlyNsq::Http`
+
+Wrappers around `nsqd` and `nsqlookupd` http api's described here:
+* [NSQD API](http://nsq.io/components/nsqd.html)
+* [NSQLOOKUPD API](http://nsq.io/components/nsqlookupd.html)
+
+#### `Nsqd`
+
+Implements most of the Nsqd api.
+
+Example usage:
+```ruby
+FastlyNsq::Http::Nsqd.ping
+FastlyNsq::Http::Nsqd.create_channel(topic: 'foo', channel: 'bar')
+FastlyNsq::Http::Nsqd.stats(topic: 'foo', format: '')
+```
+
+TODO:
+1. Debug endpoints (`/debug/*`)
+2. Config PUT (`/config/nsqlookupd_tcp_address`)
+3. Correct Handling of `mpub` `binary` mode
+
+#### `Nsqlookupd`
+
+Implements all of the Nsqlookupd api.
+
+Example usage:
+```ruby
+FastlyNsq::Http::Nsqlookupd.nodes
+FastlyNsq::Http::Nsqlookupd.lookup(topic: 'foo')
+```
+
+### `Real vs. Fake`
 
 The real strategy
 creates a connection
