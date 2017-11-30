@@ -74,3 +74,6 @@ Style/TrailingCommaInArguments:
 
 Lint/RescueWithoutErrorClass:
   Enabled: false
+
+Metrics/BlockLength:
+  ExcludedMethods: [describe, context, configure]
