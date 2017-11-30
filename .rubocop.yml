@@ -10,9 +10,6 @@ AllCops:
 LineLength:
   Enabled: false
 
-BracesAroundHashParameters:
-  Enabled: false
-
 CollectionMethods:
   Enabled: false
 

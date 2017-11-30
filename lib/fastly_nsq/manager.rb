@@ -81,13 +81,11 @@ class FastlyNsq::Manager
   def setup_listener(topic, processor)
     FastlyNsq.logger.info { "Listening to topic:'#{topic}' on channel: '#{FastlyNsq.channel}'" }
     FastlyNsq::Listener.new(
-      {
-        topic:        topic,
-        channel:      FastlyNsq.channel,
-        processor:    processor,
-        preprocessor: FastlyNsq.preprocessor,
-        manager:      self,
-      },
+      topic:        topic,
+      channel:      FastlyNsq.channel,
+      processor:    processor,
+      preprocessor: FastlyNsq.preprocessor,
+      manager:      self,
     )
   end
 
