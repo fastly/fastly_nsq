@@ -47,13 +47,11 @@ RSpec.describe FastlyNsq::Manager do
     it 'sets up each configured listener' do
       configed_topics.each do |t|
         expect(FastlyNsq::Listener).to have_received(:new).with(
-          {
-            channel:      FastlyNsq.channel,
-            manager:      manager,
-            preprocessor: FastlyNsq.preprocessor,
-            processor:    t[:klass],
-            topic:        t[:topic],
-          },
+          channel:      FastlyNsq.channel,
+          manager:      manager,
+          preprocessor: FastlyNsq.preprocessor,
+          processor:    t[:klass],
+          topic:        t[:topic],
         )
       end
     end

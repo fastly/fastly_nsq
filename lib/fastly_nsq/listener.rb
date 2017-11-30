@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require 'fastly_nsq/message'
 require 'fastly_nsq/manager'
 require 'fastly_nsq/safe_thread'
@@ -58,8 +59,8 @@ module FastlyNsq
       @manager.listener_stopped(self)
     rescue FastlyNsq::Shutdown
       @manager.listener_stopped(self)
-    rescue Exception => ex # rubocop:disable Lint/RescueException
-      @logger.error ex.inspect
+    rescue Exception => e # rubocop:disable Lint/RescueException
+      @logger.error e.inspect
       @manager.listener_killed(self)
     end
 

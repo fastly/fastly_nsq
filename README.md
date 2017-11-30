@@ -310,6 +310,7 @@ you might write your own processor.
 * Thomas O'Neil ([@alieander](https://github.com/alieander))
 * Joshua Wehner ([@jaw6](https://github.com/jaw6))
 * Lukas Eklund  ([@leklund](https://github.com/leklund))
+* Josh Lane     ([@lanej](https://github.com/lanej))
 
 ## Acknowledgements
 

@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 module FastlyNsq::SafeThread
   def safe_thread(name, &block)
     Thread.new do
@@ -9,10 +10,10 @@ module FastlyNsq::SafeThread
 
   def watchdog(last_words)
     yield
-  rescue => ex
-    FastlyNsq.logger.error ex
+  rescue => e
+    FastlyNsq.logger.error e
     FastlyNsq.logger.error last_words
-    FastlyNsq.logger.error ex.backtrace.join("\n") unless ex.backtrace.nil?
-    raise ex
+    FastlyNsq.logger.error e.backtrace.join("\n") unless e.backtrace.nil?
+    raise e
   end
 end

@@ -24,13 +24,13 @@ end
 #-------------------------------------------------------------------------------
 # In Rails, you can include the application environment. The task looks like:
 
-FastlyNsq::RakeTask.new(:listen_task => :environment)
+FastlyNsq::RakeTask.new(listen_task: :environment)
 
 #-------------------------------------------------------------------------------
 # It's also possible to define the rake task to allow for overriding channel
 # and topics when calling the rake task:
 
-FastlyNsq::RakeTask.new(:listen_task, [:channel, :topics])
+FastlyNsq::RakeTask.new(:listen_task, %i[channel topics])
 
 # Then call the task:
 #   rake listen_task[my_channel, {topic: Processor}]
@@ -38,4 +38,4 @@ FastlyNsq::RakeTask.new(:listen_task, [:channel, :topics])
 #-------------------------------------------------------------------------------
 # Do the same thing and include the environment:
 
-FastlyNsq::RakeTask.new(:listen_task, [:channel, :topics] => :environment)
+FastlyNsq::RakeTask.new(:listen_task, %i[channel topics] => :environment)

@@ -7,7 +7,7 @@ RSpec.describe FastlyNsq::Http::Nsqd do
   let(:base_uri) { 'http://example.com' }
 
   it 'makes simple get requests' do
-    %w(ping info config/nsqlookupd_tcp_addresses).each do |api|
+    %w[ping info config/nsqlookupd_tcp_addresses].each do |api|
       url = "#{base_uri}/#{api}"
       stub_request(:get, url)
       FastlyNsq::Http::Nsqd.send(api.tr('/', '_').to_sym, base_uri: base_uri)
@@ -56,7 +56,7 @@ RSpec.describe FastlyNsq::Http::Nsqd do
   end
 
   it 'can create, delete, empty, pause and unpause topics and channels' do
-    verbs = %w(create delete empty pause unpause)
+    verbs = %w[create delete empty pause unpause]
 
     verbs.each do |verb|
       url = "#{base_uri}/topic/#{verb}?topic=lol"

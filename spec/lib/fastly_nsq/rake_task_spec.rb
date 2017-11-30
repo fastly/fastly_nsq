@@ -65,7 +65,7 @@ RSpec.describe FastlyNsq::RakeTask do
       let(:listener) { class_double FastlyNsq::Listener, listen_to: nil }
 
       it 'configures via a block if one is given' do
-        FastlyNsq::RakeTask.new(:begin_listening, [:channel, :topics]) do |task|
+        FastlyNsq::RakeTask.new(:begin_listening, %i[channel topics]) do |task|
           task.channel  = channel
           task.topics   = topics
           task.listener = listener
@@ -80,7 +80,7 @@ RSpec.describe FastlyNsq::RakeTask do
       it 'prefers inline channel definition over block assignments' do
         new_channel = 'send_balloons_to_customer_service'
 
-        FastlyNsq::RakeTask.new(:begin_listening, [:channel, :topics]) do |task|
+        FastlyNsq::RakeTask.new(:begin_listening, %i[channel topics]) do |task|
           task.channel  = channel
           task.topics   = topics
           task.listener = listener
@@ -93,9 +93,9 @@ RSpec.describe FastlyNsq::RakeTask do
       end
 
       it 'configures a listener for each topic if there are multiple' do
-        topics = %w(foo bar baz quuz etc)
+        topics = %w[foo bar baz quuz etc]
 
-        FastlyNsq::RakeTask.new(:begin_listening, [:channel, :topics, :listener])
+        FastlyNsq::RakeTask.new(:begin_listening, %i[channel topics listener])
         Rake::Task['begin_listening'].execute(channel: channel, topics: topics, listener: listener)
 
         topics.each do |(topic, processor)|

@@ -9,7 +9,7 @@ class FastlyNsq::Http
     def_delegator :client, :post
 
     BASE_NSQD_URL = ENV.fetch 'NSQD_URL', "https://#{ENV.fetch('NSQD_HTTPS_ADDRESS', '')}"
-    VALID_FORMATS = %w(text json).freeze
+    VALID_FORMATS = %w[text json].freeze
 
     ##
     # Monitoring endpoint, should return 200 OK. It returns an HTTP 500 if it is not healthy.

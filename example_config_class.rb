@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 class MessageProcessor
   def self.process(message)
     FastlyNsq.logger.info("IN PROCESS: #{message}")

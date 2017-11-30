@@ -4,46 +4,29 @@ AllCops:
   Exclude:
     - 'db/schema.rb'
     - 'vendor/**/*'
-  TargetRubyVersion: 2.1
+    - 'Gemfile'
+  TargetRubyVersion: 2.2
 
-LineLength:
-  Enabled: false
-
-HashSyntax:
-  Enabled: false
-
-BracesAroundHashParameters:
-  Enabled: false
-
-CollectionMethods:
-  Enabled: false
-
-CyclomaticComplexity:
-  Enabled: true
-
-Style/DotPosition:
+Layout/DotPosition:
   Enabled: true
   EnforcedStyle: trailing
   SupportedStyles:
     - leading
     - trailing
 
-MethodLength:
+Lint/RescueWithoutErrorClass:
   Enabled: false
 
-PerlBackrefs:
+Metrics/MethodLength:
   Enabled: false
 
-RescueModifier:
+Metrics/LineLength:
   Enabled: false
 
-GuardClause:
-  Enabled: false
+Metrics/BlockLength:
+  ExcludedMethods: [describe, context, configure]
 
-IfUnlessModifier:
-  Enabled: false
-
-ClassLength:
+Style/ClassAndModuleChildren:
   Enabled: false
 
 Style/ClassVars:
@@ -51,22 +34,25 @@ Style/ClassVars:
   StyleGuide: 'https://github.com/bbatsov/ruby-style-guide#no-class-vars'
   Enabled: false
 
-Documentation:
+Style/Documentation:
   Enabled: false
 
-RegexpLiteral:
+Style/GuardClause:
   Enabled: false
 
-SignalException:
+Style/IfUnlessModifier:
+  Enabled: false
+
+Style/RegexpLiteral:
+  Enabled: false
+
+Style/SignalException:
   EnforcedStyle: only_raise
 
-Style/ClassAndModuleChildren:
-  Enabled: false
-
-Style/TrailingCommaInLiteral:
+Style/TrailingCommaInArguments:
   EnforcedStyleForMultiline: comma
   Enabled: true
 
-Style/TrailingCommaInArguments:
+Style/TrailingCommaInLiteral:
   EnforcedStyleForMultiline: comma
   Enabled: true
