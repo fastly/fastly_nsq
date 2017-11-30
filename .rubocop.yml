@@ -10,9 +10,6 @@ AllCops:
 LineLength:
   Enabled: false
 
-CyclomaticComplexity:
-  Enabled: true
-
 Style/DotPosition:
   Enabled: true
   EnforcedStyle: trailing
