@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# rubocop:disable Metrics/ClassLength
 $stdout.sync = true
 
 require 'fastly_nsq'
@@ -250,3 +251,4 @@ class FastlyNsq::CLI
     options[:pidfile]
   end
 end
+# rubocop:enable Metrics/ClassLength

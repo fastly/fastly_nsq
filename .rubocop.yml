@@ -26,9 +26,6 @@ GuardClause:
 IfUnlessModifier:
   Enabled: false
 
-ClassLength:
-  Enabled: false
-
 Style/ClassVars:
   Description: 'Avoid the use of class variables.'
   StyleGuide: 'https://github.com/bbatsov/ruby-style-guide#no-class-vars'
