@@ -10,9 +10,6 @@ AllCops:
 LineLength:
   Enabled: false
 
-HashSyntax:
-  Enabled: false
-
 BracesAroundHashParameters:
   Enabled: false
 

@@ -24,7 +24,7 @@ end
 #-------------------------------------------------------------------------------
 # In Rails, you can include the application environment. The task looks like:
 
-FastlyNsq::RakeTask.new(:listen_task => :environment)
+FastlyNsq::RakeTask.new(listen_task: :environment)
 
 #-------------------------------------------------------------------------------
 # It's also possible to define the rake task to allow for overriding channel
