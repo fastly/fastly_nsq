@@ -20,9 +20,6 @@ Style/DotPosition:
 MethodLength:
   Enabled: false
 
-PerlBackrefs:
-  Enabled: false
-
 RescueModifier:
   Enabled: false
 
