@@ -1,3 +1,7 @@
+### 0.13.1 / 2017-11-30
+
+* Allow specifying custom metadata on message delivery
+
 ### 0.12.3 / 2017-11-02
 
 * Remove initialization Timeout on Consumer Connections
