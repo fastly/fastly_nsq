@@ -4,7 +4,7 @@ AllCops:
   Exclude:
     - 'db/schema.rb'
     - 'vendor/**/*'
-  TargetRubyVersion: 2.1
+  TargetRubyVersion: 2.2
 
 LineLength:
   Enabled: false
@@ -70,3 +70,6 @@ Style/TrailingCommaInLiteral:
 Style/TrailingCommaInArguments:
   EnforcedStyleForMultiline: comma
   Enabled: true
+
+Lint/RescueWithoutErrorClass:
+  Enabled: false
