@@ -52,7 +52,7 @@ RSpec.configure do |config|
   def load_sample_environment_variables
     env_file = File.open('env_configuration_for_local_gem_tests.yml')
 
-    YAML.load(env_file).each do |key, value|
+    YAML.safe_load(env_file).each do |key, value|
       ENV[key.to_s] = value
     end
   end
