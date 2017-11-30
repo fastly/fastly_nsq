@@ -24,7 +24,7 @@ RSpec.describe FastlyNsq::Message do
   end
 
   it 'delegates methods to the nsq_message object' do
-    %w(attempts finish requeue touch timestamp).each do |method|
+    %w[attempts finish requeue touch timestamp].each do |method|
       subject = FastlyNsq::Message.new nsq_message
       expect(nsq_message).to receive(method)
 

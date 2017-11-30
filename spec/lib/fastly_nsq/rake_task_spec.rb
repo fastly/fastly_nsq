@@ -93,7 +93,7 @@ RSpec.describe FastlyNsq::RakeTask do
       end
 
       it 'configures a listener for each topic if there are multiple' do
-        topics = %w(foo bar baz quuz etc)
+        topics = %w[foo bar baz quuz etc]
 
         FastlyNsq::RakeTask.new(:begin_listening, %i[channel topics listener])
         Rake::Task['begin_listening'].execute(channel: channel, topics: topics, listener: listener)

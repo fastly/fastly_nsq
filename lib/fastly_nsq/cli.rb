@@ -120,7 +120,7 @@ class FastlyNsq::CLI
   def pid_status(pidfile)
     return :exited unless File.exist?(pidfile)
     pid = ::File.read(pidfile).to_i
-    return :dead if pid == 0
+    return :dead if pid.zero?
     Process.kill(0, pid) # check process status
     :running
   rescue Errno::ESRCH
@@ -151,7 +151,7 @@ class FastlyNsq::CLI
 
   def trap_signals
     self_read, self_write = IO.pipe
-    sigs = %w(INT TERM TTIN USR1)
+    sigs = %w[INT TERM TTIN USR1]
 
     sigs.each do |sig|
       begin

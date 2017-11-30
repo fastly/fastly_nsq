@@ -7,7 +7,7 @@ RSpec.describe FastlyNsq::Http::Nsqlookupd do
   let(:base_uri) { 'http://example.com' }
 
   it 'makes simple get requests' do
-    %w(topics nodes ping info).each do |api|
+    %w[topics nodes ping info].each do |api|
       url = "#{base_uri}/#{api}"
       stub_request(:get, url)
       FastlyNsq::Http::Nsqlookupd.send(api.to_sym, base_uri: base_uri)
