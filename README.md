@@ -311,6 +311,7 @@ you might write your own processor.
 * Joshua Wehner ([@jaw6](https://github.com/jaw6))
 * Lukas Eklund  ([@leklund](https://github.com/leklund))
 * Josh Lane     ([@lanej](https://github.com/lanej))
+* Hassan Shahid ([@set5think](https://github.com/set5think))
 
 ## Acknowledgements
 

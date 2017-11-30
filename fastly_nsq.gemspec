@@ -8,7 +8,7 @@ Gem::Specification.new do |gem|
   gem.summary       = 'Fastly NSQ Adapter'
   gem.description   = "Helper classes for Fastly's NSQ Services"
   gem.license       = 'MIT'
-  gem.authors       = ["Tommy O'Neil", 'Adarsh Pandit', 'Joshua Wehner', 'Lukas Eklund', 'Josh Lane']
+  gem.authors       = ["Tommy O'Neil", 'Adarsh Pandit', 'Joshua Wehner', 'Lukas Eklund', 'Josh Lane', 'Hassan Shahid']
   gem.email         = 'tommy@fastly.com'
   gem.homepage      = 'https://github.com/fastly/fastly_nsq'
 
