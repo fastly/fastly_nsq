@@ -10,9 +10,6 @@ AllCops:
 LineLength:
   Enabled: false
 
-CollectionMethods:
-  Enabled: false
-
 CyclomaticComplexity:
   Enabled: true
 
