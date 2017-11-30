@@ -17,7 +17,7 @@ module FastlyNsq
     end
 
     def empty?
-      connection.size.zero? # rubocop:disable ZeroLengthPredicate
+      connection.size.zero?
     end
 
     private
