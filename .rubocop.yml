@@ -20,9 +20,6 @@ Style/DotPosition:
 MethodLength:
   Enabled: false
 
-RescueModifier:
-  Enabled: false
-
 GuardClause:
   Enabled: false
 
