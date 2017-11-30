@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 module FastlyNsq::SafeThread
   def safe_thread(name, &block)
     Thread.new do

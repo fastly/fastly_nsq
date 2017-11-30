@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require 'fastly_nsq/message'
 require 'fastly_nsq/manager'
 require 'fastly_nsq/safe_thread'
