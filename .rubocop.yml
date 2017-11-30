@@ -4,6 +4,7 @@ AllCops:
   Exclude:
     - 'db/schema.rb'
     - 'vendor/**/*'
+    - 'Gemfile'
   TargetRubyVersion: 2.2
 
 LineLength:
