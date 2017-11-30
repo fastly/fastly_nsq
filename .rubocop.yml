@@ -10,7 +10,7 @@ AllCops:
 LineLength:
   Enabled: false
 
-Style/DotPosition:
+Layout/DotPosition:
   Enabled: true
   EnforcedStyle: trailing
   SupportedStyles:
