@@ -7,9 +7,6 @@ AllCops:
     - 'Gemfile'
   TargetRubyVersion: 2.2
 
-LineLength:
-  Enabled: false
-
 Layout/DotPosition:
   Enabled: true
   EnforcedStyle: trailing
@@ -17,13 +14,19 @@ Layout/DotPosition:
     - leading
     - trailing
 
-MethodLength:
+Lint/RescueWithoutErrorClass:
   Enabled: false
 
-GuardClause:
+Metrics/MethodLength:
   Enabled: false
 
-IfUnlessModifier:
+Metrics/LineLength:
+  Enabled: false
+
+Metrics/BlockLength:
+  ExcludedMethods: [describe, context, configure]
+
+Style/ClassAndModuleChildren:
   Enabled: false
 
 Style/ClassVars:
@@ -31,28 +34,25 @@ Style/ClassVars:
   StyleGuide: 'https://github.com/bbatsov/ruby-style-guide#no-class-vars'
   Enabled: false
 
-Documentation:
+Style/Documentation:
   Enabled: false
 
-RegexpLiteral:
+Style/GuardClause:
   Enabled: false
 
-SignalException:
+Style/IfUnlessModifier:
+  Enabled: false
+
+Style/RegexpLiteral:
+  Enabled: false
+
+Style/SignalException:
   EnforcedStyle: only_raise
-
-Style/ClassAndModuleChildren:
-  Enabled: false
-
-Style/TrailingCommaInLiteral:
-  EnforcedStyleForMultiline: comma
-  Enabled: true
 
 Style/TrailingCommaInArguments:
   EnforcedStyleForMultiline: comma
   Enabled: true
 
-Lint/RescueWithoutErrorClass:
-  Enabled: false
-
-Metrics/BlockLength:
-  ExcludedMethods: [describe, context, configure]
+Style/TrailingCommaInLiteral:
+  EnforcedStyleForMultiline: comma
+  Enabled: true
