@@ -39,6 +39,32 @@ RSpec.describe FastlyNsq::Messenger do
 
       expect(producer).to have_received(:write).with(expected_attributes.to_json)
     end
+
+    it 'allows setting arbitrary metadata' do
+      meta = { test: 'test' }
+
+      expected_attributes = { data: message, meta: meta.merge(originating_service: origin) }
+
+      subject.producers['topic'] = producer
+
+      subject.deliver message: message, on_topic: 'topic', meta: meta, originating_service: origin
+
+      expect(producer).to have_received(:write).with(expected_attributes.to_json)
+    end
+
+    it 'prevents originating_service from being overwritten by meta' do
+      meta = { test: 'test' }
+
+      expected_attributes = { data: message, meta: meta.merge(originating_service: origin) }
+
+      meta[:originating_service] = 'other_service'
+
+      subject.producers['topic'] = producer
+
+      subject.deliver message: message, on_topic: 'topic', meta: meta, originating_service: origin
+
+      expect(producer).to have_received(:write).with(expected_attributes.to_json)
+    end
   end
 
   describe '#originating_service=' do
