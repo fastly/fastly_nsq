@@ -4,12 +4,12 @@ module FastlyNsq::Messenger
 
   module_function
 
-  def deliver(message:, on_topic:, originating_service: nil)
+  def deliver(message:, on_topic:, originating_service: nil, meta: {})
+    meta[:originating_service] = originating_service || self.originating_service
+
     payload = {
       data: message,
-      meta: {
-        originating_service: originating_service || self.originating_service,
-      },
+      meta: meta,
     }
 
     producer_for(topic: on_topic) do |producer|
