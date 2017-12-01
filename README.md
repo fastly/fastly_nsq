@@ -181,6 +181,12 @@ Wrapper around a producer for sending messages and persisting producer objects.
 FastlyNsq::Messenger.deliver(message: msg, on_topic: 'my_topic', originating_service: 'my service')
 ```
 
+You can also optionally pass custom metadata.
+
+```ruby
+FastlyNsq::Messenger.deliver(message: msg, on_topic: 'my_topic', originating_service: 'my service', meta: { test: 'test' })
+```
+
 This will use a FastlyNsq::Producer for the given topic or create on if it isn't
 already persisted. Then it will write the passed message to the queue. If you don't set
 the originating service it will use `unknown`
