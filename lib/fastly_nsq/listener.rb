@@ -27,7 +27,6 @@ module FastlyNsq
     def identity
       {
         consumer:     @consumer,
-        logger:       @logger,
         manager:      @manager,
         preprocessor: @preprocessor,
         processor:    @processor,

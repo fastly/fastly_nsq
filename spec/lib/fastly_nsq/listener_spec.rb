@@ -151,7 +151,6 @@ RSpec.describe FastlyNsq::Listener do
       it 'can describe itself' do
         id = listener.identity
         expect(id[:consumer]).to_not be_nil
-        expect(id[:logger]).to be logger
         expect(id[:manager]).to be manager
         expect(id[:preprocessor]).to be_nil
         expect(id[:processor]).to_not be_nil
