@@ -17,6 +17,10 @@ class FastlyNsq::Message
     @data ||= body['data']
   end
 
+  def meta
+    @meta ||= body['meta']
+  end
+
   def body
     @body ||= JSON.parse(raw_body)
   end

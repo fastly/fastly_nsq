@@ -3,7 +3,7 @@ require 'json'
 
 RSpec.describe FastlyNsq::Message do
   let(:nsq_message) { double 'Nsq::Message', body: json_body, attempts: nil, finish: nil, requeue: nil, touch: nil, timestamp: nil }
-  let(:body)        { { 'data' => 'goes here', 'other_field' => 'is over here' } }
+  let(:body)        { { 'data' => 'goes here', 'other_field' => 'is over here', 'meta' => 'meta stuff' } }
   let(:json_body)   { body.to_json }
   subject           { FastlyNsq::Message.new nsq_message }
 
@@ -17,6 +17,10 @@ RSpec.describe FastlyNsq::Message do
 
   it 'plucks data as data' do
     expect(subject.data).to eq('goes here')
+  end
+
+  it 'plucks meta as meta' do
+    expect(subject.meta).to eq(body['meta'])
   end
 
   it 'aliases raw_body to to_s' do
