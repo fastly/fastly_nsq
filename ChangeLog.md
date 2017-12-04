@@ -1,3 +1,8 @@
+### 0.13.2 / 2017-12-04
+
+* Reduce circular log output
+* Allow retrieving metadata similar to data.
+
 ### 0.13.1 / 2017-11-30
 
 * Allow specifying custom metadata on message delivery
