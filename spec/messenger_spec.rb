@@ -1,4 +1,6 @@
 
+# frozen_string_literal: true
+
 require 'spec_helper'
 require 'json'
 
@@ -26,7 +28,7 @@ RSpec.describe FastlyNsq::Messenger do
     it 'writes a single message on a producer' do
       subject.producers['topic'] = producer
 
-      subject.deliver message: message, on_topic: 'topic', originating_service: origin
+      subject.deliver message: message, topic: 'topic', originating_service: origin
 
       expect(producer).to have_received(:write).with(expected_attributes.to_json)
     end
@@ -35,7 +37,7 @@ RSpec.describe FastlyNsq::Messenger do
       subject.producers['topic'] = producer
       expected_attributes[:meta][:originating_service] = 'Unknown'
 
-      subject.deliver message: message, on_topic: 'topic'
+      subject.deliver message: message, topic: 'topic'
 
       expect(producer).to have_received(:write).with(expected_attributes.to_json)
     end
@@ -47,7 +49,7 @@ RSpec.describe FastlyNsq::Messenger do
 
       subject.producers['topic'] = producer
 
-      subject.deliver message: message, on_topic: 'topic', meta: meta, originating_service: origin
+      subject.deliver message: message, topic: 'topic', meta: meta, originating_service: origin
 
       expect(producer).to have_received(:write).with(expected_attributes.to_json)
     end
@@ -61,7 +63,7 @@ RSpec.describe FastlyNsq::Messenger do
 
       subject.producers['topic'] = producer
 
-      subject.deliver message: message, on_topic: 'topic', meta: meta, originating_service: origin
+      subject.deliver message: message, topic: 'topic', meta: meta, originating_service: origin
 
       expect(producer).to have_received(:write).with(expected_attributes.to_json)
     end
@@ -74,7 +76,7 @@ RSpec.describe FastlyNsq::Messenger do
       subject.originating_service = service
       expected_attributes[:meta][:originating_service] = service
 
-      subject.deliver message: message, on_topic: 'nanotopic'
+      subject.deliver message: message, topic: 'nanotopic'
 
       expect(producer).to have_received(:write).with(expected_attributes.to_json)
 
