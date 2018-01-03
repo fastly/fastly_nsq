@@ -3,10 +3,21 @@
 require 'spec_helper'
 
 RSpec.describe FastlyNsq do
+  describe '#channel=' do
+    let!(:default_channel) { FastlyNsq.channel }
+    after { FastlyNsq.channel = default_channel }
+
+    it 'allows the channel to be set and retrieved' do
+      expect(subject.channel).to be_nil
+      subject.channel = 'foo'
+      expect(subject.channel).to eq('foo')
+    end
+  end
+
   describe '#logger=' do
     let!(:default_logger) { FastlyNsq.logger }
-
     after { FastlyNsq.logger = default_logger }
+
     it 'allows the logger to be set and retrieved' do
       logger = Logger.new(STDOUT)
       FastlyNsq.logger = logger
