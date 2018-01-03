@@ -3,13 +3,13 @@
 require 'spec_helper'
 
 RSpec.describe FastlyNsq::PriorityThreadPool do
-  let!(:pool) { described_class.new(max_threads: 1) }
+  let!(:pool) { described_class.new(max_threads: 20) }
 
   after { pool.shutdown || pool.wait_for_termination }
 
   it 'executes work based on supplied priority' do
     actual = []
-    count = 5
+    count = 100
     count.times { |i| pool.post(i) { actual << i } }
     expect { pool.completed_task_count }.to eventually(eq(count)).within(5)
 
