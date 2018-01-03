@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module EnvHelpers
   def use_fake_connection
     allow(ENV).to receive(:[]).with('FAKE_QUEUE').and_return(true)
