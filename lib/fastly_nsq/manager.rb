@@ -46,7 +46,7 @@ class FastlyNsq::Manager
     logger.info { "Listening to topic:'#{listener.topic}' on channel: '#{listener.channel}'" }
 
     if topic_listeners[listener.topic]
-      logger.warn("topic: #{listener.topic} was added more than once")
+      logger.warn { "topic: #{listener.topic} was added more than once" }
     end
 
     topic_listeners[listener.topic] = listener

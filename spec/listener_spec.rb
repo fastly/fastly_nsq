@@ -47,6 +47,12 @@ RSpec.describe FastlyNsq::Listener do
         expect(listener.logger).to eq(FastlyNsq.logger)
       end
     end
+
+    it 'warns when creating a listener for the same topic' do
+      expect(FastlyNsq.manager.logger).to receive(:warn).and_yield.and_return(match("#{topic} was added more than once"))
+
+      described_class.new(topic: topic, channel: channel, processor: processor)
+    end
   end
 
   describe '#priority' do
