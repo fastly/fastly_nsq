@@ -3,7 +3,7 @@
 require 'spec_helper'
 require 'fastly_nsq/http/nsqlookupd'
 
-RSpec.describe FastlyNsq::Http::Nsqlookupd do
+RSpec.describe FastlyNsq::Http::Nsqlookupd, :webmock do
   let(:base_uri) { 'http://example.com' }
 
   it 'makes simple get requests' do
