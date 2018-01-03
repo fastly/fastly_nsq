@@ -7,7 +7,7 @@ class FastlyNsq::Http
     extend Forwardable
     def_delegator :client, :get
 
-    BASE_NSQLOOKUPD_URL = "http://#{ENV.fetch('NSQLOOKUPD_HTTP_ADDRESS', '').split(',')[0]}".freeze
+    BASE_NSQLOOKUPD_URL = "http://#{ENV.fetch('NSQLOOKUPD_HTTP_ADDRESS', '').split(',')[0]}"
 
     ##
     # List of producers for a given topic
