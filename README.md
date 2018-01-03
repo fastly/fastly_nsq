@@ -61,15 +61,39 @@ producer.write(message_data.to_json)
 ```
 The mock/real strategy used
 can be switched
-by adding an environment variable
-to your application:
+by requiring the test file and configuring the mode.
 
 ```ruby
-# for the fake
-ENV['FAKE_QUEUE'] = true
+require 'fastly_nsq/testing'
+FastlyNsq::Testing.enabled? #=> true
+FastlyNsq::Testing.disabled? #=> false
 
-# for the real thing
-ENV['FAKE_QUEUE'] = false
+producer = FastlyNsq::Producer.new(topic: topic)
+listener = FastlyNsq::Listener.new(topic: topic, channel: channel, processor: ->(m) { puts 'got: '+ m.body })
+
+FastlyNsq::Testing.fake! # default, messages accumulate on the listeners
+
+producer.write '{"foo":"bar"}'
+listener.messages.size #=> 1
+
+FastlyNsq::Testing.reset!  # remove all accumulated messages
+
+listener.messages.size #=> 0
+
+producer.write '{"foo":"bar"}'
+listener.messages.size #=> 1
+
+listener.drain
+#  got: {"foo"=>"bar"}
+listener.messages.size #=> 0
+
+FastlyNsq::Testing.inline! # messages are processed as they are produced
+producer.write '{"foo":"bar"}'
+#  got: {"foo"=>"bar"}
+listener.messages.size #=> 0
+
+FastlyNsq::Testing.disable! # do it live
+FastlyNsq::Testing.enable!  # re-enable testing mode
 ```
 
 ### `FastlyNsq::Consumer`
@@ -93,11 +117,6 @@ consumer.size #=> 0
 consumer.terminate
 ```
 
-As above,
-the mock/real strategy used
-can be switched by setting the
-`FAKE_QUEUE` environment variable appropriately.
-
 ### `FastlyNsq::Listener`
 
 To process the next message on the queue:
@@ -107,57 +126,24 @@ topic     = 'user_created'
 channel   = 'my_consuming_service'
 processor = MessageProcessor
 
-FastlyNsq::Listener.new(topic: topic, channel: channel, processor: processor).go(run_once: true)
+FastlyNsq::Listener.new(topic: topic, channel: channel, processor: processor)
 ```
 
-This will pop the next message
+This will send messages through `FastlyNsq.manager.pool`
 off of the queue
 and send the JSON text body
-to `MessageProcessor.process(message_body, topic)`.
+to `MessageProcessor.call(message)`.
 
-To initiate a blocking loop to process messages continuously:
+Specify a topic priority by providing a number (default is 5)
 
 ```ruby
 topic     = 'user_created'
 channel   = 'my_consuming_service'
 processor = MessageProcessor
+priority  = 7 # a little higher
 
-FastlyNsq::Listener.new(topic: topic, channel: channel, processor: processor).go
+FastlyNsq::Listener.new(topic: topic, channel: channel, processor: processor, priority: priority)
 ```
-
-This will block until
-there is a new message on the queue,
-      pop the next message
-      off of the queue
-      and send it to `MessageProcessor.process(message_body, topic)`.
-
-### `FastlyNsq::RakeTask`
-
-To help facilitate running the `FastlyNsq::Listener` in a blocking fashion
-outside your application, a simple `RakeTask` is provided.
-
-The task will listen
-to all specified topics,
-each in a separate thread.
-
-This task can be added into your `Rakefile` in one of two ways:
-
-Using a block:
-```ruby
-require 'fastly_nsq/rake_task'
-
-FastlyNsq::RakeTask.new(:listen_task) do |task|
-  task.channel = 'some_channel'
-  task.topics  = {
-    'some_topic' => SomeMessageProcessor
-  }
-end
-```
-
-The task can also define a `call`-able "preprocessor" (called before any `Processor.process`) and a custom `logger`.
-
-See the [`Rakefile`](examples/Rakefile) file
-for more detail.
 
 ### `FastlyNsq::CLI`
 
@@ -166,11 +152,11 @@ outside your application, a `CLI` and bin script [`fastly_nsq`](bin/fastly_nsq)
 are provided.
 
 This can be setup ahead of time by calling `FastlyNsq.configure` and passing
-block. An exmaple of this can be found here: [`Example Config`](exmaple_config_class.rb)
+block. An exmaple of this can be found here: [`Example Config`](example_config_class.rb)
 
 An example of using the cli:
 ```bash
-./bin/fastly_nsq -r ./example_config_class.rb -L ./test.log -P ./fastly_nsq.pid -v -d -t 4
+./bin/fastly_nsq -r ./example_config_class.rb -L ./test.log -P ./fastly_nsq.pid -v -d -t 4 -c 10
 ```
 
 ### `FastlyNsq::Messenger`
@@ -178,13 +164,13 @@ An example of using the cli:
 Wrapper around a producer for sending messages and persisting producer objects.
 
 ```ruby
-FastlyNsq::Messenger.deliver(message: msg, on_topic: 'my_topic', originating_service: 'my service')
+FastlyNsq::Messenger.deliver(message: msg, topic: 'my_topic', originating_service: 'my service')
 ```
 
 You can also optionally pass custom metadata.
 
 ```ruby
-FastlyNsq::Messenger.deliver(message: msg, on_topic: 'my_topic', originating_service: 'my service', meta: { test: 'test' })
+FastlyNsq::Messenger.deliver(message: msg, topic: 'my_topic', originating_service: 'my service', meta: { test: 'test' })
 ```
 
 This will use a FastlyNsq::Producer for the given topic or create on if it isn't
@@ -281,34 +267,6 @@ NSQLOOKUPD_HTTP_ADDRESS='127.0.0.1:4161, 10.1.1.101:4161'
 
 See the [`.sample.env`](examples/.sample.env) file
 for more detail.
-
-### Testing Against the Fake
-
-In the gem's test suite,
-the fake message queue is used.
-
-If you would like to force
-use of the real NSQ adapter,
-ensure `FAKE_QUEUE` is set to `false`.
-
-When you are developing your application,
-it is recommended to
-start by using the fake queue:
-
-```shell
-FAKE_QUEUE=true
-```
-
-Also be sure call
-`FakeBackend.reset!`
-before each test in your app to ensure
-there are no leftover messages.
-
-Also note that during gem tests,
-we are aliasing `MessageProcessor` to `SampleMessageProcessor`.
-You can also refer to the latter
-as an example of how
-you might write your own processor.
 
 ## Contributors
 
