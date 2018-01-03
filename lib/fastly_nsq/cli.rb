@@ -75,6 +75,10 @@ class FastlyNsq::CLI
     opts = {}
 
     @parser = OptionParser.new do |o|
+      o.on '-c', '--concurrency COUNT', 'Number of threads used to process messages' do |arg|
+        opts[:max_threads] = arg
+      end
+
       o.on '-d', '--daemon', 'Daemonize process' do |arg|
         opts[:daemonize] = arg
       end
@@ -245,6 +249,10 @@ class FastlyNsq::CLI
 
   def logfile
     options[:logfile]
+  end
+
+  def max_threads
+    options[:max_threads]
   end
 
   def pidfile
