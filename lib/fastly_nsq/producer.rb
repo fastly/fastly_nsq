@@ -1,41 +1,52 @@
-require 'forwardable'
+# frozen_string_literal: true
 
-module FastlyNsq
-  class Producer
-    extend Forwardable
-    def_delegator :connection, :terminate
-    def_delegator :connection, :write
+class FastlyNsq::Producer
+  DEFAULT_CONNECTION_TIMEOUT = 5 # seconds
 
-    def initialize(topic:, tls_options: nil, connector: nil)
-      @topic       = topic
-      @tls_options = TlsOptions.as_hash(tls_options)
-      @connector   = connector
-      Timeout.timeout(5) do
-        sleep(0.1) until connection.connected?
-      end
-    rescue Timeout::Error => error
-      FastlyNsq.logger.error "Producer for #{topic} failed to connect!"
-      connection.terminate
-      raise error
-    end
+  attr_reader :topic, :connect_timeout, :connection
 
-    private
+  def initialize(topic:, tls_options: nil, connect_timeout: DEFAULT_CONNECTION_TIMEOUT)
+    @topic           = topic
+    @tls_options     = FastlyNsq::TlsOptions.as_hash(tls_options)
+    @connect_timeout = connect_timeout
 
-    attr_reader :topic, :tls_options
-
-    def connection
-      @connection ||= connector.new(params)
-    end
-
-    def connector
-      @connector || FastlyNsq.strategy::Producer
-    end
-
-    def params
-      {
-        nsqlookupd:  ENV.fetch('NSQLOOKUPD_HTTP_ADDRESS').split(',').map(&:strip),
-        topic:       topic,
-      }.merge(tls_options)
-    end
+    connect
   end
+
+  def terminate
+    connection.terminate
+    @connection = nil
+  end
+
+  def connected?
+    return false unless connection
+
+    connection.connected?
+  end
+
+  def write(message)
+    raise FastlyNsq::NotConnectedError unless connected?
+    connection.write message
+  end
+
+  def connect
+    @connection ||= Nsq::Producer.new(
+      tls_options.merge(
+        nsqlookupd:  FastlyNsq.lookupd_http_addresses,
+        topic:       topic,
+      ),
+    )
+
+    Timeout.timeout(connect_timeout) { sleep(0.1) until connection.connected? }
+
+    true
+  rescue Timeout::Error => error
+    FastlyNsq.logger.error "Producer for #{topic} failed to connect!"
+    connection.terminate
+    raise error
+  end
+
+  private
+
+  attr_reader :tls_options
 end
