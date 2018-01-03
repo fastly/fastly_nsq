@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module FastlyNsq
   class TlsOptions
     def self.as_hash(context = nil)
