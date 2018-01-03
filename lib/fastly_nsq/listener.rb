@@ -1,8 +1,12 @@
 # frozen_string_literal: true
 
 class FastlyNsq::Listener
+  extend Forwardable
+
   DEFAULT_PRIORITY = 0
   DEFAULT_CONNECTION_TIMEOUT = 5 # seconds
+
+  def_delegators :consumer, :connected?
 
   attr_reader :preprocessor, :topic, :processor, :priority, :channel, :logger, :consumer
 
@@ -33,10 +37,6 @@ class FastlyNsq::Listener
     preprocessor&.call(message)
     result = processor.call(message)
     nsq_message.finish if result
-  end
-
-  def connected?
-    consumer.connected?
   end
 
   def terminate
