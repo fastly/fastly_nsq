@@ -20,6 +20,10 @@ if ENV['DEBUG']
   FastlyNsq.logger = Logger.new(STDOUT)
 end
 
+if Thread.respond_to?(:report_on_exception)
+  Thread.report_on_exception = ENV.key?('DEBUG')
+end
+
 RSpec.configure do |config|
   config.expect_with :rspec do |expectations|
     expectations.include_chain_clauses_in_custom_matcher_descriptions = true
