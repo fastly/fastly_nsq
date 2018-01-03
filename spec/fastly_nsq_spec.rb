@@ -7,6 +7,17 @@ RSpec.describe FastlyNsq do
     specify { expect { |b| described_class.configure(&b) }.to yield_with_args(described_class) }
   end
 
+  describe '#listen' do
+    let!(:default_channel) { subject.channel }
+    before { subject.channel = 'fnsq' }
+    after { subject.channel = default_channel }
+
+    it 'creates a listener' do
+      topic = 'fnsq'
+      expect { subject.listen topic, ->(*) {} }.to change { subject.manager.topics }.to([topic])
+    end
+  end
+
   describe '#channel=' do
     let!(:default_channel) { subject.channel }
     after { subject.channel = default_channel }

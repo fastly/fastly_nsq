@@ -15,6 +15,10 @@ module FastlyNsq
     attr_accessor :channel, :preprocessor
     attr_writer :logger
 
+    def listen(topic, processor)
+      FastlyNsq::Listener.new(topic: topic, processor: processor)
+    end
+
     def logger
       @logger ||= Logger.new(nil)
     end
