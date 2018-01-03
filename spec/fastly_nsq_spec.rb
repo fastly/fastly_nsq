@@ -8,8 +8,8 @@ RSpec.describe FastlyNsq do
   end
 
   describe '#channel=' do
-    let!(:default_channel) { FastlyNsq.channel }
-    after { FastlyNsq.channel = default_channel }
+    let!(:default_channel) { subject.channel }
+    after { subject.channel = default_channel }
 
     it 'allows the channel to be set and retrieved' do
       expect(subject.channel).to be_nil
@@ -19,31 +19,31 @@ RSpec.describe FastlyNsq do
   end
 
   describe '#logger=' do
-    let!(:default_logger) { FastlyNsq.logger }
-    after { FastlyNsq.logger = default_logger }
+    let!(:default_logger) { subject.logger }
+    after { subject.logger = default_logger }
 
     it 'allows the logger to be set and retrieved' do
       logger = Logger.new(STDOUT)
-      FastlyNsq.logger = logger
+      subject.logger = logger
 
-      expect(FastlyNsq.logger).to eq logger
+      expect(subject.logger).to eq logger
     end
   end
 
   describe '#manager' do
     it 'represents the active default manager' do
-      expect(FastlyNsq.manager).not_to be_stopped
+      expect(subject.manager).not_to be_stopped
     end
   end
 
   describe '#manager=' do
     it 'transfers to specified manager' do
-      old_manager = FastlyNsq.manager
+      old_manager = subject.manager
       new_manager = FastlyNsq::Manager.new
 
       expect(old_manager).to receive(:transfer).with(new_manager)
 
-      FastlyNsq.manager = new_manager
+      subject.manager = new_manager
     end
   end
 
