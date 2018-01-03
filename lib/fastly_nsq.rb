@@ -8,7 +8,6 @@ require 'logger'
 require 'forwardable'
 
 module FastlyNsq
-  ConfigurationError = Class.new(StandardError)
   NotConnectedError = Class.new(StandardError)
 
   class << self
