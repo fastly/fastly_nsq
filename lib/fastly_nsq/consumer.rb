@@ -19,7 +19,7 @@ class FastlyNsq::Consumer
   end
 
   def empty?
-    connection.size.zero?
+    size.zero?
   end
 
   private
