@@ -3,6 +3,10 @@
 require 'spec_helper'
 
 RSpec.describe FastlyNsq do
+  describe '#configure' do
+    specify { expect { |b| described_class.configure(&b) }.to yield_with_args(described_class) }
+  end
+
   describe '#channel=' do
     let!(:default_channel) { FastlyNsq.channel }
     after { FastlyNsq.channel = default_channel }
