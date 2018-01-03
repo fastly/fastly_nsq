@@ -1,62 +1,52 @@
+# frozen_string_literal: true
+
 require 'nsq'
+require 'concurrent'
+require 'fc'
+require 'set'
+require 'logger'
+require 'forwardable'
+
+module FastlyNsq
+  ConfigurationError = Class.new(StandardError)
+  NotConnectedError = Class.new(StandardError)
+
+  class << self
+    attr_accessor :channel, :preprocessor
+    attr_writer :logger
+
+    def logger
+      @logger ||= Logger.new(nil)
+    end
+
+    def configure
+      yield self
+    end
+
+    def manager
+      @manager ||= FastlyNsq::Manager.new
+    end
+
+    def manager=(manager)
+      @manager&.transfer(manager)
+      @manager = manager
+    end
+
+    def lookupd_http_addresses
+      ENV.fetch('NSQLOOKUPD_HTTP_ADDRESS').split(',').map(&:strip)
+    end
+  end
+end
+
 require 'fastly_nsq/consumer'
-require 'fastly_nsq/fake_backend'
+require 'fastly_nsq/priority_thread_pool'
+require 'fastly_nsq/priority_queue'
+require 'fastly_nsq/feeder'
+require 'fastly_nsq/launcher'
 require 'fastly_nsq/listener'
+require 'fastly_nsq/manager'
 require 'fastly_nsq/message'
 require 'fastly_nsq/messenger'
 require 'fastly_nsq/producer'
-require 'fastly_nsq/strategy'
 require 'fastly_nsq/tls_options'
 require 'fastly_nsq/version'
-
-module FastlyNsq
-  module_function
-
-  @preprocessor = nil
-
-  def channel=(channel)
-    @channel ||= channel
-  end
-
-  def logger=(logger)
-    strategy.logger = logger
-  end
-
-  def preprocessor=(preprocessor)
-    @preprocessor ||= preprocessor
-  end
-
-  def channel
-    @channel
-  end
-
-  def logger
-    strategy.logger
-  end
-
-  def preprocessor
-    @preprocessor
-  end
-
-  def strategy
-    Strategy.for_queue
-  end
-
-  def configure
-    yield self
-  end
-
-  def topic_map
-    @listener_config.topic_map
-  end
-
-  def listener_config
-    @listener_config ||= FastlyNsq::Listener::Config.new
-    yield @listener_config if block_given?
-    @listener_config
-  end
-
-  def reset_config
-    @listener_config = nil
-  end
-end
