@@ -77,38 +77,40 @@ RSpec.describe FastlyNsq::Listener do
       to raise_error(ArgumentError, match('Integer'))
   end
 
-  it 'processes a message' do
-    body = { 'foo' => 'bar' }
-    message = spy('message', body: JSON.dump(body))
-    expect { subject.call(message) }.to change { messages }.to([body])
+  describe '#call' do
+    it 'processes a message' do
+      body = { 'foo' => 'bar' }
+      message = spy('message', body: JSON.dump(body))
+      expect { subject.call(message) }.to change { messages }.to([body])
+    end
+
+    describe 'when the processor returns true' do
+      let(:processor) { ->(_) { true } }
+
+      it 'finishes the message' do
+        message = spy('message', body: '{}')
+        subject.call(message)
+
+        expect(message).to have_received(:finish)
+      end
+    end
+
+    describe 'when the processor returns false' do
+      let(:processor) { ->(_) { false } }
+
+      it 'finishes the message' do
+        message = spy('message', body: '{}')
+        subject.call(message)
+
+        expect(message).not_to have_received(:finish)
+      end
+    end
   end
 
   it { should be_connected }
 
   it 'should terminate' do
     expect { subject.terminate }.to change(subject, :connected?).to(false)
-  end
-
-  describe 'when the processor returns true' do
-    let(:processor) { ->(_) { true } }
-
-    it 'finishes the message' do
-      message = spy('message', body: '{}')
-      subject.call(message)
-
-      expect(message).to have_received(:finish)
-    end
-  end
-
-  describe 'when the processor returns false' do
-    let(:processor) { ->(_) { false } }
-
-    it 'finishes the message' do
-      message = spy('message', body: '{}')
-      subject.call(message)
-
-      expect(message).not_to have_received(:finish)
-    end
   end
 
   describe 'faking', :fake do

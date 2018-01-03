@@ -36,7 +36,8 @@ class FastlyNsq::Listener
     logger.info "[NSQ] Message received on topic [#{topic}]: #{message}"
     preprocessor&.call(message)
     result = processor.call(message)
-    nsq_message.finish if result
+    message.finish if result
+    message
   end
 
   def terminate
