@@ -9,12 +9,18 @@ RSpec.describe FastlyNsq do
 
   describe '#listen' do
     let!(:default_channel) { subject.channel }
+    let!(:topic) { 'fnsq' }
+
     before { subject.channel = 'fnsq' }
     after { subject.channel = default_channel }
 
     it 'creates a listener' do
-      topic = 'fnsq'
       expect { subject.listen topic, ->(*) {} }.to change { subject.manager.topics }.to([topic])
+    end
+
+    it 'creates a listener with a specific priority' do
+      listener = subject.listen topic, ->(*) {}, priority: 10
+      expect(listener.priority).to eq(10)
     end
   end
 
