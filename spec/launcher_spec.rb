@@ -1,11 +1,12 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
-require 'fastly_nsq/launcher'
 
 RSpec.describe FastlyNsq::Launcher do
   let(:launcher) { FastlyNsq::Launcher.new options }
   let(:manager)  { instance_double 'Manager', start: nil, quiet: nil, stop: nil }
   let(:thread)   { instance_double 'Thread' }
-  let(:options)  { { joe: 'biden', timeout: 9 } }
+  let(:options)  { { max_workers: 1, timeout: 9 } }
 
   before do
     allow(FastlyNsq::Manager).to receive(:new).and_return(manager)
@@ -13,7 +14,7 @@ RSpec.describe FastlyNsq::Launcher do
   end
 
   it 'creates a manager with correct options' do
-    expect(FastlyNsq::Manager).to have_received(:new).with(options)
+    expect(FastlyNsq::Manager).to have_received(:new).with(max_workers: 1)
   end
 
   describe '#run' do
