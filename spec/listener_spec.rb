@@ -14,6 +14,53 @@ RSpec.describe FastlyNsq::Listener do
 
   subject { described_class.new(topic: topic, channel: channel, processor: processor) }
 
+  describe '#initialize' do
+    describe 'with FastlyNsq.channel set' do
+      let!(:default_channel) { FastlyNsq.channel }
+      before { FastlyNsq.channel = 'fnsq' }
+      after { FastlyNsq.channel = default_channel }
+
+      it 'defaults to FastlyNsq.channel' do
+        listener = described_class.new(topic: topic, processor: processor)
+        expect(listener.channel).to eq(FastlyNsq.channel)
+      end
+    end
+
+    describe 'with FastlyNsq.preprocessor set' do
+      let!(:default_preprocessor) { FastlyNsq.preprocessor }
+      before { FastlyNsq.preprocessor = 'fnsq' }
+      after { FastlyNsq.preprocessor = default_preprocessor }
+
+      it 'defaults to FastlyNsq.preprocessor' do
+        listener = described_class.new(topic: topic, processor: processor, channel: channel)
+        expect(listener.preprocessor).to eq(FastlyNsq.preprocessor)
+      end
+    end
+
+    describe 'with FastlyNsq.logger set' do
+      let!(:default_logger) { FastlyNsq.logger }
+      before { FastlyNsq.logger = Logger.new(nil) }
+      after { FastlyNsq.logger = default_logger }
+
+      it 'defaults to FastlyNsq.logger' do
+        listener = described_class.new(topic: topic, processor: processor, channel: channel)
+        expect(listener.logger).to eq(FastlyNsq.logger)
+      end
+    end
+  end
+
+  describe '#priority' do
+    specify { expect(subject.priority).to eq(described_class::DEFAULT_PRIORITY) }
+  end
+
+  describe '#consumer' do
+    specify { expect(subject.consumer).to be_a(FastlyNsq::Consumer) }
+  end
+
+  describe 'connect_timeout' do
+    specify { expect(subject.consumer.connect_timeout).to eq(described_class::DEFAULT_CONNECTION_TIMEOUT) }
+  end
+
   it 'requires processor to respond_to #call' do
     expect { described_class.new(topic: topic, channel: channel, processor: 'foo') }.
       to raise_error(ArgumentError, match('#call'))

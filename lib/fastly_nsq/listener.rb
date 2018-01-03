@@ -4,10 +4,10 @@ class FastlyNsq::Listener
   DEFAULT_PRIORITY = 0
   DEFAULT_CONNECTION_TIMEOUT = 5 # seconds
 
-  attr_reader :preprocessor, :topic, :processor, :priority, :channel
+  attr_reader :preprocessor, :topic, :processor, :priority, :channel, :logger, :consumer
 
-  def initialize(topic:, processor:, preprocessor: nil, channel: nil, consumer: nil, logger: FastlyNsq.logger,
-                 priority: DEFAULT_PRIORITY, connect_timeout: DEFAULT_CONNECTION_TIMEOUT)
+  def initialize(topic:, processor:, preprocessor: FastlyNsq.preprocessor, channel: FastlyNsq.channel, consumer: nil,
+                 logger: FastlyNsq.logger, priority: DEFAULT_PRIORITY, connect_timeout: DEFAULT_CONNECTION_TIMEOUT)
 
     raise ArgumentError, "processor #{processor.inspect} does not respond to #call" unless processor.respond_to?(:call)
     raise ArgumentError, "priority #{priority.inspect} must be a Integer" unless priority.is_a?(Integer)
@@ -46,8 +46,6 @@ class FastlyNsq::Listener
   end
 
   private
-
-  attr_reader :logger, :consumer
 
   def log(message)
     logger&.info "[NSQ] Message received on topic [#{topic}]: #{message}"
