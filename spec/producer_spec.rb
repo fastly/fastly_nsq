@@ -13,7 +13,8 @@ RSpec.describe FastlyNsq::Producer do
   it { should be_connected }
 
   it 'writes a message' do
-    expect { subject.write 'foo' }.to change { message_count(topic) }.by(1)
+    subject.write 'foo'
+    expect { message_count(topic) }.to eventually(eq(1)).within(5)
   end
 
   it 'should terminate' do
