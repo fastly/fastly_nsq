@@ -134,13 +134,13 @@ off of the queue
 and send the JSON text body
 to `MessageProcessor.call(message)`.
 
-Specify a topic priority by providing a number (default is 5)
+Specify a topic priority by providing a number (default is 0)
 
 ```ruby
 topic     = 'user_created'
 channel   = 'my_consuming_service'
 processor = MessageProcessor
-priority  = 7 # a little higher
+priority  = 1 # a little higher
 
 FastlyNsq::Listener.new(topic: topic, channel: channel, processor: processor, priority: priority)
 ```
@@ -151,12 +151,24 @@ To help facilitate running the `FastlyNsq::Listener` in a blocking fashion
 outside your application, a `CLI` and bin script [`fastly_nsq`](bin/fastly_nsq)
 are provided.
 
-This can be setup ahead of time by calling `FastlyNsq.configure` and passing
-block. An exmaple of this can be found here: [`Example Config`](example_config_class.rb)
+This can be setup ahead of time by calling `FastlyNsq.configure` and passing block.
+
+```ruby
+# config/fastly_nsq.rb
+FastlyNsq.configure do |config|
+  config.channel = 'fnsq'
+  config.logger = Logger.new
+  config.preprocessor = ->(_) { FastlyNsq.logger.info 'PREPROCESSESES' }
+
+  lc.listen 'posts', ->(m) { puts "posts: #{m.body}" }
+  lc.listen 'blogs', ->(m) { puts "blogs: #{m.body}" }, priority: 3
+end
+```
 
 An example of using the cli:
+
 ```bash
-./bin/fastly_nsq -r ./example_config_class.rb -L ./test.log -P ./fastly_nsq.pid -v -d -t 4 -c 10
+./bin/fastly_nsq -r config/fastly_nsq.rb -L ./test.log -P ./fastly_nsq.pid -v -d -t 4 -c 10
 ```
 
 ### `FastlyNsq::Messenger`
