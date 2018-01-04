@@ -23,7 +23,7 @@ class FastlyNsq::Manager
   end
 
   def listeners
-    topic_listeners.values
+    topic_listeners.values.to_set
   end
 
   def terminate(deadline = DEADLINE)
