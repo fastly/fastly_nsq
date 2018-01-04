@@ -9,6 +9,7 @@ require 'forwardable'
 
 module FastlyNsq
   NotConnectedError = Class.new(StandardError)
+  ConnectionFailed = Class.new(StandardError)
 
   class << self
     attr_accessor :channel, :preprocessor

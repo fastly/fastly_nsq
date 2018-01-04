@@ -31,20 +31,28 @@ class FastlyNsq::Producer
   end
 
   def connect
+    lookupd = FastlyNsq.lookupd_http_addresses
+
     @connection ||= Nsq::Producer.new(
       tls_options.merge(
-        nsqlookupd:  FastlyNsq.lookupd_http_addresses,
+        nsqlookupd:  lookupd,
         topic:       topic,
       ),
     )
 
-    Timeout.timeout(connect_timeout) { sleep(0.1) until connection.connected? }
+    timeout_args = [connect_timeout, FastlyNsq::ConnectionFailed]
+
+    if RUBY_VERSION > '2.4.0'
+      timeout_args << "Failed connection to #{lookupd} within #{connect_timeout} seconds"
+    end
+
+    Timeout.timeout(*timeout_args) { Thread.pass until connection.connected? }
 
     true
-  rescue Timeout::Error => error
+  rescue FastlyNsq::ConnectionFailed
     logger.error { "Producer for #{topic} failed to connect!" }
     terminate
-    raise error
+    raise
   end
 
   private
