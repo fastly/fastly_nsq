@@ -31,6 +31,15 @@ RSpec.describe FastlyNsq::Producer do
     expect { subject.connect }.to change(subject, :connected?).to(true)
   end
 
+  it 'raises when connection fails within the specified timeframe' do
+    allow_any_instance_of(Nsq::Producer).to receive(:connected?).and_return(false)
+    logger = spy('logger')
+    expect(logger).to receive(:error).and_return("Producer for #{topic} failed to connect!")
+
+    expect { FastlyNsq::Producer.new(topic: topic, logger: logger, connect_timeout: 0.2) }.
+      to raise_error(Timeout::Error)
+  end
+
   describe 'faking', :fake do
     it { should be_connected }
 

@@ -3,12 +3,13 @@
 class FastlyNsq::Producer
   DEFAULT_CONNECTION_TIMEOUT = 5 # seconds
 
-  attr_reader :topic, :connect_timeout, :connection
+  attr_reader :topic, :connect_timeout, :connection, :logger
 
-  def initialize(topic:, tls_options: nil, connect_timeout: DEFAULT_CONNECTION_TIMEOUT)
+  def initialize(topic:, tls_options: nil, logger: FastlyNsq.logger, connect_timeout: DEFAULT_CONNECTION_TIMEOUT)
     @topic           = topic
     @tls_options     = FastlyNsq::TlsOptions.as_hash(tls_options)
     @connect_timeout = connect_timeout
+    @logger          = logger
 
     connect
   end
@@ -41,8 +42,8 @@ class FastlyNsq::Producer
 
     true
   rescue Timeout::Error => error
-    FastlyNsq.logger.error "Producer for #{topic} failed to connect!"
-    connection.terminate
+    logger.error { "Producer for #{topic} failed to connect!" }
+    terminate
     raise error
   end
 
