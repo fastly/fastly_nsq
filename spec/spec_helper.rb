@@ -18,10 +18,9 @@ FastlyNsq::Testing.disable!
 if ENV['DEBUG']
   Concurrent.use_stdlib_logger(Logger::DEBUG)
   FastlyNsq.logger = Logger.new(STDOUT)
-end
-
-if Thread.respond_to?(:report_on_exception)
-  Thread.report_on_exception = ENV.key?('DEBUG')
+else
+  Concurrent.use_stdlib_logger(Logger::ERROR)
+  FastlyNsq.logger = Logger.new(STDOUT).tap { |l| l.level = Logger::ERROR }
 end
 
 RSpec.configure do |config|
