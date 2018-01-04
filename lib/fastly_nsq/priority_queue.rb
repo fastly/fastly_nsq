@@ -3,5 +3,10 @@
 class FastlyNsq::PriorityQueue < FastContainers::PriorityQueue
   alias << push
   alias length size
-  alias shift pop
+
+  def shift
+    pop
+  rescue RuntimeError
+    nil
+  end
 end

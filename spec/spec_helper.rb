@@ -57,7 +57,7 @@ RSpec.configure do |config|
   end
 
   config.before(:each) do
-    FastlyNsq.manager.terminate(0)
+    FastlyNsq.manager.terminate(1)
     FastlyNsq.manager = FastlyNsq::Manager.new
     FastlyNsq::Testing.reset!
   end
