@@ -27,8 +27,8 @@ CommitMsg:
     description: 'Prevent empty commit messages'
     enabled: true
   TextWidth:
-    description: 'Ensure commit message subjects are <60 chars'
+    description: 'Ensure commit message subjects are <72 chars'
     enabled: true
     description: 'Checking text width'
-    max_subject_width: 60
-    max_body_width: 1000
+    max_subject_width: 72
+    max_body_width: 72
