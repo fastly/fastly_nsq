@@ -5,23 +5,27 @@ require 'spec_helper'
 RSpec.describe FastlyNsq::Launcher do
   let!(:options)  { { max_threads: 3, timeout: 9 } }
   let!(:launcher) { FastlyNsq::Launcher.new options }
+  let!(:topic)    { 'fnsq' }
+  let!(:channel)  { 'fnsq' }
+  let(:listener)  { FastlyNsq::Listener.new(topic: topic, channel: channel, processor: ->(*) {}) }
 
-  let(:manager)  { FastlyNsq.manager }
-  let(:thread)   { instance_double 'Thread' }
+  before { reset_topic(topic, channel: channel) }
+  before { expect { listener }.to eventually(be_connected).within(5) }
+  after  { listener.terminate if listener.connected? }
 
-  before do
-    allow(launcher).to receive(:safe_thread).and_return(thread)
-  end
+  let(:manager) { launcher.manager }
 
   it 'creates a manager with correct options' do
     expect(FastlyNsq.manager.pool.max_threads).to eq(3)
   end
 
-  describe '#run' do
+  describe '#beat' do
+    let!(:logger)   { Logger.new(nil).tap { |l| l.level = Logger::DEBUG } }
+    let!(:launcher) { FastlyNsq::Launcher.new pulse: 0.01, logger: logger }
+
     it 'creates a heartbeat thread' do
-      launcher.run
-      expect(launcher).to have_received(:safe_thread).with('heartbeat')
-      expect(launcher.stopping?).to eq false
+      expect(logger).not_to receive(:error)
+      expect { launcher.beat }.to eventually_not(eq('dead')).pause_for(1)
     end
   end
 

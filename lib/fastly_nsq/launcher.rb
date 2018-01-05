@@ -4,23 +4,25 @@ require 'fastly_nsq/safe_thread'
 
 class FastlyNsq::Launcher
   include FastlyNsq::SafeThread
-  extend Forwardable
 
-  attr_reader :timeout
+  attr_reader :timeout, :logger
+  attr_accessor :pulse
 
   def manager
     FastlyNsq.manager
   end
 
-  def initialize(timeout: 5, **options)
+  def initialize(timeout: 5, pulse: 5, logger: FastlyNsq.logger, **options)
     @done    = false
     @timeout = timeout
+    @pulse   = pulse
+    @logger  = logger
 
     FastlyNsq.manager = FastlyNsq::Manager.new(options)
   end
 
-  def run
-    @thread = safe_thread('heartbeat', &method(:start_heartbeat))
+  def beat
+    @heartbeat ||= safe_thread('heartbeat', &method(:start_heartbeat))
   end
 
   def stop
@@ -40,25 +42,28 @@ class FastlyNsq::Launcher
   private
 
   def heartbeat
-    FastlyNsq.logger.debug do
+    logger.debug do
       [
         'HEARTBEAT:',
-        'thread_status:', @manager.listeners.map(&:status).join(', '),
-        'listener_count:', @manager.listeners.count
+        'busy:', manager.pool.length,
+        'processed:', manager.pool.completed_task_count,
+        'max_threads:', manager.pool.max_length,
+        'max_queue_size:', manager.pool.largest_length,
+        'listeners:', manager.listeners.count
       ].join(' ')
     end
 
     # TODO: Check the health of the system overall and kill it if needed
     #       ::Process.kill('dieing because...', $$)
   rescue => e
-    FastlyNsq.logger.error "heartbeat error: #{e.message}"
+    logger.error "Heartbeat error: #{e.message}"
   end
 
   def start_heartbeat
-    loop do
+    until manager.stopped?
       heartbeat
-      sleep 5
+      sleep pulse
     end
-    FastlyNsq.logger.info('Heartbeat stopping...')
+    logger.info('Heartbeat stopping...')
   end
 end
