@@ -59,6 +59,12 @@ class FastlyNsq::Manager
     @done = true
   end
 
+  def stop_listeners
+    logger.info { 'Stopping listeners' }
+    listeners.each(&:terminate)
+    topic_listeners.clear
+  end
+
   protected
 
   def stop_processing(deadline)
@@ -70,11 +76,5 @@ class FastlyNsq::Manager
 
     logger.info { 'Killing processors...' }
     pool.kill
-  end
-
-  def stop_listeners
-    logger.info { 'Stopping listeners' }
-    listeners.each(&:terminate)
-    topic_listeners.clear
   end
 end

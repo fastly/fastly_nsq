@@ -182,7 +182,7 @@ class FastlyNsq::CLI
       raise Interrupt
     when 'USR1'
       FastlyNsq.logger.info 'Received USR1, no longer accepting new work'
-      launcher.quiet
+      launcher.stop_listeners
     when 'TTIN'
       handle_ttin
     end
