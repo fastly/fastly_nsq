@@ -43,14 +43,14 @@ module FastlyNsq
 end
 
 require 'fastly_nsq/consumer'
-require 'fastly_nsq/priority_thread_pool'
-require 'fastly_nsq/priority_queue'
 require 'fastly_nsq/feeder'
 require 'fastly_nsq/launcher'
 require 'fastly_nsq/listener'
 require 'fastly_nsq/manager'
 require 'fastly_nsq/message'
 require 'fastly_nsq/messenger'
+require 'fastly_nsq/priority_queue'
+require 'fastly_nsq/priority_thread_pool'
 require 'fastly_nsq/producer'
 require 'fastly_nsq/tls_options'
 require 'fastly_nsq/version'

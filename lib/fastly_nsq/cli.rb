@@ -25,19 +25,17 @@ class FastlyNsq::CLI
 
   def run
     startup
-    begin
-      # Multithreading begins here ----
-      launcher.run
 
-      read_loop
-    rescue Interrupt
-      FastlyNsq.logger.info 'Shutting down'
-      launcher.stop
-      # Explicitly exit so busy Processor threads can't block
-      # process shutdown.
-      FastlyNsq.logger.info 'Bye!'
-      exit(0)
-    end
+    launcher.beat
+
+    read_loop
+  rescue Interrupt
+    FastlyNsq.logger.info 'Shutting down'
+    launcher.stop
+    # Explicitly exit so busy Processor threads can't block
+    # process shutdown.
+    FastlyNsq.logger.info 'Bye!'
+    exit(0)
   end
 
   private
