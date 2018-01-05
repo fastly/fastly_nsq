@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 lib = File.expand_path('../lib', __FILE__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require 'fastly_nsq/version'
@@ -20,16 +22,13 @@ Gem::Specification.new do |gem|
 
   gem.add_development_dependency 'awesome_print', '~> 1.6'
   gem.add_development_dependency 'bundler', '~> 1.12'
-  gem.add_development_dependency 'bundler-audit', '~> 0.5.0'
   gem.add_development_dependency 'dotenv'
-  gem.add_development_dependency 'overcommit', '~> 0.32.0'
   gem.add_development_dependency 'pry-byebug', '~> 3.3'
-  gem.add_development_dependency 'rake', '~> 11.1.2'
-  gem.add_development_dependency 'rdoc', '~> 4.2.2'
-  gem.add_development_dependency 'rspec', '~> 3.4.0'
-  gem.add_development_dependency 'rubocop', '~> 0.51.0'
-  gem.add_development_dependency 'rubygems-tasks', '~> 0.2'
-  gem.add_development_dependency 'webmock'
+  gem.add_development_dependency 'rspec', '~> 3.4'
+  gem.add_development_dependency 'rspec-eventually', '0.2'
+  gem.add_development_dependency 'webmock', '~> 3.0'
 
+  gem.add_dependency 'concurrent-ruby', '~> 1.0'
   gem.add_dependency 'nsq-ruby', '~> 2.0', '>= 2.0.5'
+  gem.add_dependency 'priority_queue_cxx', '~> 0.3'
 end

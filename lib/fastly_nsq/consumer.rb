@@ -1,43 +1,39 @@
-require 'forwardable'
+# frozen_string_literal: true
 
-module FastlyNsq
-  class Consumer
-    extend Forwardable
-    def_delegator :connection, :pop
-    def_delegator :connection, :pop_without_blocking
-    def_delegator :connection, :size
-    def_delegator :connection, :terminate
+class FastlyNsq::Consumer
+  extend Forwardable
 
-    def initialize(topic:, channel:, tls_options: nil, connector: nil)
-      @topic       = topic
-      @channel     = channel
-      @tls_options = TlsOptions.as_hash(tls_options)
-      @connector   = connector
-      connection
-    end
+  DEFAULT_CONNECTION_TIMEOUT = 5 # seconds
 
-    def empty?
-      connection.size.zero?
-    end
+  attr_reader :channel, :topic, :connection, :connect_timeout
 
-    private
+  def_delegators :connection, :size, :terminate, :connected?, :pop, :pop_without_blocking
 
-    attr_reader :channel, :topic, :tls_options
+  def initialize(topic:, channel:, queue: nil, tls_options: nil, connect_timeout: DEFAULT_CONNECTION_TIMEOUT)
+    @topic           = topic
+    @channel         = channel
+    @tls_options     = FastlyNsq::TlsOptions.as_hash(tls_options)
+    @connect_timeout = connect_timeout
 
-    def connection
-      @connection ||= connector.new(params)
-    end
+    @connection = connect(queue)
+  end
 
-    def connector
-      @connector || FastlyNsq.strategy::Consumer
-    end
+  def empty?
+    size.zero?
+  end
 
-    def params
+  private
+
+  attr_reader :tls_options
+
+  def connect(queue)
+    Nsq::Consumer.new(
       {
-        nsqlookupd: ENV.fetch('NSQLOOKUPD_HTTP_ADDRESS').split(',').map(&:strip),
+        nsqlookupd: FastlyNsq.lookupd_http_addresses,
         topic: topic,
         channel: channel,
-      }.merge(tls_options)
-    end
+        queue: queue,
+      }.merge(tls_options),
+    )
   end
 end

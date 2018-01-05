@@ -1,7 +1,9 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 require 'fastly_nsq/http'
 
-RSpec.describe FastlyNsq::Http do
+RSpec.describe FastlyNsq::Http, :webmock do
   let(:base_url) { 'http://example.com' }
   describe 'get' do
     it 'can make simple requests' do

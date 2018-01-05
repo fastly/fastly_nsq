@@ -1,10 +1,12 @@
+# frozen_string_literal: true
+
 module FastlyNsq::Messenger
-  DEFAULT_ORIGIN = 'Unknown'.freeze
+  DEFAULT_ORIGIN = 'Unknown'
   @originating_service = DEFAULT_ORIGIN
 
   module_function
 
-  def deliver(message:, on_topic:, originating_service: nil, meta: {})
+  def deliver(message:, topic:, originating_service: nil, meta: {})
     meta[:originating_service] = originating_service || self.originating_service
 
     payload = {
@@ -12,9 +14,7 @@ module FastlyNsq::Messenger
       meta: meta,
     }
 
-    producer_for(topic: on_topic) do |producer|
-      producer.write payload.to_json
-    end
+    producer_for(topic: topic) { |producer| producer.write payload.to_json }
   end
 
   def originating_service=(service)

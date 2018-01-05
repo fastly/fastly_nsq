@@ -1,104 +1,80 @@
 # frozen_string_literal: true
 
-require 'set'
-
 class FastlyNsq::Manager
-  attr_reader :listeners
+  DEADLINE = 30
+  DEFAULT_POOL_SIZE = 5
 
-  def initialize(options = {})
-    @options = options
-    @done = false
-    @listeners = Set.new
-    @plock = Mutex.new
-  end
+  attr_reader :done, :pool, :logger
 
-  def start
-    setup_configured_listeners
-    @listeners.each(&:start)
-  end
-
-  def quiet
-    return if @done
-    @done = true
-
-    FastlyNsq.logger.info { 'Terminating quiet listeners' }
-    @listeners.each(&:terminate)
-  end
-
-  PAUSE_TIME = 0.5
-
-  def stop(deadline)
-    quiet
-
-    sleep PAUSE_TIME
-    return if @listeners.empty?
-
-    FastlyNsq.logger.info { 'Pausing to allow workers to finish...' }
-    remaining = deadline - Time.now
-    while remaining > PAUSE_TIME
-      return if @listeners.empty?
-      sleep PAUSE_TIME
-      remaining = deadline - Time.now
-    end
-    return if @listeners.empty?
-
-    hard_shutdown
-  end
-
-  def stopped?
-    @done
-  end
-
-  def listener_stopped(listener)
-    @plock.synchronize do
-      @listeners.delete listener
-    end
-  end
-
-  def listener_killed(listener)
-    @plock.synchronize do
-      @listeners.delete listener
-      unless @done
-        FastlyNsq.logger.info { "recreating listener for: #{listener.identity}" }
-        new_listener = listener.reset_then_dup
-        @listeners << new_listener
-        new_listener.start
-      end
-    end
-  end
-
-  private
-
-  def setup_configured_listeners
-    FastlyNsq.logger.debug { "options #{@options.inspect}" }
-    FastlyNsq.logger.debug { "starting listeners: #{FastlyNsq.topic_map.inspect}" }
-
-    FastlyNsq.topic_map.each_pair do |topic, processor|
-      @listeners << setup_listener(topic, processor)
-    end
-  end
-
-  def setup_listener(topic, processor)
-    FastlyNsq.logger.info { "Listening to topic:'#{topic}' on channel: '#{FastlyNsq.channel}'" }
-    FastlyNsq::Listener.new(
-      topic:        topic,
-      channel:      FastlyNsq.channel,
-      processor:    processor,
-      preprocessor: FastlyNsq.preprocessor,
-      manager:      self,
+  def initialize(logger: FastlyNsq.logger, **pool_options)
+    @done      = false
+    @logger    = logger
+    @pool      = FastlyNsq::PriorityThreadPool.new(
+      { fallback_policy: :caller_runs, max_threads: DEFAULT_POOL_SIZE }.merge(pool_options),
     )
   end
 
-  def hard_shutdown
-    cleanup = nil
-    @plock.synchronize do
-      cleanup = @listeners.dup
+  def topic_listeners
+    @topic_listeners ||= {}
+  end
+
+  def topics
+    topic_listeners.keys
+  end
+
+  def listeners
+    topic_listeners.values.to_set
+  end
+
+  def terminate(deadline = DEADLINE)
+    return if done
+
+    stop_listeners
+
+    return if pool.shutdown?
+
+    stop_processing(deadline)
+
+    @done = true
+  end
+
+  def stopped?
+    done
+  end
+
+  def add_listener(listener)
+    logger.info { "Listening to topic:'#{listener.topic}' on channel: '#{listener.channel}'" }
+
+    if topic_listeners[listener.topic]
+      logger.warn { "topic: #{listener.topic} was added more than once" }
     end
 
-    unless cleanup.empty?
-      FastlyNsq.logger.warn { "Terminating #{cleanup.size} busy worker threads" }
-    end
+    topic_listeners[listener.topic] = listener
+  end
 
-    cleanup.each(&:kill)
+  def transfer(new_manager, deadline: DEADLINE)
+    new_manager.topic_listeners.merge!(topic_listeners)
+    stop_processing(deadline)
+    topic_listeners.clear
+    @done = true
+  end
+
+  protected
+
+  def stop_processing(deadline)
+    logger.info { 'Stopping processors' }
+    pool.shutdown
+
+    logger.info { 'Waiting for processors to finish...' }
+    return if pool.wait_for_termination(deadline)
+
+    logger.info { 'Killing processors...' }
+    pool.kill
+  end
+
+  def stop_listeners
+    logger.info { 'Stopping listeners' }
+    listeners.each(&:terminate)
+    topic_listeners.clear
   end
 end

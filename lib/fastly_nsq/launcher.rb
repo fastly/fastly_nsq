@@ -5,10 +5,12 @@ require 'fastly_nsq/safe_thread'
 class FastlyNsq::Launcher
   include FastlyNsq::SafeThread
 
-  def initialize(options)
-    @done = false
+  attr_reader :timeout, :manager
+
+  def initialize(timeout: 5, **options)
+    @done    = false
     @manager = FastlyNsq::Manager.new options
-    @options = options
+    @timeout = timeout
   end
 
   def run
@@ -25,7 +27,7 @@ class FastlyNsq::Launcher
   # return until all work is complete and cleaned up.
   # It can take up to the timeout to complete.
   def stop
-    deadline = Time.now + @options.fetch(:timeout, 5)
+    deadline = Time.now + timeout
     quiet
     @manager.stop deadline
   end

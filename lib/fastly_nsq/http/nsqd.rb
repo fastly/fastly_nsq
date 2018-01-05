@@ -8,7 +8,13 @@ class FastlyNsq::Http
     def_delegator :client, :get
     def_delegator :client, :post
 
-    BASE_NSQD_URL = ENV.fetch 'NSQD_URL', "https://#{ENV.fetch('NSQD_HTTPS_ADDRESS', '')}"
+    BASE_NSQD_URL = ENV.fetch('NSQD_URL') do
+      if ENV['NSQD_HTTPS_ADDRESS']
+        "https://#{ENV.fetch('NSQD_HTTPS_ADDRESS')}"
+      else
+        "http://#{ENV.fetch('NSQD_HTTP_ADDRESS')}"
+      end
+    end
     VALID_FORMATS = %w[text json].freeze
 
     ##

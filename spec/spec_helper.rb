@@ -1,9 +1,27 @@
-require 'fastly_nsq'
-require 'awesome_print'
-require 'pry-byebug'
-require 'webmock/rspec'
+# frozen_string_literal: true
 
-require_relative 'support/env_helpers'
+require 'dotenv'
+Dotenv.load
+
+require 'bundler/setup'
+
+Bundler.require(:development)
+
+require 'fastly_nsq'
+require 'fastly_nsq/http'
+require 'fastly_nsq/testing'
+
+Dir[File.expand_path('../{support,shared,matchers}/**/*.rb', __FILE__)].each { |f| require(f) }
+
+FastlyNsq::Testing.disable!
+
+if ENV['DEBUG']
+  Concurrent.use_stdlib_logger(Logger::DEBUG)
+  FastlyNsq.logger = Logger.new(STDOUT)
+else
+  Concurrent.use_stdlib_logger(Logger::ERROR)
+  FastlyNsq.logger = Logger.new(STDOUT).tap { |l| l.level = Logger::ERROR }
+end
 
 RSpec.configure do |config|
   config.expect_with :rspec do |expectations|
@@ -22,38 +40,24 @@ RSpec.configure do |config|
   config.profile_examples = 1
   config.run_all_when_everything_filtered = true
   Kernel.srand config.seed
+  config.default_formatter = 'doc' if config.files_to_run.one?
 
-  if config.files_to_run.one?
-    config.default_formatter = 'doc'
+  config.around(:each, fake: true) do |example|
+    RSpec::Mocks.with_temporary_scope do
+      FastlyNsq::Messages.messages.clear
+      FastlyNsq::Testing.fake! { example.run }
+    end
+  end
+
+  config.around(:each, inline: true) do |example|
+    RSpec::Mocks.with_temporary_scope do
+      FastlyNsq::Testing.inline! { example.run }
+    end
   end
 
   config.before(:each) do
-    load_sample_environment_variables
-    FastlyNsq::FakeBackend.reset!
-    WebMock.reset!
-  end
-
-  config.around(:each, fake_queue: true) do |example|
-    RSpec::Mocks.with_temporary_scope do
-      use_fake_connection do
-        example.run
-      end
-    end
-  end
-
-  config.around(:each, fake_queue: false) do |example|
-    RSpec::Mocks.with_temporary_scope do
-      use_real_connection do
-        example.run
-      end
-    end
-  end
-
-  def load_sample_environment_variables
-    env_file = File.open('env_configuration_for_local_gem_tests.yml')
-
-    YAML.safe_load(env_file).each do |key, value|
-      ENV[key.to_s] = value
-    end
+    FastlyNsq.manager.terminate(1)
+    FastlyNsq.manager = FastlyNsq::Manager.new
+    FastlyNsq::Testing.reset!
   end
 end
