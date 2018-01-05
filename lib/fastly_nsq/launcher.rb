@@ -4,32 +4,33 @@ require 'fastly_nsq/safe_thread'
 
 class FastlyNsq::Launcher
   include FastlyNsq::SafeThread
+  extend Forwardable
 
-  attr_reader :timeout, :manager
+  attr_reader :timeout
+
+  def manager
+    FastlyNsq.manager
+  end
 
   def initialize(timeout: 5, **options)
     @done    = false
-    @manager = FastlyNsq::Manager.new options
     @timeout = timeout
+
+    FastlyNsq.manager = FastlyNsq::Manager.new(options)
   end
 
   def run
     @thread = safe_thread('heartbeat', &method(:start_heartbeat))
-    @manager.start
   end
 
-  def quiet
-    @done = true
-    @manager.quiet
-  end
-
-  # Shuts down the process.  This method does not
-  # return until all work is complete and cleaned up.
-  # It can take up to the timeout to complete.
   def stop
-    deadline = Time.now + timeout
-    quiet
-    @manager.stop deadline
+    @done = true
+    manager.terminate(timeout)
+  end
+
+  def stop_listeners
+    @done = true
+    manager.stop_listeners
   end
 
   def stopping?
