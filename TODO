@@ -1,0 +1,7 @@
+## Consolidate Discovery Services
+
+Use a ConnectionPool to hold open sockets to lookupds
+Use a ConnectionPool to hold open sockets to nsqds
+Assign a thread-pool and to topic discovery and use TimedTasks at configurable intervals
+Assign a thread-pool to manage checking nsqd TCP sockets for available bytes
+Centralize storage and configuration of nsqlookupds and nsqds

@@ -5,14 +5,14 @@ $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require 'fastly_nsq/version'
 
 Gem::Specification.new do |gem|
-  gem.name          = 'fastly_nsq'
+  gem.name          = 'fnsq'
   gem.version       = FastlyNsq::VERSION
-  gem.summary       = 'Fastly NSQ Adapter'
-  gem.description   = "Helper classes for Fastly's NSQ Services"
+  gem.summary       = 'NSQ client'
+  gem.description   = 'Processing and client services for using NSQ'
   gem.license       = 'MIT'
   gem.authors       = ["Tommy O'Neil", 'Adarsh Pandit', 'Joshua Wehner', 'Lukas Eklund', 'Josh Lane', 'Hassan Shahid']
   gem.email         = 'tommy@fastly.com'
-  gem.homepage      = 'https://github.com/fastly/fastly_nsq'
+  gem.homepage      = 'https://github.com/fastly/fnsq'
 
   gem.files         = `git ls-files`.split("\n")
 
@@ -29,6 +29,5 @@ Gem::Specification.new do |gem|
   gem.add_development_dependency 'webmock', '~> 3.0'
 
   gem.add_dependency 'concurrent-ruby', '~> 1.0'
-  gem.add_dependency 'nsq-ruby', '~> 2.0', '>= 2.0.5'
   gem.add_dependency 'priority_queue_cxx', '~> 0.3'
 end
