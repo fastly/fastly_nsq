@@ -38,7 +38,7 @@ class FastlyNsq::Listener
 
   def call(nsq_message)
     message = FastlyNsq::Message.new(nsq_message)
-    logger.info "[NSQ] Message received on topic [#{topic}]: #{message}"
+    logger.info "topic #{topic}, attempts #{nsq_message.attempts} received: #{message}"
     preprocessor&.call(message)
     result = processor.call(message)
     message.finish if result
@@ -48,6 +48,6 @@ class FastlyNsq::Listener
   def terminate
     return unless connected?
     consumer.terminate
-    logger.info "< Consumer terminated: topic [#{topic}]"
+    logger.info "topic #{topic}, channel #{channel}: consumer terminated"
   end
 end
