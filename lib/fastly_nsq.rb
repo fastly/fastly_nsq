@@ -14,6 +14,7 @@ module FastlyNsq
   class << self
     attr_accessor :channel
     attr_accessor :preprocessor
+    attr_accessor :max_attempts
     attr_writer :logger
 
     def listen(topic, processor, **options)

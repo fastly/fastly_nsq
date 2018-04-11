@@ -6,14 +6,16 @@ class FastlyNsq::Consumer
   DEFAULT_CONNECTION_TIMEOUT = 5 # seconds
 
   attr_reader :channel, :topic, :connection, :connect_timeout
+  attr_reader :max_attempts
 
   def_delegators :connection, :size, :terminate, :connected?, :pop, :pop_without_blocking
 
-  def initialize(topic:, channel:, queue: nil, tls_options: nil, connect_timeout: DEFAULT_CONNECTION_TIMEOUT, **options)
+  def initialize(topic:, channel:, queue: nil, tls_options: nil, connect_timeout: DEFAULT_CONNECTION_TIMEOUT, max_attempts: FastlyNsq.max_attempts, **options)
     @topic           = topic
     @channel         = channel
     @tls_options     = FastlyNsq::TlsOptions.as_hash(tls_options)
     @connect_timeout = connect_timeout
+    @max_attempts    = max_attempts
 
     @connection = connect(queue, **options)
   end
@@ -33,6 +35,7 @@ class FastlyNsq::Consumer
         topic: topic,
         channel: channel,
         queue: queue,
+        max_attempts: max_attempts,
         **options,
       }.merge(tls_options),
     )
