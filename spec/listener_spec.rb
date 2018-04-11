@@ -15,15 +15,19 @@ RSpec.describe FastlyNsq::Listener do
   subject { described_class.new(topic: topic, channel: channel, processor: processor) }
 
   describe '#initialize' do
-    describe 'max_attempts' do
-      it 'can be passed to the consumer' do
-        listener = described_class.new topic: topic,
-                                       processor: processor,
-                                       channel: channel,
-                                       max_attempts: 5
+    describe 'with FastlyNsq.max_attempts set' do
+      let!(:default_max_attempts) { FastlyNsq.max_attempts }
+      before { FastlyNsq.max_attempts = 19 }
+      after { FastlyNsq.max_attempts = default_max_attempts }
+
+      it 'defaults to FastlyNsq.max_attempts' do
+        listener = described_class.new(topic: topic, processor: processor, channel: channel)
+        expect(listener.max_attempts).to eq(FastlyNsq.max_attempts)
+
         expect { listener }.to eventually(be_connected).within(5)
+
         nsq_connection = listener.consumer.connection.connections.values.first # whoa
-        expect(nsq_connection.instance_variable_get(:@max_attempts)).to eq(5)
+        expect(nsq_connection.instance_variable_get(:@max_attempts)).to eq(FastlyNsq.max_attempts)
       end
     end
 
