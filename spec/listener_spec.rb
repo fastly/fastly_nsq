@@ -15,6 +15,18 @@ RSpec.describe FastlyNsq::Listener do
   subject { described_class.new(topic: topic, channel: channel, processor: processor) }
 
   describe '#initialize' do
+    describe 'max_attempts' do
+      it 'can be passed to the consumer' do
+        listener = described_class.new topic: topic,
+                                       processor: processor,
+                                       channel: channel,
+                                       max_attempts: 5
+        expect { listener }.to eventually(be_connected).within(5)
+        nsq_connection = listener.consumer.connection.connections.values.first # whoa
+        expect(nsq_connection.instance_variable_get(:@max_attempts)).to eq(5)
+      end
+    end
+
     describe 'with FastlyNsq.channel set' do
       let!(:default_channel) { FastlyNsq.channel }
       before { FastlyNsq.channel = 'fnsq' }

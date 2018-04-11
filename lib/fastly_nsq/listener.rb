@@ -11,7 +11,8 @@ class FastlyNsq::Listener
   attr_reader :preprocessor, :topic, :processor, :priority, :channel, :logger, :consumer
 
   def initialize(topic:, processor:, preprocessor: FastlyNsq.preprocessor, channel: FastlyNsq.channel, consumer: nil,
-                 logger: FastlyNsq.logger, priority: DEFAULT_PRIORITY, connect_timeout: DEFAULT_CONNECTION_TIMEOUT)
+                 logger: FastlyNsq.logger, priority: DEFAULT_PRIORITY, connect_timeout: DEFAULT_CONNECTION_TIMEOUT,
+                 **consumer_options)
 
     raise ArgumentError, "processor #{processor.inspect} does not respond to #call" unless processor.respond_to?(:call)
     raise ArgumentError, "priority #{priority.inspect} must be a Integer" unless priority.is_a?(Integer)
@@ -26,7 +27,8 @@ class FastlyNsq::Listener
     @consumer = consumer || FastlyNsq::Consumer.new(topic: topic,
                                                     connect_timeout: connect_timeout,
                                                     channel: channel,
-                                                    queue: FastlyNsq::Feeder.new(self, priority))
+                                                    queue: FastlyNsq::Feeder.new(self, priority),
+                                                    **consumer_options)
 
     FastlyNsq.manager.add_listener(self)
   end
