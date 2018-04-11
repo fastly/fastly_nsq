@@ -12,7 +12,8 @@ module FastlyNsq
   ConnectionFailed = Class.new(StandardError)
 
   class << self
-    attr_accessor :channel, :preprocessor
+    attr_accessor :channel
+    attr_accessor :preprocessor
     attr_writer :logger
 
     def listen(topic, processor, **options)
