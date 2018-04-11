@@ -62,9 +62,11 @@ module FastlyNsq
 
   class TestMessage
     attr_reader :raw_body
+    attr_reader :attempts
 
     def initialize(raw_body)
       @raw_body = raw_body
+      @attempts = 0
     end
 
     def body
@@ -78,7 +80,7 @@ module FastlyNsq
     end
 
     def requeue(*)
-      # sure
+      @attempts += 1
       true
     end
   end
