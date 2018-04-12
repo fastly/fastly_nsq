@@ -45,6 +45,7 @@ class FastlyNsq::Message
   private
 
   def requeue_period
-    ((attempts**4) + 45 + (rand(60) * (attempts + 1))) * 1_000
+    retry_count = [attempts, 30].min
+    ((retry_count**4) + 45 + (rand(60) * (retry_count + 1))) * 1_000
   end
 end
