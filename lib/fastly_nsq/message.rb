@@ -34,10 +34,17 @@ class FastlyNsq::Message
     nsq_message.finish
   end
 
-  def requeue(*args)
+  def requeue(timeout = nil)
     return managed if managed
+    timeout ||= requeue_period
 
     @managed = :requeued
-    nsq_message.requeue(*args)
+    nsq_message.requeue(timeout)
+  end
+
+  private
+
+  def requeue_period
+    ((attempts**4) + 45 + (rand(60) * (attempts + 1))) * 1_000
   end
 end

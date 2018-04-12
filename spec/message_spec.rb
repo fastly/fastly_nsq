@@ -4,7 +4,7 @@ require 'spec_helper'
 require 'json'
 
 RSpec.describe FastlyNsq::Message do
-  let(:nsq_message) { double 'Nsq::Message', body: json_body, attempts: nil, finish: nil, requeue: nil, touch: nil, timestamp: nil }
+  let(:nsq_message) { double 'Nsq::Message', body: json_body, attempts: 1, finish: nil, requeue: nil, touch: nil, timestamp: nil }
   let(:body)        { { 'data' => 'goes here', 'other_field' => 'is over here', 'meta' => 'meta stuff' } }
   let(:json_body)   { body.to_json }
   subject           { FastlyNsq::Message.new nsq_message }
@@ -56,5 +56,17 @@ RSpec.describe FastlyNsq::Message do
     subject.requeue
 
     expect(subject.managed).to eq(:finished)
+  end
+
+  it 'uses the passed timeout for the requeue timeout' do
+    expect(nsq_message).to receive(:requeue).with(1000)
+
+    subject.requeue(1000)
+  end
+
+  it 'uses exponential backoff for timeout if none is given' do
+    expect(nsq_message).to receive(:requeue).with(46_000..166_000)
+
+    subject.requeue
   end
 end
