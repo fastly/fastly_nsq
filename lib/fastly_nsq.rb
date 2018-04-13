@@ -6,6 +6,7 @@ require 'fc'
 require 'set'
 require 'logger'
 require 'forwardable'
+require 'digest/md5'
 
 module FastlyNsq
   NotConnectedError = Class.new(StandardError)
