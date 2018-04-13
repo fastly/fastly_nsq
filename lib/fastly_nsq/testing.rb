@@ -63,9 +63,11 @@ module FastlyNsq
   class TestMessage
     attr_reader :raw_body
     attr_reader :attempts
+    attr_reader :id
 
     def initialize(raw_body)
       @raw_body = raw_body
+      @id       = Digest::SHA1.hexdigest(raw_body.to_s + Time.now.to_s)
       @attempts = 0
     end
 
