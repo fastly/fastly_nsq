@@ -130,7 +130,7 @@ RSpec.describe FastlyNsq::Listener do
   end
 
   describe 'faking', :fake do
-    let!(:message) { { 'foo' => 'bar' } }
+    let!(:message) { JSON.dump('foo' => 'bar') }
 
     before { subject }
 
@@ -169,7 +169,7 @@ RSpec.describe FastlyNsq::Listener do
   end
 
   describe 'inline', :inline do
-    let!(:message) { { 'foo' => 'bar' } }
+    let!(:message) { JSON.dump('foo' => 'bar') }
     let!(:processor) { ->(m) { messages << m.raw_body } }
 
     before { subject }

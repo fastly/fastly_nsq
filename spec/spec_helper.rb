@@ -20,7 +20,7 @@ if ENV['DEBUG']
   FastlyNsq.logger = Logger.new(STDOUT)
 else
   Concurrent.use_stdlib_logger(Logger::ERROR)
-  FastlyNsq.logger = Logger.new(STDOUT).tap { |l| l.level = Logger::ERROR }
+  FastlyNsq.logger = Logger.new('/dev/null').tap { |l| l.level = Logger::DEBUG }
 end
 
 RSpec.configure do |config|
