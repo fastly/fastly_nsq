@@ -51,6 +51,11 @@ module FastlyNsq
         return unless enabled?
         FastlyNsq::Messages.messages.clear
       end
+
+      def message(data:, meta: nil)
+        test_message = FastlyNsq::TestMessage.new(JSON.dump('data' => data, 'meta' => meta))
+        FastlyNsq::Message.new(test_message)
+      end
     end
   end
 
