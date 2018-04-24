@@ -8,6 +8,7 @@ module FastlyNsq::Messenger
 
   def deliver(message:, topic:, originating_service: nil, meta: {})
     meta[:originating_service] = originating_service || self.originating_service
+    meta[:sent_at] = Time.now.iso8601(5)
 
     payload = {
       data: message,
