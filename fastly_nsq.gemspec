@@ -26,6 +26,7 @@ Gem::Specification.new do |gem|
   gem.add_development_dependency 'pry-byebug', '~> 3.3'
   gem.add_development_dependency 'rspec', '~> 3.4'
   gem.add_development_dependency 'rspec-eventually', '0.2'
+  gem.add_development_dependency 'timecop'
   gem.add_development_dependency 'webmock', '~> 3.0'
 
   gem.add_dependency 'concurrent-ruby', '~> 1.0'
