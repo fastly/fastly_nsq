@@ -8,12 +8,14 @@ RSpec.describe FastlyNsq::Messenger do
   let(:message)  { { sample: 'sample', message: 'message' } }
   let(:producer) { double 'FastlyNsq::Producer', write: nil, terminate: :terminated }
   let(:origin)   { 'originating_service' }
+  let(:sent_at)  { Time.now.iso8601(5) }
 
   let(:expected_attributes) do
     {
       data: message,
       meta: {
         originating_service: 'originating_service',
+        sent_at: sent_at,
       },
     }
   end
@@ -25,6 +27,8 @@ RSpec.describe FastlyNsq::Messenger do
   end
 
   describe '#deliver' do
+    before { Timecop.freeze(sent_at) }
+
     it 'writes a single message on a producer' do
       subject.producers['topic'] = producer
 
@@ -45,7 +49,7 @@ RSpec.describe FastlyNsq::Messenger do
     it 'allows setting arbitrary metadata' do
       meta = { test: 'test' }
 
-      expected_attributes = { data: message, meta: meta.merge(originating_service: origin) }
+      expected_attributes = { data: message, meta: meta.merge(originating_service: origin, sent_at: sent_at) }
 
       subject.producers['topic'] = producer
 
@@ -57,7 +61,7 @@ RSpec.describe FastlyNsq::Messenger do
     it 'prevents originating_service from being overwritten by meta' do
       meta = { test: 'test' }
 
-      expected_attributes = { data: message, meta: meta.merge(originating_service: origin) }
+      expected_attributes = { data: message, meta: meta.merge(originating_service: origin, sent_at: sent_at) }
 
       meta[:originating_service] = 'other_service'
 
@@ -70,6 +74,8 @@ RSpec.describe FastlyNsq::Messenger do
   end
 
   describe '#originating_service=' do
+    before { Timecop.freeze(sent_at) }
+
     it "set's the default originating service" do
       subject.producers['nanotopic'] = producer
       service = 'nano service'
