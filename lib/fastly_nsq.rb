@@ -15,15 +15,26 @@ module FastlyNsq
   LIFECYCLE_EVENTS = %i[startup shutdown heartbeat].freeze
 
   class << self
+    # @return [String] NSQ Channel
     attr_accessor :channel
+    # @return [Proc] global preprocessor
     attr_accessor :preprocessor
+    # @return [Numeric] number of max attempts for processing an NSQ message
     attr_accessor :max_attempts
+    # @return [Logger]
     attr_writer :logger
 
     def events
       @events ||= LIFECYCLE_EVENTS.each_with_object({}) { |e, a| a[e] = [] }
     end
 
+    ##
+    # Create a FastlyNsq::Listener
+    #
+    # @param topic [String] NSQ topic on which to listen
+    # @param procesor [Proc] processor that will be `call`ed per message
+    # @param options [Hash] additional options
+    # @return FastlyNsq::Listener
     def listen(topic, processor, **options)
       FastlyNsq::Listener.new(topic: topic, processor: processor, **options)
     end
@@ -32,19 +43,37 @@ module FastlyNsq
       @logger ||= Logger.new(nil)
     end
 
+    ##
+    # Configuration for FastlyNsq
+    # @example
+    #   FastlyNsq.configure do |config|
+    #     config.channel = 'Z'
+    #     config.logger = Logger.new
+    #   end
     def configure
       yield self
     end
 
+    ##
+    # Returns a new FastlyNsq::Manager or the memoized
+    # instance `@manager`.
+    # @return [FastlyNsq::Manager]
     def manager
       @manager ||= FastlyNsq::Manager.new
     end
 
+    ##
+    # Set a new manager
+    # @param manager [FastlyNsq::Manager]
+    # @return [FastlyNsq::Manager]
     def manager=(manager)
       @manager&.transfer(manager)
       @manager = manager
     end
 
+    ##
+    # Return an array of NSQ lookupd http addresses
+    # @return [Array<String>] list of nsqlookupd http addresses
     def lookupd_http_addresses
       ENV.fetch('NSQLOOKUPD_HTTP_ADDRESS').split(',').map(&:strip)
     end
