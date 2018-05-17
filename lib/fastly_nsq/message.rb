@@ -34,6 +34,9 @@ class FastlyNsq::Message
     nsq_message.finish
   end
 
+  ##
+  # Requeue an NSQ Message
+  # @param timeout [Integer] timeout in milliseconds
   def requeue(timeout = nil)
     return managed if managed
     timeout ||= requeue_period

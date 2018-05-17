@@ -243,19 +243,9 @@ FastlyNsq::Http::Nsqlookupd.nodes
 FastlyNsq::Http::Nsqlookupd.lookup(topic: 'foo')
 ```
 
-### `Real vs. Fake`
+### Testing
 
-The real strategy
-creates a connection
-to `nsq-ruby`'s
-`Nsq::Producer` and `Nsq::Consumer` classes.
-
-The fake strategy
-mocks the connection
-to NSQ for testing purposes.
-It adheres to the same API
-as the real adapter.
-
+[ ] fixme
 
 ## Configuration
 

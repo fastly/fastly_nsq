@@ -19,7 +19,7 @@ module FastlyNsq
     attr_accessor :channel
     # @return [Proc] global preprocessor
     attr_accessor :preprocessor
-    # @return [Numeric] number of max attempts for processing an NSQ message
+    # @return [Numeric] maxium number of times an NSQ message will be attempted
     attr_accessor :max_attempts
     # @return [Logger]
     attr_writer :logger
@@ -49,6 +49,14 @@ module FastlyNsq
     #   FastlyNsq.configure do |config|
     #     config.channel = 'Z'
     #     config.logger = Logger.new
+    #   end
+    # @example
+    #   FastlyNsq.configure do |config|
+    #     config.channel = 'fnsq'
+    #     config.logger = Logger.new
+    #     config.preprocessor = ->(_) { FastlyNsq.logger.info 'PREPROCESSESES' }
+    #     lc.listen 'posts', ->(m) { puts "posts: #{m.body}" }
+    #     lc.listen 'blogs', ->(m) { puts "blogs: #{m.body}" }, priority: 3
     #   end
     def configure
       yield self
