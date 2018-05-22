@@ -17,10 +17,13 @@ module FastlyNsq
   class << self
     # @return [String] NSQ Channel
     attr_accessor :channel
+
     # @return [Proc] global preprocessor
     attr_accessor :preprocessor
-    # @return [Numeric] maxium number of times an NSQ message will be attempted
+
+    # @return [Integer] maxium number of times an NSQ message will be attempted
     attr_accessor :max_attempts
+
     # @return [Logger]
     attr_writer :logger
 
@@ -32,7 +35,7 @@ module FastlyNsq
     # Create a FastlyNsq::Listener
     #
     # @param topic [String] NSQ topic on which to listen
-    # @param procesor [Proc] processor that will be `call`ed per message
+    # @param processor [Proc] processor that will be `call`ed per message
     # @param options [Hash] additional options
     # @return FastlyNsq::Listener
     def listen(topic, processor, **options)

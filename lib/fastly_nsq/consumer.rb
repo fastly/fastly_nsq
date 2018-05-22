@@ -2,6 +2,7 @@
 
 # Provides an adapter to an Nsq::Consumer
 # and used to read messages off the queue.
+#
 # @example
 #   consumer = FastlyNsq::Consumer.new(
 #     topic: 'topic',
@@ -59,15 +60,17 @@ class FastlyNsq::Consumer
 
   ##
   # Create a FastlyNsq::Consumer
-  # @param topic [String] Nsq topic from which to consume
-  # @param channel [String] Nsq channel from which to consume
+  #
+  # @param topic [String] NSQ topic from which to consume
+  # @param channel [String] NSQ channel from which to consume
   # @param queue [#pop, #size] Queue object, most likely an instance of {FastlyNsq::Feeder}
   # @param tls_options [Hash] Hash of TSL options passed the connection.
   #   In most cases this should be nil unless you need to override the
   #   default values set in ENV.
   # @param connect_timeout [Integer] NSQ connection timeout in seconds
   # @param max_attempts [Integer] maximum number of times an NSQ message will be attemped
-  # @param optionts [Hash] addtional options forwarded to the connection contructor
+  # @param options [Hash] addtional options forwarded to the connection contructor
+  #
   # @example
   #   consumer = FastlyNsq::Consumer.new(
   #     topic: 'topic',

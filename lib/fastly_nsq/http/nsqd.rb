@@ -3,6 +3,11 @@
 require 'fastly_nsq/http'
 
 class FastlyNsq::Http
+  ##
+  # Provides an interface to the the functionality provided by
+  # the nsqd HTTP interface
+  #
+  # @see https://nsq.io/components/nsqd.html
   class Nsqd
     extend Forwardable
     def_delegator :client, :get

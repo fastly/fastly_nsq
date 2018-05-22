@@ -10,6 +10,20 @@ require 'fileutils'
 require 'optparse'
 require 'singleton'
 
+# Provides functionality to support running FastlyNsq as a command line
+# application that listens and processes NSQ messages.
+#
+# @example
+#   begin
+#     cli = FastlyNsq::CLI.instance
+#     cli.parse_options
+#     cli.run
+#   rescue => e
+#     raise e if $DEBUG
+#     STDERR.puts e.message
+#     STDERR.puts e.backtrace.join("\n")
+#     exit 1
+#   end
 class FastlyNsq::CLI
   include Singleton
 
