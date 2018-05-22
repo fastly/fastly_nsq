@@ -1,11 +1,27 @@
 # frozen_string_literal: true
 
+##
+# Provides interface for writing messages to NSQ.
+# Manages tracking and creation of {FastlyNsq::Producer}s
+# @example
+#   FastlyNsq::Messenger.deliver(
+#     message: message,
+#     topic: 'topic',
+#     meta: metadata_hash,
+#   )
 module FastlyNsq::Messenger
   DEFAULT_ORIGIN = 'Unknown'
   @originating_service = DEFAULT_ORIGIN
 
   module_function
 
+  ##
+  # Deliver an NSQ message
+  # @param message [#to_s] written to the `data` key of the NSQ message payload
+  # @param topic [String] NSQ topic on which to deliver the message
+  # @param originating_service [String] added to meta key of message payload
+  # @param meta [Hash]
+  # @return [Void]
   def deliver(message:, topic:, originating_service: nil, meta: {})
     meta[:originating_service] = originating_service || self.originating_service
     meta[:sent_at] = Time.now.iso8601(5)
@@ -22,6 +38,9 @@ module FastlyNsq::Messenger
     @originating_service = service
   end
 
+  ##
+  # @param topic [String] NSQ topic
+  # @return [FastlyNsq::Producer] returns producer for given topic
   def producer_for(topic:)
     producer = producers[topic]
 
@@ -30,10 +49,16 @@ module FastlyNsq::Messenger
     producer
   end
 
+  ##
+  # Hash of FastlyNsq::Producer objects
+  # @return [Hash]
   def producers
     @producers ||= Hash.new { |hash, topic| hash[topic] = FastlyNsq::Producer.new(topic: topic) }
   end
 
+  ##
+  # Terminate producer for given topic
+  # @param topic [String] NSQ topic
   def terminate_producer(topic:)
     producer_for(topic: topic).terminate
     producers.delete(topic)

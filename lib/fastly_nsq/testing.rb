@@ -1,6 +1,39 @@
 # frozen_string_literal: true
 
 module FastlyNsq
+  ##
+  # Interface for testing FastlyNsq
+  # @example
+  #   require 'fastly_nsq/testing'
+  #   FastlyNsq::Testing.enabled? #=> true
+  #   FastlyNsq::Testing.disabled? #=> false
+
+  #   producer = FastlyNsq::Producer.new(topic: topic)
+  #   listener = FastlyNsq::Listener.new(topic: topic, channel: channel, processor: ->(m) { puts 'got: '+ m.body })
+
+  #   FastlyNsq::Testing.fake! # default, messages accumulate on the listeners
+
+  #   producer.write '{"foo":"bar"}'
+  #   listener.messages.size #=> 1
+
+  #   FastlyNsq::Testing.reset!  # remove all accumulated messages
+
+  #   listener.messages.size #=> 0
+
+  #   producer.write '{"foo":"bar"}'
+  #   listener.messages.size #=> 1
+
+  #   listener.drain
+  #   # got: {"foo"=>"bar"}
+  #   listener.messages.size #=> 0
+
+  #   FastlyNsq::Testing.inline! # messages are processed as they are produced
+  #   producer.write '{"foo":"bar"}'
+  #   # got: {"foo"=>"bar"}
+  #   listener.messages.size #=> 0
+
+  #   FastlyNsq::Testing.disable! # do it live
+  #   FastlyNsq::Testing.enable!  # re-enable testing mode
   class Testing
     class << self
       attr_accessor :__test_mode
@@ -57,7 +90,7 @@ module FastlyNsq
         FastlyNsq::Message.new(test_message)
       end
     end
-  end
+   end
 
   module Messages
     def self.messages
