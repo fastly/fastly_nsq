@@ -17,7 +17,7 @@ module FastlyNsq::Messenger
 
   ##
   # Deliver an NSQ message
-  # @param message [#to_s] written to the `data` key of the NSQ message payload
+  # @param message [#to_s] written to the +data+ key of the NSQ message payload
   # @param topic [String] NSQ topic on which to deliver the message
   # @param originating_service [String] added to meta key of message payload
   # @param meta [Hash]

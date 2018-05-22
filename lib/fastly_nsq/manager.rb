@@ -19,7 +19,7 @@ class FastlyNsq::Manager
   # Create a FastlyNsq::Manager
   #
   # @param logger [Logger]
-  # @param **pool_options [Hash] Options forwarded to {FastlyNsq::PriorityThreadPool} constructor.
+  # @param pool_options [Hash] Options forwarded to {FastlyNsq::PriorityThreadPool} constructor.
   def initialize(logger: FastlyNsq.logger, **pool_options)
     @done      = false
     @logger    = logger

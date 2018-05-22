@@ -35,7 +35,7 @@ module FastlyNsq
     # Create a FastlyNsq::Listener
     #
     # @param topic [String] NSQ topic on which to listen
-    # @param processor [Proc] processor that will be `call`ed per message
+    # @param processor [Proc] processor that will be +call+ed per message
     # @param options [Hash] additional options
     # @return FastlyNsq::Listener
     def listen(topic, processor, **options)
@@ -67,7 +67,7 @@ module FastlyNsq
 
     ##
     # Returns a new FastlyNsq::Manager or the memoized
-    # instance `@manager`.
+    # instance +@manager+.
     # @return [FastlyNsq::Manager]
     def manager
       @manager ||= FastlyNsq::Manager.new

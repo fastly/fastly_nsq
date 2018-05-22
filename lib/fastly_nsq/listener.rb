@@ -20,7 +20,7 @@ class FastlyNsq::Listener
   DEFAULT_CONNECTION_TIMEOUT = 5
 
   # @!method connected?
-  #   Delegated to `self.consumer`
+  #   Delegated to +self.consumer+
   #   @return [FastlyNsq::Consumer#connected?]
   def_delegators :consumer, :connected?
 
@@ -52,21 +52,21 @@ class FastlyNsq::Listener
   # Create a FastlyNsq::Listener
   #
   # @param topic [String] NSQ topic on which to listen
-  # @param processor [Proc#call] Any object that responds to `call`. Each message will
-  #   be processed with `processor.call(FastlyNsq::Message.new(nsq_message))`.
-  #   The processor should return `true` to indicate that processing is complete
+  # @param processor [Proc#call] Any object that responds to +call+. Each message will
+  #   be processed with +processor.call(FastlyNsq::Message.new(nsq_message))+.
+  #   The processor should return +true+ to indicate that processing is complete
   #   and NSQ message can be finished. The processor is passed an instance of {FastlyNsq::Message}
   #   so the provided Proc can optionally manage the message state using methods provided by {FastlyNsq::Message}.
-  # @param preprocessor [Proc#call] ANy object that responds to `call`. Similar to the processor
-  #   each message it processes via `preprocessor.call(message)`. Default: {FastlyNsq.preprocessor}
+  # @param preprocessor [Proc#call] ANy object that responds to +call+. Similar to the processor
+  #   each message it processes via +preprocessor.call(message)+. Default: {FastlyNsq.preprocessor}
   # @param channel [String] NSQ Channel on which to listen. Default: {FastlyNsq.channel}
-  # @param consumer [FastlyNsq::Consumer] interface to read messages off the queue. If value is `nil` the
+  # @param consumer [FastlyNsq::Consumer] interface to read messages off the queue. If value is +nil+ the
   #   constructor will create a {FastlyNsq::Consumer} based on the provided parameters.
   # @param logger [Logger] Default: {FastlyNsq.logger}
   # @param priority [Integer] Queue piority. Default: {DEFAULT_PRIORITY}
   # @param connect_timeout [Integer] NSQ connection timeout in seconds. Default: {DEFAULT_CONNECTION_TIMEOUT}
   # @param max_attempts [Integer] maximum number of times an NSQ message will be attemped Default: {FastlyNsq.max_attempts}
-  # @param **consumer_options [Hash] additional options forwarded to the {FastlyNsq::Consumer}} contructor
+  # @param consumer_options [Hash] additional options forwarded to the {FastlyNsq::Consumer}} contructor
   #
   # @example
   #   FastlyNsq::Listener.new(

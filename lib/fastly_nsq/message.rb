@@ -9,20 +9,20 @@ class FastlyNsq::Message
   extend Forwardable
 
   # @!method attempts
-  #   Delegated to `self.nsq_message`
+  #   Delegated to +self.nsq_message+
   #   @return [Nsq::Message#attempts]
   #   @see https://www.rubydoc.info/gems/nsq-ruby/Nsq/Message#attempts-instance_method
   # @!method touch
-  #   Delegated to `self.nsq_message`
+  #   Delegated to +self.nsq_message+
   #   @return [Nsq::Message#touch]
   #   @see https://www.rubydoc.info/gems/nsq-ruby/Nsq/Message#touch-instance_method
   # @!method timestamp
-  #   Delegated to `self.nsq_message`
+  #   Delegated to +self.nsq_message+
   #   @return [Nsq::Message#timestamp]
   #   @see https://www.rubydoc.info/gems/nsq-ruby/Nsq/Message#timestamp-instance_method
   def_delegators :@nsq_message, :attempts, :touch, :timestamp
 
-  # @return [Symbol] Message state. Returns `nil` if message has not been requeued or finished.
+  # @return [Symbol] Message state. Returns +nil+ if message has not been requeued or finished.
   attr_reader :managed
 
   # @return [Nsq::Message]

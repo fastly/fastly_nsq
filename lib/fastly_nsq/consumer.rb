@@ -37,23 +37,23 @@ class FastlyNsq::Consumer
   attr_reader :max_attempts
 
   # @!method connected?
-  #   Delegated to `self.connection`
+  #   Delegated to +self.connection+
   #   @return [Nsq::Consumer#connected?]
   #   @see https://www.rubydoc.info/gems/nsq-ruby/Nsq/ClientBase#connected%3F-instance_method Nsq::ClientBase#connected?
   # @!method pop
-  #   Delegated to `self.connection`
+  #   Delegated to +self.connection+
   #   @return [Nsq::Consumer#pop]
   #   @see https://www.rubydoc.info/gems/nsq-ruby/Nsq%2FConsumer:pop Nsq::Consumer#pop
   # @!method pop_without_blocking
-  #   Delegated to `self.connection`
+  #   Delegated to +self.connection+
   #   @return [Nsq::Consumer#pop_without_blocking]
   #   @see https://www.rubydoc.info/gems/nsq-ruby/Nsq%2FConsumer:pop_without_blocking Nsq::Consumer#pop_without_blocking
   # @!method size
-  #   Delegated to `self.connection`
+  #   Delegated to +self.connection+
   #   @return [Nsq::Consumer#size]
   #   @see https://www.rubydoc.info/gems/nsq-ruby/Nsq%2FConsumer:size Nsq::Consumer#size
   # @!method terminate
-  #   Delegated to `self.connection`
+  #   Delegated to +self.connection+
   #   @return [Nsq::Consumer#terminate]
   #   @see https://www.rubydoc.info/gems/nsq-ruby/Nsq%2FConsumer:terminate Nsq::Consumer#terminate
   def_delegators :connection, :connected?, :pop, :pop_without_blocking, :size, :terminate

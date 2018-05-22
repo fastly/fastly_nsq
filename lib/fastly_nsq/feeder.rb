@@ -19,13 +19,13 @@ class FastlyNsq::Feeder
   ##
   # Send a message to the processor with specified priority
   #
-  # This will `post` to the FastlyNsq.manager.pool with a queue priority and block
-  # that will `call`ed. FastlyNsq.manager.pool is a PriorityThreadPool which is a
+  # This will +post+ to the FastlyNsq.manager.pool with a queue priority and block
+  # that will +call+ed. FastlyNsq.manager.pool is a PriorityThreadPool which is a
   # Concurrent::ThreadPoolExecutor that has @queue which in turn is a priority queue
   # that manages job priority
   #
-  # The ThreadPoolExecutor is what actually works the @queue and sends `call` to the queued Proc.
-  # When that code is exec'ed `processer.call(message)` is run. Processor in this context is
+  # The ThreadPoolExecutor is what actually works the @queue and sends +call+ to the queued Proc.
+  # When that code is exec'ed +processer.call(message)+ is run. Processor in this context is
   # a FastlyNsq::Listener
   #
   # @param message [Nsq::Message]
