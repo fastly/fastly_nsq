@@ -85,12 +85,24 @@ module FastlyNsq
         FastlyNsq::Messages.messages.clear
       end
 
+      ##
+      # Creates a FastlyNsq::TestMessage that is used to create a FastlyNsq::Message where the underlying
+      # +nsq_message+ is the TestMessage and not an Nsq::Message. This aids in testing application code that
+      # is doing message processing
+      #
+      # @param data [String] NSQ message data
+      # @param meta [String] NSQ message metadata
+      #
+      # @example
+      #   test_message = FastlyNsq::Testing.message(data: post_data, meta: {})
+      #   processor_klass.call(test_message)
+      #   expect(Post.find(post_data['id']).not_to be nil
       def message(data:, meta: nil)
         test_message = FastlyNsq::TestMessage.new(JSON.dump('data' => data, 'meta' => meta))
         FastlyNsq::Message.new(test_message)
       end
     end
-   end
+  end
 
   module Messages
     def self.messages
@@ -98,6 +110,10 @@ module FastlyNsq
     end
   end
 
+  ##
+  # Stub for Nsq::Message used for testing.
+  # Use this class instead of a struct or test stubs
+  # when testing application logic that requires a Nsq::Message.
   class TestMessage
     attr_reader :raw_body
     attr_reader :attempts

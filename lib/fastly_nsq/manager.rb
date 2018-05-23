@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 ##
-# Interface for tracking listeners.
+# Interface for tracking listeners and managing the processing pool.
 class FastlyNsq::Manager
   DEADLINE = 30
   DEFAULT_POOL_SIZE = 5

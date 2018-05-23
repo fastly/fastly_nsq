@@ -5,7 +5,7 @@ require 'fastly_nsq/http/nsqd'
 require 'fastly_nsq/http/nsqlookupd'
 
 ##
-# Adatper class for HTTP requests to NSQd
+# Adapter class for HTTP requests to NSQD
 #
 # @example
 #   uri = URI.join(nsqd_url, '/info')

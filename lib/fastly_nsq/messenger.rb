@@ -50,7 +50,7 @@ module FastlyNsq::Messenger
   end
 
   ##
-  # Hash of FastlyNsq::Producer objects
+  # Map of subscribed topics to FastlyNsq::Producer
   # @return [Hash]
   def producers
     @producers ||= Hash.new { |hash, topic| hash[topic] = FastlyNsq::Producer.new(topic: topic) }

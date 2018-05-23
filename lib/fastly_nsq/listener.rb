@@ -57,7 +57,7 @@ class FastlyNsq::Listener
   #   The processor should return +true+ to indicate that processing is complete
   #   and NSQ message can be finished. The processor is passed an instance of {FastlyNsq::Message}
   #   so the provided Proc can optionally manage the message state using methods provided by {FastlyNsq::Message}.
-  # @param preprocessor [Proc#call] ANy object that responds to +call+. Similar to the processor
+  # @param preprocessor [Proc#call] Any object that responds to +call+. Similar to the processor
   #   each message it processes via +preprocessor.call(message)+. Default: {FastlyNsq.preprocessor}
   # @param channel [String] NSQ Channel on which to listen. Default: {FastlyNsq.channel}
   # @param consumer [FastlyNsq::Consumer] interface to read messages off the queue. If value is +nil+ the
@@ -66,6 +66,7 @@ class FastlyNsq::Listener
   # @param priority [Integer] Queue piority. Default: {DEFAULT_PRIORITY}
   # @param connect_timeout [Integer] NSQ connection timeout in seconds. Default: {DEFAULT_CONNECTION_TIMEOUT}
   # @param max_attempts [Integer] maximum number of times an NSQ message will be attemped Default: {FastlyNsq.max_attempts}
+  #   When set to +nil+, attempts will be unlimited
   # @param consumer_options [Hash] additional options forwarded to the {FastlyNsq::Consumer}} contructor
   #
   # @example

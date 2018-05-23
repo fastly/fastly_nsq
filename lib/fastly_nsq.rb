@@ -21,7 +21,9 @@ module FastlyNsq
     # @return [Proc] global preprocessor
     attr_accessor :preprocessor
 
-    # @return [Integer] maxium number of times an NSQ message will be attempted
+    # Maximum number of times an NSQ message will be attempted.
+    # When set to +nil+, the number of attempts will be unlimited.
+    # @return [Integer]
     attr_accessor :max_attempts
 
     # @return [Logger]
@@ -36,7 +38,7 @@ module FastlyNsq
     #
     # @param topic [String] NSQ topic on which to listen
     # @param processor [Proc] processor that will be +call+ed per message
-    # @param options [Hash] additional options
+    # @param options [Hash] additional options that are passed to FastlyNsq::Listener's constructor
     # @return FastlyNsq::Listener
     def listen(topic, processor, **options)
       FastlyNsq::Listener.new(topic: topic, processor: processor, **options)
@@ -74,7 +76,7 @@ module FastlyNsq
     end
 
     ##
-    # Set a new manager
+    # Set a new manager and transfer listeners to the new manager.
     # @param manager [FastlyNsq::Manager]
     # @return [FastlyNsq::Manager]
     def manager=(manager)
@@ -83,7 +85,7 @@ module FastlyNsq
     end
 
     ##
-    # Return an array of NSQ lookupd http addresses
+    # Return an array of NSQ lookupd http addresses sourced from ENV['NSQLOOKUPD_HTTP_ADDRESS']
     # @return [Array<String>] list of nsqlookupd http addresses
     def lookupd_http_addresses
       ENV.fetch('NSQLOOKUPD_HTTP_ADDRESS').split(',').map(&:strip)

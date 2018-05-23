@@ -29,7 +29,7 @@ class FastlyNsq::Message
   # @see https://www.rubydoc.info/gems/nsq-ruby/Nsq/Message
   attr_reader :nsq_message
 
-  # @return [String]Nsq::Message body
+  # @return [String] Nsq::Message body
   attr_reader :raw_body
 
   alias to_s raw_body

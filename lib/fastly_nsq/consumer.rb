@@ -69,6 +69,7 @@ class FastlyNsq::Consumer
   #   default values set in ENV.
   # @param connect_timeout [Integer] NSQ connection timeout in seconds
   # @param max_attempts [Integer] maximum number of times an NSQ message will be attemped
+  #   When set to +nil+, attempts will be unlimited
   # @param options [Hash] addtional options forwarded to the connection contructor
   #
   # @example
@@ -97,8 +98,6 @@ class FastlyNsq::Consumer
 
   attr_reader :tls_options
 
-  ##
-  # create a new Nsq::Consumer
   def connect(queue, **options)
     Nsq::Consumer.new(
       {
