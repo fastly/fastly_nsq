@@ -69,4 +69,20 @@ RSpec.describe FastlyNsq do
       expect(subject.lookupd_http_addresses).to eq(ENV['NSQLOOKUPD_HTTP_ADDRESS'].split(','))
     end
   end
+
+  describe '#on' do
+    before { FastlyNsq.events.each { |(_, v)| v.clear } }
+    after  { FastlyNsq.events.each { |(_, v)| v.clear } }
+
+    it 'registers callbacks for events' do
+      %i[startup shutdown heartbeat].each do |event|
+        block = -> {}
+        expect { FastlyNsq.on(event, &block) }.to change { FastlyNsq.events[event] }.by([block])
+      end
+    end
+
+    it 'limits callback registration to valid events' do
+      expect { FastlyNsq.on(:foo, &-> {}) }.to raise_error(ArgumentError, /Invalid event name/)
+    end
+  end
 end
