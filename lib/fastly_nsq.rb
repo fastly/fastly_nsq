@@ -95,19 +95,24 @@ module FastlyNsq
     end
 
     # Register a block to run at a point in the lifecycle.
-    # :startup, :heartbeat or :shutdown are valid events.
     #
+    # @example
     #   FastlyNsq.configure do |config|
     #     config.on(:shutdown) do
     #       puts "Goodbye cruel world!"
     #     end
     #   end
+    # @param event [Symbol] Event to hook into.  One of :startup, :heartbeat or :shutdown.
+    # @yield Proc to execute when event is triggered.
     def on(event, &block)
       event = event.to_sym
       raise ArgumentError, "Invalid event name: #{event}" unless LIFECYCLE_EVENTS.include?(event)
       events[event] << block
     end
 
+    # Execute Procs assigned for the lifecycle event
+    #
+    # @param event [Symbol] Lifecycle event to trigger
     def fire_event(event)
       blocks = FastlyNsq.events.fetch(event)
       blocks.each do |block|
