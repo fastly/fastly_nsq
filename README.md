@@ -24,6 +24,7 @@ Please use [GitHub Issues] to report bugs.
 
 [GitHub Issues]: https://github.com/fastly/fastly_nsq/issues
 
+**[Documentation](https://www.rubydoc.info/gems/fastly_nsq)**
 
 ## Install
 
@@ -245,7 +246,31 @@ FastlyNsq::Http::Nsqlookupd.lookup(topic: 'foo')
 
 ### Testing
 
-[ ] fixme
+`FastlyNsq` provides a test mode and a helper class to make testing easier.
+
+In order to test classes that use FastlyNsq without having real connections
+to NSQ:
+
+```ruby
+require 'fastly_nsq/testing'
+
+RSpec.configure do |config|
+  config.before(:each) do
+    FastlyNsq::Testing.fake!
+    FastlyNsq::Testing.reset!
+  end
+end
+```
+
+To test processor classes you can create test messages:
+
+```ruby
+test_message = FastlyNsq::Testing.message(data: { 'count' => 123 })
+
+My::ProcessorKlass.call(test_message)
+
+expect(some_result)
+```
 
 ## Configuration
 
