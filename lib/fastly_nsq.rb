@@ -29,6 +29,9 @@ module FastlyNsq
     # @return [Logger]
     attr_writer :logger
 
+    ##
+    # Map of lifecycle events
+    # @return [Hash]
     def events
       @events ||= LIFECYCLE_EVENTS.each_with_object({}) { |e, a| a[e] = [] }
     end
