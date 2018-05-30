@@ -19,6 +19,7 @@ class FastlyNsq::Launcher
     @logger  = logger
 
     FastlyNsq.manager = FastlyNsq::Manager.new(options)
+    FastlyNsq.fire_event :startup
   end
 
   def beat
@@ -28,6 +29,7 @@ class FastlyNsq::Launcher
   def stop
     @done = true
     manager.terminate(timeout)
+    FastlyNsq.fire_event :shutdown
   end
 
   def stop_listeners
@@ -57,6 +59,8 @@ class FastlyNsq::Launcher
     #       ::Process.kill('dieing because...', $$)
   rescue => e
     logger.error "Heartbeat error: #{e.message}"
+  ensure
+    FastlyNsq.fire_event :heartbeat
   end
 
   def start_heartbeat
