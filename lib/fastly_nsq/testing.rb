@@ -1,6 +1,39 @@
 # frozen_string_literal: true
 
 module FastlyNsq
+  ##
+  # Interface for testing FastlyNsq
+  # @example
+  #   require 'fastly_nsq/testing'
+  #   FastlyNsq::Testing.enabled? #=> true
+  #   FastlyNsq::Testing.disabled? #=> false
+
+  #   producer = FastlyNsq::Producer.new(topic: topic)
+  #   listener = FastlyNsq::Listener.new(topic: topic, channel: channel, processor: ->(m) { puts 'got: '+ m.body })
+
+  #   FastlyNsq::Testing.fake! # default, messages accumulate on the listeners
+
+  #   producer.write '{"foo":"bar"}'
+  #   listener.messages.size #=> 1
+
+  #   FastlyNsq::Testing.reset!  # remove all accumulated messages
+
+  #   listener.messages.size #=> 0
+
+  #   producer.write '{"foo":"bar"}'
+  #   listener.messages.size #=> 1
+
+  #   listener.drain
+  #   # got: {"foo"=>"bar"}
+  #   listener.messages.size #=> 0
+
+  #   FastlyNsq::Testing.inline! # messages are processed as they are produced
+  #   producer.write '{"foo":"bar"}'
+  #   # got: {"foo"=>"bar"}
+  #   listener.messages.size #=> 0
+
+  #   FastlyNsq::Testing.disable! # do it live
+  #   FastlyNsq::Testing.enable!  # re-enable testing mode
   class Testing
     class << self
       attr_accessor :__test_mode
@@ -52,6 +85,18 @@ module FastlyNsq
         FastlyNsq::Messages.messages.clear
       end
 
+      ##
+      # Creates a FastlyNsq::TestMessage that is used to create a FastlyNsq::Message where the underlying
+      # +nsq_message+ is the TestMessage and not an Nsq::Message. This aids in testing application code that
+      # is doing message processing
+      #
+      # @param data [String] NSQ message data
+      # @param meta [String] NSQ message metadata
+      #
+      # @example
+      #   test_message = FastlyNsq::Testing.message(data: post_data, meta: {})
+      #   processor_klass.call(test_message)
+      #   expect(Post.find(post_data['id']).not_to be nil
       def message(data:, meta: nil)
         test_message = FastlyNsq::TestMessage.new(JSON.dump('data' => data, 'meta' => meta))
         FastlyNsq::Message.new(test_message)
@@ -65,6 +110,10 @@ module FastlyNsq
     end
   end
 
+  ##
+  # Stub for Nsq::Message used for testing.
+  # Use this class instead of a struct or test stubs
+  # when testing application logic that requires a Nsq::Message.
   class TestMessage
     attr_reader :raw_body
     attr_reader :attempts

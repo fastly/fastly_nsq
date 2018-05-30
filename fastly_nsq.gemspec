@@ -28,6 +28,7 @@ Gem::Specification.new do |gem|
   gem.add_development_dependency 'rspec-eventually', '0.2'
   gem.add_development_dependency 'timecop'
   gem.add_development_dependency 'webmock', '~> 3.0'
+  gem.add_development_dependency 'yard'
 
   gem.add_dependency 'concurrent-ruby', '~> 1.0'
   gem.add_dependency 'nsq-ruby', '~> 2.3'
