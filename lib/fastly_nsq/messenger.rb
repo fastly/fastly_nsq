@@ -23,15 +23,12 @@ module FastlyNsq::Messenger
   # @param meta [Hash]
   # @return [Void]
   def deliver(message:, topic:, originating_service: nil, meta: {})
-    meta[:originating_service] = originating_service || self.originating_service
-    meta[:sent_at] = Time.now.iso8601(5)
-
     payload = {
       data: message,
-      meta: meta,
+      meta: populate_meta(originating_service: originating_service, meta: meta),
     }
 
-    producer_for(topic: topic) { |producer| producer.write payload.to_json }
+    deliver_payload(topic: topic, payload: payload.to_json)
   end
 
   def originating_service=(service)
@@ -73,5 +70,17 @@ module FastlyNsq::Messenger
 
   def originating_service
     @originating_service || DEFAULT_ORIGIN
+  end
+
+  private_class_method
+
+  def deliver_payload(topic:, payload:)
+    producer_for(topic: topic) { |producer| producer.write payload }
+  end
+
+  def populate_meta(originating_service: nil, meta: {})
+    meta[:originating_service] = originating_service || self.originating_service
+    meta[:sent_at] = Time.now.iso8601(5)
+    meta
   end
 end
