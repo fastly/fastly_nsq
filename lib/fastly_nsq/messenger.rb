@@ -17,6 +17,10 @@ module FastlyNsq::Messenger
 
   ##
   # Deliver an NSQ message. Uses +pub+
+  #
+  # Will add two keys to the `+meta+ payload that cannot be overidden:
+  #   +originating_service+ which defaults to {FastlyNsq#originating_service} and
+  #   +sent_at+ which will be set to +Time.now.iso8601(5)+ when the payload is created.
   # @param message [#to_json(*)] written to the +data+ key of the NSQ message payload
   # @param topic [String] NSQ topic on which to deliver the message
   # @param originating_service [String] added to meta key of message payload
@@ -38,6 +42,12 @@ module FastlyNsq::Messenger
 
   ##
   # Deliver many NSQ messages at once. Uses +mpub+
+  #
+  # For each message will add two keys to the `+meta+ payload of each message
+  # that cannot be overidden:
+  #   +originating_service+ which defaults to {FastlyNsq#originating_service} and
+  #   +sent_at+ which will be set to +Time.now.iso8601(5)+ when messages are processed.
+  #   The +sent_at+ time and +originating_service+ will be the same for every message.
   # @param messages [Array] Array of message which will be written to +data+ key of the
   #   individual NSQ message payload. Each message needs to respond to +to_json(*)+.
   # @param topic [String] NSQ topic on which to deliver the message
