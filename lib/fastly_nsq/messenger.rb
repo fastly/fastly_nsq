@@ -16,12 +16,17 @@ module FastlyNsq::Messenger
   module_function
 
   ##
-  # Deliver an NSQ message
-  # @param message [#to_s] written to the +data+ key of the NSQ message payload
+  # Deliver an NSQ message. Uses +pub+
+  # @param message [#to_json(*)] written to the +data+ key of the NSQ message payload
   # @param topic [String] NSQ topic on which to deliver the message
   # @param originating_service [String] added to meta key of message payload
   # @param meta [Hash]
   # @return [Void]
+  # @example
+  #   FastlyNsq::Messenger.deliver(
+  #     message: {a: 1, count: 123},
+  #     topic: 'count',
+  #   )
   def deliver(message:, topic:, originating_service: nil, meta: {})
     payload = {
       data: message,

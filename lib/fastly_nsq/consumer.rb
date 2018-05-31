@@ -55,7 +55,7 @@ class FastlyNsq::Consumer
   # @!method terminate
   #   Delegated to +self.connection+
   #   @return [Nsq::Consumer#terminate]
-  #   @see https://www.rubydoc.info/gems/nsq-ruby/Nsq%2FConsumer:terminate Nsq::Consumer#terminate
+  #   @see https://www.rubydoc.info/gems/nsq-ruby/Nsq%2FClientBase:terminate Nsq::ClientBase#terminate
   def_delegators :connection, :connected?, :pop, :pop_without_blocking, :size, :terminate
 
   ##
