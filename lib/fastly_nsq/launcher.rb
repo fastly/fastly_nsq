@@ -2,6 +2,11 @@
 
 require 'fastly_nsq/safe_thread'
 
+##
+# FastlyNsq::Launcher is a lighweight wrapper of a thread manager
+# and heartbeat.
+#
+# This class is used internally by FastlyNsq::CLI.
 class FastlyNsq::Launcher
   include FastlyNsq::SafeThread
 

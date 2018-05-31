@@ -1,9 +1,5 @@
 # fastly_nsq [![Build Status](https://travis-ci.org/fastly/fastly_nsq.svg?branch=master)](https://travis-ci.org/fastly/fastly_nsq)
 
-*NOTE: This is a point-release
-which is not yet suitable for production.
-Use at your own peril.*
-
 NSQ adapter and testing objects
 for using the NSQ messaging system
 in your Ruby project.
@@ -24,6 +20,7 @@ Please use [GitHub Issues] to report bugs.
 
 [GitHub Issues]: https://github.com/fastly/fastly_nsq/issues
 
+**[Documentation](https://www.rubydoc.info/gems/fastly_nsq)**
 
 ## Install
 
@@ -243,19 +240,33 @@ FastlyNsq::Http::Nsqlookupd.nodes
 FastlyNsq::Http::Nsqlookupd.lookup(topic: 'foo')
 ```
 
-### `Real vs. Fake`
+### Testing
 
-The real strategy
-creates a connection
-to `nsq-ruby`'s
-`Nsq::Producer` and `Nsq::Consumer` classes.
+`FastlyNsq` provides a test mode and a helper class to make testing easier.
 
-The fake strategy
-mocks the connection
-to NSQ for testing purposes.
-It adheres to the same API
-as the real adapter.
+In order to test classes that use FastlyNsq without having real connections
+to NSQ:
 
+```ruby
+require 'fastly_nsq/testing'
+
+RSpec.configure do |config|
+  config.before(:each) do
+    FastlyNsq::Testing.fake!
+    FastlyNsq::Testing.reset!
+  end
+end
+```
+
+To test processor classes you can create test messages:
+
+```ruby
+test_message = FastlyNsq::Testing.message(data: { 'count' => 123 })
+
+My::ProcessorKlass.call(test_message)
+
+expect(some_result)
+```
 
 ## Configuration
 

@@ -2,6 +2,9 @@
 
 module FastlyNsq
   class TlsOptions
+    ##
+    # Return hash of TLS options for creating an NSQ connection.
+    # @param context [Hash]
     def self.as_hash(context = nil)
       new(context).to_h
     end

@@ -3,6 +3,11 @@
 require 'fastly_nsq/http'
 
 class FastlyNsq::Http
+  ##
+  # Provides an interface to the functionality exposed by
+  # the nsqlookupd HTTP interface
+  #
+  # @see https://nsq.io/components/nsqlookupd.html
   class Nsqlookupd
     extend Forwardable
     def_delegator :client, :get

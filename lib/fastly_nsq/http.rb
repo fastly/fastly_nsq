@@ -4,6 +4,16 @@ require 'net/https'
 require 'fastly_nsq/http/nsqd'
 require 'fastly_nsq/http/nsqlookupd'
 
+##
+# Adapter class for HTTP requests to NSQD
+#
+# @example
+#   uri = URI.join(nsqd_url, '/info')
+#   client = FastlyNsq::Http.new(uri: uri)
+#   client.use_ssl
+#
+# @see FastlyNsq::Http::Nsqd
+# @see FastlyNsq::Http::Nsqlookupd
 class FastlyNsq::Http
   def initialize(uri:, cert_filename: ENV['NSQ_SSL_CERTIFICATE'], key_filename: ENV['NSQ_SSL_KEY'])
     @uri = uri.is_a?(URI) ? uri : URI.parse(uri)
