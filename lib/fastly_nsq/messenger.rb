@@ -36,6 +36,34 @@ module FastlyNsq::Messenger
     deliver_payload(topic: topic, payload: payload.to_json)
   end
 
+  ##
+  # Deliver many NSQ messages at once. Uses +mpub+
+  # @param messages [Array] Array of message which will be written to +data+ key of the
+  #   individual NSQ message payload. Each message needs to respond to +to_json(*)+.
+  # @param topic [String] NSQ topic on which to deliver the message
+  # @param originating_service [String] added to meta key of message payload
+  # @param meta [Hash]
+  # @return [Void]
+  # @example
+  #   FastlyNsq::Messenger.deliver_multi(
+  #     messages: [{a: 1, count: 11}, {a: 2, count: 22}],
+  #     topic: 'counts',
+  #   )
+  def deliver_multi(messages:, topic:, originating_service: nil, meta: {})
+    meta = populate_meta(originating_service: originating_service, meta: meta)
+
+    payload = messages.each_with_object([]) do |message, a|
+      msg = {
+        data: message,
+        meta: meta,
+      }
+
+      a << msg.to_json
+    end
+
+    deliver_payload(topic: topic, payload: payload)
+  end
+
   def originating_service=(service)
     @originating_service = service
   end

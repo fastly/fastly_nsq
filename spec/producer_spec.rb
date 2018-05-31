@@ -17,6 +17,11 @@ RSpec.describe FastlyNsq::Producer do
     expect { message_count(topic) }.to eventually(eq(1)).within(5)
   end
 
+  it 'writes multiple messages' do
+    subject.write %w[foo bar]
+    expect { message_count(topic) }.to eventually(eq(2)).within(5)
+  end
+
   it 'should terminate' do
     expect { subject.terminate }.to change(subject, :connected?).to(false)
     expect(subject.connection).to eq(nil)

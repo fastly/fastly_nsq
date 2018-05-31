@@ -27,7 +27,7 @@ class FastlyNsq::Producer
 
   def write(message)
     raise FastlyNsq::NotConnectedError unless connected?
-    connection.write message
+    connection.write(*message)
   end
 
   def connect
