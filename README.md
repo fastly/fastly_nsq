@@ -291,6 +291,19 @@ NSQLOOKUPD_HTTP_ADDRESS='127.0.0.1:4161, 10.1.1.101:4161'
 See the [`.sample.env`](examples/.sample.env) file
 for more detail.
 
+## Development
+
+The fastest way to get up and running for development is to use
+the Docker container provided by Docker Compose:
+
+* Clone: `git clone https://github.com/fastly/fastly_nsq.git`
+* `cd fastly_nsq`
+* run `bundle install`
+* run `docker-compose up -d`
+* `rake spec`
+
+You will still need the `ENV` variables as defined above.
+
 ## Contributors
 
 * Adarsh Pandit ([@adarsh](https://github.com/adarsh))
