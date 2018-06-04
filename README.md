@@ -192,6 +192,13 @@ You can also set the originating service for all `deliver` calls:
 FastlyNsq::Messenger.originating_service = 'some awesome service'
 ```
 
+`FastlyNsq::Messenger` also spuports delivering multiple message at once and will
+use the NSQ `mpub` directive under the hood.
+
+```ruby
+FastlyNsq::Messenger.deliver_multi(messages: array_of_msgs, topic: 'my_topic')
+```
+
 `FastlyNsq::Messenger` can also be used to manage Producer connections
 
 ```ruby
@@ -290,6 +297,19 @@ NSQLOOKUPD_HTTP_ADDRESS='127.0.0.1:4161, 10.1.1.101:4161'
 
 See the [`.sample.env`](examples/.sample.env) file
 for more detail.
+
+## Development
+
+The fastest way to get up and running for development is to use
+the Docker container provided by Docker Compose:
+
+* Clone: `git clone https://github.com/fastly/fastly_nsq.git`
+* `cd fastly_nsq`
+* run `bundle install`
+* run `docker-compose up -d`
+* `rake spec`
+
+You will still need the `ENV` variables as defined above.
 
 ## Contributors
 

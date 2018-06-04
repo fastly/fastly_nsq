@@ -16,22 +16,62 @@ module FastlyNsq::Messenger
   module_function
 
   ##
-  # Deliver an NSQ message
-  # @param message [#to_s] written to the +data+ key of the NSQ message payload
+  # Deliver an NSQ message. Uses +pub+
+  #
+  # Will add two keys to the `+meta+ payload that cannot be overidden:
+  #   +originating_service+ which defaults to {FastlyNsq#originating_service} and
+  #   +sent_at+ which will be set to +Time.now.iso8601(5)+ when the payload is created.
+  # @param message [#to_json(*)] written to the +data+ key of the NSQ message payload
   # @param topic [String] NSQ topic on which to deliver the message
   # @param originating_service [String] added to meta key of message payload
   # @param meta [Hash]
   # @return [Void]
+  # @example
+  #   FastlyNsq::Messenger.deliver(
+  #     message: {a: 1, count: 123},
+  #     topic: 'count',
+  #   )
   def deliver(message:, topic:, originating_service: nil, meta: {})
-    meta[:originating_service] = originating_service || self.originating_service
-    meta[:sent_at] = Time.now.iso8601(5)
-
     payload = {
       data: message,
-      meta: meta,
+      meta: populate_meta(originating_service: originating_service, meta: meta),
     }
 
-    producer_for(topic: topic) { |producer| producer.write payload.to_json }
+    deliver_payload(topic: topic, payload: payload.to_json)
+  end
+
+  ##
+  # Deliver many NSQ messages at once. Uses +mpub+
+  #
+  # For each message will add two keys to the `+meta+ payload of each message
+  # that cannot be overidden:
+  #   +originating_service+ which defaults to {FastlyNsq#originating_service} and
+  #   +sent_at+ which will be set to +Time.now.iso8601(5)+ when messages are processed.
+  #   The +sent_at+ time and +originating_service+ will be the same for every message.
+  # @param messages [Array] Array of message which will be written to +data+ key of the
+  #   individual NSQ message payload. Each message needs to respond to +to_json(*)+.
+  # @param topic [String] NSQ topic on which to deliver the message
+  # @param originating_service [String] added to meta key of message payload
+  # @param meta [Hash]
+  # @return [Void]
+  # @example
+  #   FastlyNsq::Messenger.deliver_multi(
+  #     messages: [{a: 1, count: 11}, {a: 2, count: 22}],
+  #     topic: 'counts',
+  #   )
+  def deliver_multi(messages:, topic:, originating_service: nil, meta: {})
+    meta = populate_meta(originating_service: originating_service, meta: meta)
+
+    payload = messages.each_with_object([]) do |message, a|
+      msg = {
+        data: message,
+        meta: meta,
+      }
+
+      a << msg.to_json
+    end
+
+    deliver_payload(topic: topic, payload: payload)
   end
 
   def originating_service=(service)
@@ -73,5 +113,17 @@ module FastlyNsq::Messenger
 
   def originating_service
     @originating_service || DEFAULT_ORIGIN
+  end
+
+  private_class_method
+
+  def deliver_payload(topic:, payload:)
+    producer_for(topic: topic) { |producer| producer.write payload }
+  end
+
+  def populate_meta(originating_service: nil, meta: {})
+    meta[:originating_service] = originating_service || self.originating_service
+    meta[:sent_at] = Time.now.iso8601(5)
+    meta
   end
 end

@@ -6,6 +6,7 @@ require 'json'
 
 RSpec.describe FastlyNsq::Messenger do
   let(:message)  { { sample: 'sample', message: 'message' } }
+  let(:message2) { { sample: 'elpmas', message: 'egassem' } }
   let(:producer) { double 'FastlyNsq::Producer', write: nil, terminate: :terminated }
   let(:origin)   { 'originating_service' }
   let(:sent_at)  { Time.now.iso8601(5) }
@@ -70,6 +71,30 @@ RSpec.describe FastlyNsq::Messenger do
       subject.deliver message: message, topic: 'topic', meta: meta, originating_service: origin
 
       expect(producer).to have_received(:write).with(expected_attributes.to_json)
+    end
+  end
+
+  describe '#deliver_multi' do
+    let(:expected_attributes_multi) do
+      [
+        expected_attributes.to_json,
+        {
+          data: message2,
+          meta: {
+            originating_service: 'originating_service',
+            sent_at: sent_at,
+          },
+        }.to_json,
+      ]
+    end
+    before { Timecop.freeze(sent_at) }
+
+    it 'writes an array of messages on a producer' do
+      subject.producers['topic'] = producer
+
+      subject.deliver_multi messages: [message, message2], topic: 'topic', originating_service: origin
+
+      expect(producer).to have_received(:write).with(expected_attributes_multi)
     end
   end
 
