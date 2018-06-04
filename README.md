@@ -192,6 +192,13 @@ You can also set the originating service for all `deliver` calls:
 FastlyNsq::Messenger.originating_service = 'some awesome service'
 ```
 
+`FastlyNsq::Messenger` also spuports delivering multiple message at once and will
+use the NSQ `mpub` directive under the hood.
+
+```ruby
+FastlyNsq::Messenger.deliver_multi(messages: array_of_msgs, topic: 'my_topic')
+```
+
 `FastlyNsq::Messenger` can also be used to manage Producer connections
 
 ```ruby
