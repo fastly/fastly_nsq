@@ -1,5 +1,15 @@
 # Change Log
 
+## [v1.9.0](https://github.com/fastly/fastly_nsq/tree/v1.9.0) (2018-06-04)
+[Full Changelog](https://github.com/fastly/fastly_nsq/compare/v1.8.0...v1.9.0)
+
+**Merged pull requests:**
+
+- Support writing multiple messages in FastlyNsq::Messenger [\#81](https://github.com/fastly/fastly_nsq/pull/81) ([leklund](https://github.com/leklund))
+- Remove README line about point release... [\#80](https://github.com/fastly/fastly_nsq/pull/80) ([alieander](https://github.com/alieander))
+- Document lifecycle methods [\#79](https://github.com/fastly/fastly_nsq/pull/79) ([lanej](https://github.com/lanej))
+- update default ruby version to latest stable [\#78](https://github.com/fastly/fastly_nsq/pull/78) ([lanej](https://github.com/lanej))
+
 ## [v1.8.0](https://github.com/fastly/fastly_nsq/tree/v1.8.0) (2018-05-30)
 [Full Changelog](https://github.com/fastly/fastly_nsq/compare/v1.7.0...v1.8.0)
 
