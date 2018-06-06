@@ -3,6 +3,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [v1.9.1](https://rubygems.org/gems/fastly_nsq/versions/1.9.1) (2018-06-06)
 ### Removed
 - Removed `pry` as an undocumented requirement for `bin/fastly_nsq`
 
