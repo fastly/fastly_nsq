@@ -1,4 +1,10 @@
 # Change Log
+The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) as of [Version 1.9.1](#v1.9.1)
+and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
+
+## [Unreleased]
+### Removed
+- Removed `pry` as an undocumented requirement for `bin/fastly_nsq`
 
 ## [v1.9.0](https://github.com/fastly/fastly_nsq/tree/v1.9.0) (2018-06-04)
 [Full Changelog](https://github.com/fastly/fastly_nsq/compare/v1.8.0...v1.9.0)
