@@ -275,6 +275,14 @@ module FastlyNsq
       FastlyNsq::Testing.enabled? ? messages.empty? : super
     end
 
+    def pop
+      FastlyNsq::Testing.enabled? ? messages(topic)&.pop : super
+    end
+
+    def pop_without_blocking
+      FastlyNsq::Testing.enabled? ? messages(topic)&.pop : super
+    end
+
     def size
       FastlyNsq::Testing.enabled? ? messages.size : super
     end
