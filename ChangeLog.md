@@ -1,12 +1,18 @@
 # Change Log
-The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) as of [Version 1.9.1](#v1.9.1)
-and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [v1.9.2](https://github.com/fastly/fastly_nsq/tree/v1.9.2) (2018-07-09)
+[Full Changelog](https://github.com/fastly/fastly_nsq/compare/v1.9.1...v1.9.2)
 
-## [v1.9.1](https://rubygems.org/gems/fastly_nsq/versions/1.9.1) (2018-06-06)
-### Removed
-- Removed `pry` as an undocumented requirement for `bin/fastly_nsq`
+**Merged pull requests:**
+
+- implement pop and pop\_without\_blocking for test mode [\#83](https://github.com/fastly/fastly_nsq/pull/83) ([leklund](https://github.com/leklund))
+
+## [v1.9.1](https://github.com/fastly/fastly_nsq/tree/v1.9.1) (2018-06-06)
+[Full Changelog](https://github.com/fastly/fastly_nsq/compare/v1.9.0...v1.9.1)
+
+**Merged pull requests:**
+
+- require pry only if pry is available already [\#82](https://github.com/fastly/fastly_nsq/pull/82) ([alieander](https://github.com/alieander))
 
 ## [v1.9.0](https://github.com/fastly/fastly_nsq/tree/v1.9.0) (2018-06-04)
 [Full Changelog](https://github.com/fastly/fastly_nsq/compare/v1.8.0...v1.9.0)
