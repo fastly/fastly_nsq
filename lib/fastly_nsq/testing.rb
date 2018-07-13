@@ -271,6 +271,13 @@ module FastlyNsq
       FastlyNsq::Testing.enabled? || super
     end
 
+    def connected?
+      return super unless FastlyNsq::Testing.enabled?
+      @connected = true if @connected.nil?
+
+      @connected
+    end
+
     def empty?
       FastlyNsq::Testing.enabled? ? messages.empty? : super
     end
