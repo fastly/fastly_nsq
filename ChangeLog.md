@@ -1,5 +1,12 @@
 # Change Log
 
+## [v1.9.3](https://github.com/fastly/fastly_nsq/tree/v1.9.3) (2018-07-13)
+[Full Changelog](https://github.com/fastly/fastly_nsq/compare/v1.9.2...v1.9.3)
+
+**Merged pull requests:**
+
+- add connected? to consumer testing [\#84](https://github.com/fastly/fastly_nsq/pull/84) ([leklund](https://github.com/leklund))
+
 ## [v1.9.2](https://github.com/fastly/fastly_nsq/tree/v1.9.2) (2018-07-09)
 [Full Changelog](https://github.com/fastly/fastly_nsq/compare/v1.9.1...v1.9.2)
 
