@@ -69,4 +69,10 @@ RSpec.describe FastlyNsq::Message do
 
     subject.requeue
   end
+
+  it 'uses the FastlyNsq.max_req_timeout it timeout is larger than FastlyNsq.max_req_timeout' do
+    expect(nsq_message).to receive(:requeue).with(60 * 60 * 1_000)
+
+    subject.requeue(60 * 60 * 4 * 1_000)
+  end
 end
