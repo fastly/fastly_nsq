@@ -64,10 +64,15 @@ class FastlyNsq::Message
 
   ##
   # Requeue an NSQ Message
+  # If the +timeout+ parameter or the caclulated backoff is greater
+  # than FastlyNsq.max_req_timeout, the +max_req_timeout+ will be used
+  # to requeue the message.
   # @param timeout [Integer] timeout in milliseconds
   def requeue(timeout = nil)
     return managed if managed
     timeout ||= requeue_period
+
+    timeout = [timeout, FastlyNsq.max_req_timeout].min
 
     @managed = :requeued
     nsq_message.requeue(timeout)

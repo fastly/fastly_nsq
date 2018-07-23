@@ -26,6 +26,10 @@ module FastlyNsq
     # @return [Integer]
     attr_accessor :max_attempts
 
+    # Set Maximum requeue timeout in milliseconds
+    # @return [Integer]
+    attr_writer :max_req_timeout
+
     # @return [Logger]
     attr_writer :logger
 
@@ -85,6 +89,17 @@ module FastlyNsq
     def manager=(manager)
       @manager&.transfer(manager)
       @manager = manager
+    end
+
+    ##
+    # Maximum requeue timeout in milliseconds. This setting controls the
+    # maximum value that will be sent from FastlyNsq::Message#requeue This
+    # value should be less than or equal to the nsqd command line option
+    # +max-req-timeout+. The default setting is 1 hour.
+    # @return [Integer]
+    # @see https://nsq.io/components/nsqd.html#command-line-options
+    def max_req_timeout
+      @max_req_timeout ||= ENV.fetch('MAX_REQ_TIMEOUT', 60 * 60 * 1_000)
     end
 
     ##

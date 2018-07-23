@@ -157,6 +157,9 @@ FastlyNsq.configure do |config|
   config.logger = Logger.new
   config.preprocessor = ->(_) { FastlyNsq.logger.info 'PREPROCESSESES' }
 
+  config.max_attempts = 20
+  config.max_req_timeout = (60 * 60 * 4 * 1_000) # 4 hours
+
   lc.listen 'posts', ->(m) { puts "posts: #{m.body}" }
   lc.listen 'blogs', ->(m) { puts "blogs: #{m.body}" }, priority: 3
 end
