@@ -1,5 +1,13 @@
 # Change Log
 
+## [v1.10.0](https://github.com/fastly/fastly_nsq/tree/HEAD)
+
+[Full Changelog](https://github.com/fastly/fastly_nsq/compare/v1.9.3...v1.10.0)
+
+**Merged pull requests:**
+
+- add max\_req\_timeout \[IE-2040\] [\#85](https://github.com/fastly/fastly_nsq/pull/85) ([leklund](https://github.com/leklund))
+
 ## [v1.9.3](https://github.com/fastly/fastly_nsq/tree/v1.9.3) (2018-07-13)
 [Full Changelog](https://github.com/fastly/fastly_nsq/compare/v1.9.2...v1.9.3)
 
