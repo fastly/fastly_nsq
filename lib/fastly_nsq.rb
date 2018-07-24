@@ -99,7 +99,7 @@ module FastlyNsq
     # @return [Integer]
     # @see https://nsq.io/components/nsqd.html#command-line-options
     def max_req_timeout
-      @max_req_timeout ||= ENV.fetch('MAX_REQ_TIMEOUT', 60 * 60 * 1_000)
+      @max_req_timeout ||= ENV.fetch('MAX_REQ_TIMEOUT', 60 * 60 * 1_000).to_i
     end
 
     ##
