@@ -223,11 +223,13 @@ class FastlyNsq::CLI
 
     reopen(files_to_reopen)
 
-    [$stdout, $stderr].each do |io|
-      File.open(options.fetch(:logfile, '/dev/null'), 'ab') do |f|
-        io.reopen(f)
+    if options[:logfile]
+      [$stdout, $stderr].each do |io|
+        File.open(options.fetch(:logfile, '/dev/null'), 'ab') do |f|
+          io.reopen(f)
+        end
+        io.sync = true
       end
-      io.sync = true
     end
     $stdin.reopen('/dev/null')
 
