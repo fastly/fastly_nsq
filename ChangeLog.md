@@ -1,7 +1,14 @@
 # Change Log
 
-## [v1.10.0](https://github.com/fastly/fastly_nsq/tree/HEAD)
+## [v1.10.1](https://github.com/fastly/fastly_nsq/tree/HEAD)
 
+[Full Changelog](https://github.com/fastly/fastly_nsq/compare/v1.10.0...v1.10.1)
+
+**Merged pull requests:**
+
+- Ensure max\_req\_timeout is integer when fetching from ENV [\#86](https://github.com/fastly/fastly_nsq/pull/86) ([leklund](https://github.com/leklund))
+
+## [v1.10.0](https://github.com/fastly/fastly_nsq/tree/v1.10.0) (2018-07-23)
 [Full Changelog](https://github.com/fastly/fastly_nsq/compare/v1.9.3...v1.10.0)
 
 **Merged pull requests:**
