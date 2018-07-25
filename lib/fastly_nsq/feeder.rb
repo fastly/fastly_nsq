@@ -28,10 +28,20 @@ class FastlyNsq::Feeder
   # When that code is exec'ed +processer.call(message)+ is run. Processor in this context is
   # a FastlyNsq::Listener
   #
+  # The block also will log exceptions here because Concurrent::ThreadPoolExecutor will
+  # swallow the exception.
+  #
   # @param message [Nsq::Message]
   # @see http://ruby-concurrency.github.io/concurrent-ruby/Concurrent/ThreadPoolExecutor.html#post-instance_method
   # @see Nsq::Connection#read_loop
   def push(message)
-    FastlyNsq.manager.pool.post(priority) { processor.call(message) }
+    FastlyNsq.manager.pool.post(priority) do
+      begin
+        processor.call(message)
+      rescue => ex
+        FastlyNsq.logger.error ex
+        raise ex
+      end
+    end
   end
 end
