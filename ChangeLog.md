@@ -1,7 +1,15 @@
 # Change Log
 
-## [v1.11.0](https://github.com/fastly/fastly_nsq/tree/HEAD)
+## [v1.12.0](https://github.com/fastly/fastly_nsq/tree/v1.12.0)
 
+[Full Changelog](https://github.com/fastly/fastly_nsq/compare/v1.11.0...v1.12.0)
+
+**Merged pull requests:**
+
+- Add exception handling and logging for listeners [\#89](https://github.com/fastly/fastly_nsq/pull/89) ([leklund](https://github.com/leklund))
+- Revert "Updates for  STDERR and STDOUT redirection when daemonizing." [\#88](https://github.com/fastly/fastly_nsq/pull/88) ([leklund](https://github.com/leklund))
+
+## [v1.11.0](https://github.com/fastly/fastly_nsq/tree/v1.11.0) (2018-07-25)
 [Full Changelog](https://github.com/fastly/fastly_nsq/compare/v1.10.1...v1.11.0)
 
 **Merged pull requests:**
