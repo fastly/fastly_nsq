@@ -1,7 +1,14 @@
 # Change Log
 
-## [v1.10.1](https://github.com/fastly/fastly_nsq/tree/HEAD)
+## [v1.11.0](https://github.com/fastly/fastly_nsq/tree/HEAD)
 
+[Full Changelog](https://github.com/fastly/fastly_nsq/compare/v1.10.1...v1.11.0)
+
+**Merged pull requests:**
+
+- Updates for  STDERR and STDOUT redirection when daemonizing. [\#87](https://github.com/fastly/fastly_nsq/pull/87) ([leklund](https://github.com/leklund))
+
+## [v1.10.1](https://github.com/fastly/fastly_nsq/tree/v1.10.1) (2018-07-24)
 [Full Changelog](https://github.com/fastly/fastly_nsq/compare/v1.10.0...v1.10.1)
 
 **Merged pull requests:**
