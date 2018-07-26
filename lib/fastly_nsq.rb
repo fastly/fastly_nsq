@@ -138,6 +138,13 @@ module FastlyNsq
         end
       end
     end
+
+    # Instance of FastlyNsq::NewRelic
+    #
+    # @return [FastlyNsq::NewRelic]
+    def tracer
+      @tracer ||= FastlyNsq::NewRelic.new
+    end
   end
 end
 
@@ -148,6 +155,7 @@ require 'fastly_nsq/listener'
 require 'fastly_nsq/manager'
 require 'fastly_nsq/message'
 require 'fastly_nsq/messenger'
+require 'fastly_nsq/new_relic'
 require 'fastly_nsq/priority_queue'
 require 'fastly_nsq/priority_thread_pool'
 require 'fastly_nsq/producer'

@@ -113,21 +113,26 @@ class FastlyNsq::Listener
   def call(nsq_message)
     message = FastlyNsq::Message.new(nsq_message)
 
+    msg_info = {
+      channel:  channel,
+      topic:    topic,
+      attempts: nsq_message.attempts,
+      id:       Digest::MD5.hexdigest(nsq_message.body.to_s),
+      metadata: message.meta,
+    }
+
     logger.info do
-      {
-        channel:  channel,
-        topic:    topic,
-        attempts: nsq_message.attempts,
-        id:       Digest::MD5.hexdigest(nsq_message.body.to_s),
-        metadata: message.meta,
-      }.tap do |l|
+      msg_info.tap do |l|
         l[:data] = message.body if logger.level == Logger::DEBUG
       end
     end
 
-    preprocessor&.call(message)
-    result = processor.call(message)
-    message.finish if result
+    FastlyNsq.tracer.trace_with_newrelic(msg_info) do
+      preprocessor&.call(message)
+      result = processor.call(message)
+      message.finish if result
+    end
+
     message
   end
 
