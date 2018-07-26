@@ -5,8 +5,8 @@ class FastlyNsq::NewRelic
 
   attr_reader :agent
 
-  def initialize(agent = NewRelic::Agent)
-    @agent = agent
+  def initialize(agent = nil)
+    @agent = agent || Object.const_defined?('NewRelic') ? NewRelic::Agent : nil
   end
 
   def enabled?
@@ -14,7 +14,7 @@ class FastlyNsq::NewRelic
   end
 
   def notice_error(ex)
-    return unless enabled?
+    return unless enabled? && agent
 
     agent.notice_error(ex)
   end
