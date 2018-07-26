@@ -1,5 +1,10 @@
 # frozen_string_literal: true
 
+begin
+  require 'newrelic_rpm'
+rescue LoadError # rubocop:disable Lint/HandleExceptions
+end
+
 class FastlyNsq::NewRelic
   include NewRelic::Agent::Instrumentation::ControllerInstrumentation if defined?(::NewRelic)
 

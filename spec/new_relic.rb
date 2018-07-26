@@ -2,27 +2,17 @@
 
 require 'spec_helper'
 
-module FakeRelic
-  def perform_action_with_newrelic_trace(*_args)
-    yield
-  end
-end
-
-class FastlyNsq::NewRelic
-  include FakeRelic
-end
-
 RSpec.describe FastlyNsq::NewRelic do
   let(:agent) { double 'NewRelic::Agent', notice_error: true }
   let(:tracer) { FastlyNsq::NewRelic.new(agent) }
 
   describe '#enabled?' do
     it 'returns false unless NewRelic is loaded' do
+      allow(Object).to receive(:const_defined?).with('NewRelic').and_return(false)
       expect(tracer.enabled?).to be false
     end
 
     it 'returns true id NewRelic is loaded' do
-      allow(Object).to receive(:const_defined?).with('NewRelic').and_return(true)
       expect(tracer.enabled?).to be true
     end
   end
@@ -52,6 +42,10 @@ RSpec.describe FastlyNsq::NewRelic do
   end
 
   context 'disabled' do
+    before do
+      allow(Object).to receive(:const_defined?).with('NewRelic').and_return(false)
+    end
+
     describe '#notice_error' do
       it 'returns nil' do
         expect(tracer.notice_error('ex')).to be nil
