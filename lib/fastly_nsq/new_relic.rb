@@ -6,7 +6,7 @@ class FastlyNsq::NewRelic
   attr_reader :agent
 
   def initialize(agent = nil)
-    @agent = agent || Object.const_defined?('NewRelic') ? NewRelic::Agent : nil
+    @agent = agent || (Object.const_defined?('NewRelic') ? NewRelic::Agent : nil)
   end
 
   def enabled?
