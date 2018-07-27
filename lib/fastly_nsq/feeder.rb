@@ -40,6 +40,7 @@ class FastlyNsq::Feeder
         processor.call(message)
       rescue => ex
         FastlyNsq.logger.error ex
+        FastlyNsq.tracer.notice_error ex
         raise ex
       end
     end
