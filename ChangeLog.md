@@ -1,7 +1,14 @@
 # Change Log
 
-## [v1.13.0](https://github.com/fastly/fastly_nsq/tree/v1.13.0)
+## [v1.13.1](https://github.com/fastly/fastly_nsq/tree/v1.13.1)
 
+[Full Changelog](https://github.com/fastly/fastly_nsq/compare/v1.13.0...v1.13.1)
+
+**Merged pull requests:**
+
+- Fix class\_name for NewRelic reporting [\#91](https://github.com/fastly/fastly_nsq/pull/91) ([leklund](https://github.com/leklund))
+
+## [v1.13.0](https://github.com/fastly/fastly_nsq/tree/v1.13.0) (2018-07-27)
 [Full Changelog](https://github.com/fastly/fastly_nsq/compare/v1.12.0...v1.13.0)
 
 **Merged pull requests:**
@@ -390,18 +397,18 @@
 - Initialize the fake queue with an empty array [\#4](https://github.com/fastly/fastly_nsq/pull/4) ([adarsh](https://github.com/adarsh))
 
 ## [v0.1.3](https://github.com/fastly/fastly_nsq/tree/v0.1.3) (2016-02-03)
-[Full Changelog](https://github.com/fastly/fastly_nsq/compare/v0.1.1...v0.1.3)
+[Full Changelog](https://github.com/fastly/fastly_nsq/compare/v0.0.2...v0.1.3)
 
 **Merged pull requests:**
 
 - Use a more canonical way to require files [\#3](https://github.com/fastly/fastly_nsq/pull/3) ([adarsh](https://github.com/adarsh))
 - Remove dependancy on ActiveSupport [\#2](https://github.com/fastly/fastly_nsq/pull/2) ([adarsh](https://github.com/adarsh))
 
-## [v0.1.1](https://github.com/fastly/fastly_nsq/tree/v0.1.1) (2016-02-03)
-[Full Changelog](https://github.com/fastly/fastly_nsq/compare/v0.0.2...v0.1.1)
-
 ## [v0.0.2](https://github.com/fastly/fastly_nsq/tree/v0.0.2) (2016-02-03)
-[Full Changelog](https://github.com/fastly/fastly_nsq/compare/v0.0.1...v0.0.2)
+[Full Changelog](https://github.com/fastly/fastly_nsq/compare/v0.1.1...v0.0.2)
+
+## [v0.1.1](https://github.com/fastly/fastly_nsq/tree/v0.1.1) (2016-02-03)
+[Full Changelog](https://github.com/fastly/fastly_nsq/compare/v0.0.1...v0.1.1)
 
 **Merged pull requests:**
 
