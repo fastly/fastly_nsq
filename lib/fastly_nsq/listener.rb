@@ -122,8 +122,10 @@ class FastlyNsq::Listener
     }
 
     logger.info do
-      msg_info.tap do |l|
-        l[:data] = message.body if logger.level == Logger::DEBUG
+      if logger.level == Logger::DEBUG
+        msg_info.merge(data: message.body)
+      else
+        msg_info
       end
     end
 
