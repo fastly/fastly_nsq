@@ -127,7 +127,7 @@ class FastlyNsq::Listener
       end
     end
 
-    FastlyNsq.tracer.trace_with_newrelic(msg_info) do
+    FastlyNsq.tracer.trace_with_newrelic(params: msg_info, class_name: processor.class.to_s) do
       preprocessor&.call(message)
       result = processor.call(message)
       message.finish if result

@@ -11,6 +11,8 @@ end
 class FastlyNsq::NewRelic
   include NewRelic::Agent::Instrumentation::ControllerInstrumentation if defined?(::NewRelic)
 
+  CATEGORY = 'OtherTransaction/FastlyNsqProcessor'
+
   attr_reader :agent
 
   ##
@@ -43,13 +45,24 @@ class FastlyNsq::NewRelic
   ##
   # Trace passed block with new relic if `enabled? == true`
   # @param trace_args [Hash] tracing parameters passed to NewRelic
-  def trace_with_newrelic(trace_args)
+  #
+  # @see {https://www.rubydoc.info/github/newrelic/rpm/NewRelic%2FAgent%2FInstrumentation%2FControllerInstrumentation:perform_action_with_newrelic_trace}
+  def trace_with_newrelic(**args)
     if enabled?
-      perform_action_with_newrelic_trace(trace_args) do
+      perform_action_with_newrelic_trace(trace_args(args)) do
         yield
       end
     else
       yield
     end
+  end
+
+  private
+
+  def trace_args(**args)
+    {
+      name: 'call',
+      category: CATEGORY,
+    }.merge(args)
   end
 end

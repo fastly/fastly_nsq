@@ -38,6 +38,34 @@ RSpec.describe FastlyNsq::NewRelic do
         expect { |b| tracer.trace_with_newrelic({}, &b) }.to yield_control
         expect(tracer).to have_received(:perform_action_with_newrelic_trace)
       end
+
+      it 'calls perform_action_with_newrelic_trace with trace_args' do
+        params = { id: 1, vp: 'joe biden' }
+
+        expected = {
+          name: 'call',
+          category: FastlyNsq::NewRelic::CATEGORY,
+          params: params,
+          class_name: 'SomeClass',
+        }
+
+        allow(tracer).to receive(:perform_action_with_newrelic_trace).and_yield
+        expect { |b| tracer.trace_with_newrelic(params: params, class_name: 'SomeClass', &b) }.to yield_control
+
+        expect(tracer).to have_received(:perform_action_with_newrelic_trace).with(expected)
+      end
+
+      it 'always sends the default trace args' do
+        expected = {
+          name: 'call',
+          category: FastlyNsq::NewRelic::CATEGORY,
+        }
+        allow(tracer).to receive(:perform_action_with_newrelic_trace).and_yield
+
+        expect { |b| tracer.trace_with_newrelic(&b) }.to yield_control
+
+        expect(tracer).to have_received(:perform_action_with_newrelic_trace).with(expected)
+      end
     end
   end
 
