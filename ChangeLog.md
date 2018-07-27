@@ -1,7 +1,14 @@
 # Change Log
 
-## [v1.12.0](https://github.com/fastly/fastly_nsq/tree/v1.12.0)
+## [v1.13.0](https://github.com/fastly/fastly_nsq/tree/v1.13.0)
 
+[Full Changelog](https://github.com/fastly/fastly_nsq/compare/v1.12.0...v1.13.0)
+
+**Merged pull requests:**
+
+- Add NewRelic support [\#90](https://github.com/fastly/fastly_nsq/pull/90) ([leklund](https://github.com/leklund))
+
+## [v1.12.0](https://github.com/fastly/fastly_nsq/tree/v1.12.0) (2018-07-25)
 [Full Changelog](https://github.com/fastly/fastly_nsq/compare/v1.11.0...v1.12.0)
 
 **Merged pull requests:**
