@@ -1,7 +1,14 @@
 # Change Log
 
-## [v1.13.1](https://github.com/fastly/fastly_nsq/tree/v1.13.1)
+## [v1.14.0](https://github.com/fastly/fastly_nsq/tree/v1.14.0)
 
+[Full Changelog](https://github.com/fastly/fastly_nsq/compare/v1.13.1...v1.14.0)
+
+**Merged pull requests:**
+
+- set Nsq.logger when setting logger [\#92](https://github.com/fastly/fastly_nsq/pull/92) ([leklund](https://github.com/leklund))
+
+## [v1.13.1](https://github.com/fastly/fastly_nsq/tree/v1.13.1) (2018-07-27)
 [Full Changelog](https://github.com/fastly/fastly_nsq/compare/v1.13.0...v1.13.1)
 
 **Merged pull requests:**
