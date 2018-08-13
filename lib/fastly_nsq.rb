@@ -30,9 +30,6 @@ module FastlyNsq
     # @return [Integer]
     attr_writer :max_req_timeout
 
-    # @return [Logger]
-    attr_writer :logger
-
     ##
     # Map of lifecycle events
     # @return [Hash]
@@ -51,8 +48,18 @@ module FastlyNsq
       FastlyNsq::Listener.new(topic: topic, processor: processor, **options)
     end
 
+    ##
+    # @return [Logger]
     def logger
       @logger ||= Logger.new(nil)
+    end
+
+    ##
+    # Set the logger and also set Nsq.logger
+    # @params logger [Logger]
+    def logger=(new_logger)
+      Nsq.logger = new_logger
+      @logger = new_logger
     end
 
     ##

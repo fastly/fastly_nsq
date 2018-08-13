@@ -45,6 +45,13 @@ RSpec.describe FastlyNsq do
 
       expect(subject.logger).to eq logger
     end
+
+    it 'sets Nsq.logger' do
+      logger = Logger.new(STDOUT)
+      subject.logger = logger
+
+      expect(Nsq.logger).to eq logger
+    end
   end
 
   describe '#manager' do
