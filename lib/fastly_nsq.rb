@@ -49,9 +49,12 @@ module FastlyNsq
     end
 
     ##
+    # Return logger or set logger to default.
     # @return [Logger]
     def logger
-      @logger ||= Logger.new(nil)
+      return @logger if @logger
+
+      self.logger = Logger.new(STDERR)
     end
 
     ##

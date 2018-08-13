@@ -35,6 +35,28 @@ RSpec.describe FastlyNsq do
     end
   end
 
+  describe '#logger' do
+    let!(:default_logger) { subject.logger }
+    after { subject.logger = default_logger }
+
+    it 'returns the set logger' do
+      logger = Logger.new(nil)
+      subject.logger = logger
+
+      expect(subject.logger).to eq logger
+    end
+
+    it 'sets the default logger if none is set' do
+      subject.instance_variable_set(:@logger, nil)
+      expect(subject.instance_variable_get(:@logger)).to be nil
+      logger = subject.logger
+
+      expect(logger).to be_instance_of(Logger)
+      expect(logger.instance_variable_get(:@logdev).dev).to eq(STDERR)
+      expect(logger).to eq(Nsq.logger)
+    end
+  end
+
   describe '#logger=' do
     let!(:default_logger) { subject.logger }
     after { subject.logger = default_logger }
