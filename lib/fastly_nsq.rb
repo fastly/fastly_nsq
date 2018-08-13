@@ -58,8 +58,7 @@ module FastlyNsq
     # Set the logger and also set Nsq.logger
     # @params logger [Logger]
     def logger=(new_logger)
-      Nsq.logger = new_logger
-      @logger = new_logger
+      @logger = Nsq.logger = new_logger
     end
 
     ##
