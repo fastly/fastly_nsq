@@ -106,7 +106,8 @@ RSpec.describe FastlyNsq do
     it 'registers callbacks for events' do
       %i[startup shutdown heartbeat].each do |event|
         block = -> {}
-        expect { FastlyNsq.on(event, &block) }.to change { FastlyNsq.events[event] }.by([block])
+        FastlyNsq.on(event, &block)
+        expect(FastlyNsq.events[event]).to eq([block])
       end
     end
 
