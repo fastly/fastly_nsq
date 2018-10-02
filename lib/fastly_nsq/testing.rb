@@ -278,6 +278,11 @@ module FastlyNsq
       @connected
     end
 
+    def connect(*args)
+      return super(*args) unless FastlyNsq::Testing.enabled?
+      @connected = true
+    end
+
     def empty?
       FastlyNsq::Testing.enabled? ? messages.empty? : super
     end
