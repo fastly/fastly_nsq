@@ -281,6 +281,9 @@ module FastlyNsq
     def connect(*args)
       return super(*args) unless FastlyNsq::Testing.enabled?
       @connected = true
+      Struct.new(:topic, :channel) do
+        def connected?; end
+      end.new 'fake_topic', 'fake_channel'
     end
 
     def empty?
