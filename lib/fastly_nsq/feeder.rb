@@ -32,7 +32,7 @@ class FastlyNsq::Feeder
   # swallow the exception.
   #
   # @param message [Nsq::Message]
-  # @see http://ruby-concurrency.github.io/concurrent-ruby/Concurrent/ThreadPoolExecutor.html#post-instance_method
+  # @see http://ruby-concurrency.github.io/concurrent-ruby/1.0.5/Concurrent/ThreadPoolExecutor.html#post-instance_method
   # @see Nsq::Connection#read_loop
   def push(message)
     FastlyNsq.manager.pool.post(priority) do

@@ -24,7 +24,7 @@ class FastlyNsq::Manager
     @done      = false
     @logger    = logger
     @pool      = FastlyNsq::PriorityThreadPool.new(
-      { fallback_policy: :caller_runs, max_threads: DEFAULT_POOL_SIZE }.merge(pool_options),
+      { fallback_policy: :caller_runs, max_threads: FastlyNsq.max_threads || DEFAULT_POOL_SIZE }.merge(pool_options),
     )
   end
 

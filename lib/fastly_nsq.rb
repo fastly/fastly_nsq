@@ -30,6 +30,10 @@ module FastlyNsq
     # @return [Integer]
     attr_writer :max_req_timeout
 
+    # Maximum number of threads for FastlyNsq::PriorityThreadPool
+    # @return [Integer]
+    attr_accessor :max_threads
+
     ##
     # Map of lifecycle events
     # @return [Hash]
