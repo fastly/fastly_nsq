@@ -18,6 +18,7 @@ class FastlyNsq::Manager
   # Create a FastlyNsq::Manager
   #
   # @param logger [Logger]
+  # @param max_threads [Integer] Maxiumum number of threads to be used by {FastlyNsq::PriorityThreadPool}
   # @param pool_options [Hash] Options forwarded to {FastlyNsq::PriorityThreadPool} constructor.
   def initialize(logger: FastlyNsq.logger, max_threads: FastlyNsq.max_processing_pool_threads, **pool_options)
     @done      = false
