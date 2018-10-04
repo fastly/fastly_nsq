@@ -32,7 +32,7 @@ module FastlyNsq
 
     # Maximum number of threads for FastlyNsq::PriorityThreadPool
     # @return [Integer]
-    attr_accessor :max_threads
+    attr_writer :max_processing_pool_threads
 
     ##
     # Map of lifecycle events
@@ -113,6 +113,13 @@ module FastlyNsq
     # @see https://nsq.io/components/nsqd.html#command-line-options
     def max_req_timeout
       @max_req_timeout ||= ENV.fetch('MAX_REQ_TIMEOUT', 60 * 60 * 1_000).to_i
+    end
+
+    # Maximum number of threads for FastlyNsq::PriorityThreadPool
+    # Default setting is 5 and can be set via ENV['MAX_PROCESSING_POOL_THREADS']
+    # @return [Integer]
+    def max_processing_pool_threads
+      @max_processing_pool_threads ||= ENV.fetch('MAX_PROCESSING_POOL_THREADS', 5).to_i
     end
 
     ##

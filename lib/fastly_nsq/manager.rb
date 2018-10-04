@@ -4,7 +4,6 @@
 # Interface for tracking listeners and managing the processing pool.
 class FastlyNsq::Manager
   DEADLINE = 30
-  DEFAULT_POOL_SIZE = 5
 
   # @return [Boolean] Set true when all listeners are stopped
   attr_reader :done
@@ -20,11 +19,11 @@ class FastlyNsq::Manager
   #
   # @param logger [Logger]
   # @param pool_options [Hash] Options forwarded to {FastlyNsq::PriorityThreadPool} constructor.
-  def initialize(logger: FastlyNsq.logger, **pool_options)
+  def initialize(logger: FastlyNsq.logger, max_threads: FastlyNsq.max_processing_pool_threads, **pool_options)
     @done      = false
     @logger    = logger
     @pool      = FastlyNsq::PriorityThreadPool.new(
-      { fallback_policy: :caller_runs, max_threads: FastlyNsq.max_threads || DEFAULT_POOL_SIZE }.merge(pool_options),
+      { fallback_policy: :caller_runs, max_threads: max_threads }.merge(pool_options),
     )
   end
 

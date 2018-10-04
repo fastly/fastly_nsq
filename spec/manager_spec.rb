@@ -16,14 +16,14 @@ RSpec.describe FastlyNsq::Manager do
 
   describe '#initialize' do
     it 'allows max_threads to be specified' do
-      max_threads = described_class::DEFAULT_POOL_SIZE * 2
+      max_threads = FastlyNsq.max_processing_pool_threads * 2
       manager = described_class.new(max_threads: max_threads)
 
       expect(manager.pool.max_threads).to eq(max_threads)
     end
 
-    it 'defaults max_threads to DEFAULT_POOL_SIZE' do
-      expect(subject.pool.max_threads).to eq(described_class::DEFAULT_POOL_SIZE)
+    it 'defaults max_threads to FastlyNsq.max_processing_pool_threads' do
+      expect(subject.pool.max_threads).to eq(FastlyNsq.max_processing_pool_threads)
     end
 
     it 'allows fallback_policy to be specified' do
