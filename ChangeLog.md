@@ -1,7 +1,14 @@
 # Change Log
 
-## [v1.14.0](https://github.com/fastly/fastly_nsq/tree/v1.14.0)
+## [v1.15.0](https://github.com/fastly/fastly_nsq/tree/v1.15.0)
 
+[Full Changelog](https://github.com/fastly/fastly_nsq/compare/v1.14.0...v1.15.0)
+
+**Merged pull requests:**
+
+- Add support for configuring max\_threads [\#94](https://github.com/fastly/fastly_nsq/pull/94) ([leklund](https://github.com/leklund))
+
+## [v1.14.0](https://github.com/fastly/fastly_nsq/tree/v1.14.0) (2018-08-13)
 [Full Changelog](https://github.com/fastly/fastly_nsq/compare/v1.13.1...v1.14.0)
 
 **Merged pull requests:**
