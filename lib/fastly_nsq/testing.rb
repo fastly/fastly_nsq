@@ -284,8 +284,7 @@ module FastlyNsq
 
     def connect(*args)
       return super(*args) unless FastlyNsq::Testing.enabled?
-      @connected = true
-      FakeConnection.new
+      @connected = FakeConnection.new
     end
 
     def empty?
