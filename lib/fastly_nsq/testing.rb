@@ -249,6 +249,10 @@ module FastlyNsq
 
   FastlyNsq::Listener.prepend(ListenerTesting)
 
+  class FakeConnection
+    def connected?; end
+  end
+
   module ConsumerTesting
     module ClassMethods
       def messages(topic = nil)
@@ -276,6 +280,11 @@ module FastlyNsq
       @connected = true if @connected.nil?
 
       @connected
+    end
+
+    def connect(*args)
+      return super(*args) unless FastlyNsq::Testing.enabled?
+      @connected = FakeConnection.new
     end
 
     def empty?
