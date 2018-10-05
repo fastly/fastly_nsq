@@ -159,6 +159,7 @@ FastlyNsq.configure do |config|
 
   config.max_attempts = 20
   config.max_req_timeout = (60 * 60 * 4 * 1_000) # 4 hours
+  config.max_processing_pool_threads = 10
 
   lc.listen 'posts', ->(m) { puts "posts: #{m.body}" }
   lc.listen 'blogs', ->(m) { puts "blogs: #{m.body}" }, priority: 3
