@@ -21,7 +21,7 @@ Gem::Specification.new do |gem|
   gem.require_paths = ['lib']
 
   gem.add_development_dependency 'awesome_print', '~> 1.6'
-  gem.add_development_dependency 'bundler', '~> 1.12'
+  gem.add_development_dependency 'bundler'
   gem.add_development_dependency 'dotenv'
   gem.add_development_dependency 'pry-byebug', '~> 3.3'
   gem.add_development_dependency 'rspec', '~> 3.4'
