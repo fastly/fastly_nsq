@@ -1,7 +1,14 @@
 # Change Log
 
-## [v1.15.0](https://github.com/fastly/fastly_nsq/tree/v1.15.0)
+## [v1.16.0](https://github.com/fastly/fastly_nsq/tree/v1.16.0) (2019-08-16)
+[Full Changelog](https://github.com/fastly/fastly_nsq/compare/v1.15.0...v1.16.0)
 
+**Merged pull requests:**
+
+- Log the internal NSQ id [\#95](https://github.com/fastly/fastly_nsq/pull/95) ([leklund](https://github.com/leklund))
+- Consumer still attempts connections in Test mode [\#93](https://github.com/fastly/fastly_nsq/pull/93) ([alieander](https://github.com/alieander))
+
+## [v1.15.0](https://github.com/fastly/fastly_nsq/tree/v1.15.0) (2018-10-05)
 [Full Changelog](https://github.com/fastly/fastly_nsq/compare/v1.14.0...v1.15.0)
 
 **Merged pull requests:**
