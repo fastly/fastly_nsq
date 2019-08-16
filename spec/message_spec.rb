@@ -4,7 +4,7 @@ require 'spec_helper'
 require 'json'
 
 RSpec.describe FastlyNsq::Message do
-  let(:nsq_message) { double 'Nsq::Message', body: json_body, attempts: 1, finish: nil, requeue: nil, touch: nil, timestamp: nil }
+  let(:nsq_message) { double 'Nsq::Message', body: json_body, attempts: 1, finish: nil, requeue: nil, touch: nil, timestamp: nil, id: nil }
   let(:body)        { { 'data' => 'goes here', 'other_field' => 'is over here', 'meta' => 'meta stuff' } }
   let(:json_body)   { body.to_json }
   subject           { FastlyNsq::Message.new nsq_message }
@@ -30,7 +30,7 @@ RSpec.describe FastlyNsq::Message do
   end
 
   it 'delegates methods to the nsq_message object' do
-    %w[attempts finish requeue touch timestamp].each do |method|
+    %w[attempts finish requeue touch timestamp id].each do |method|
       subject = FastlyNsq::Message.new nsq_message
       expect(nsq_message).to receive(method)
 

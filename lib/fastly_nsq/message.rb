@@ -20,7 +20,11 @@ class FastlyNsq::Message
   #   Delegated to +self.nsq_message+
   #   @return [Nsq::Message#timestamp]
   #   @see https://www.rubydoc.info/gems/nsq-ruby/Nsq/Message#timestamp-instance_method
-  def_delegators :@nsq_message, :attempts, :touch, :timestamp
+  # @!method id
+  #   Delegated to +self.nsq_message+
+  #   @return [Nsq::Message#id]
+  #   @see https://www.rubydoc.info/gems/nsq-ruby/Nsq/Message#id-instance_method
+  def_delegators :@nsq_message, :attempts, :touch, :timestamp, :id
 
   # @return [Symbol] Message state. Returns +nil+ if message has not been requeued or finished.
   attr_reader :managed

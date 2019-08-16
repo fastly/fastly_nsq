@@ -116,8 +116,9 @@ class FastlyNsq::Listener
     msg_info = {
       channel:  channel,
       topic:    topic,
-      attempts: nsq_message.attempts,
+      attempts: message.attempts,
       id:       Digest::MD5.hexdigest(nsq_message.body.to_s),
+      nsq_id:   message.id,
       metadata: message.meta,
     }
 
