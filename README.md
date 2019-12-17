@@ -334,3 +334,7 @@ You will still need the `ENV` variables as defined above.
 Copyright (c) 2016 [Fastly, Inc](https://fastly.com) under an MIT license.
 
 See [LICENSE.txt](LICENSE.txt) for details.
+
+# Metadata
+
+- Ignore
