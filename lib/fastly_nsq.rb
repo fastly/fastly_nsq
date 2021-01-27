@@ -123,6 +123,23 @@ module FastlyNsq
     end
 
     ##
+    # The type of priority queue to use. Valid values are :min and :max.
+    # The default is :min
+    # @return [Symbol]
+    def priority_queue_type
+      @priority_queue_type ||= :min
+    end
+  
+    # Set the type of priority queue to use. Valid values are :min and :max.
+    # @return [Symbol]
+    def priority_queue_type=(type)
+      raise ArgumentError, "Invalid priority queue type #{type}" unless %i[min max].include?(type.to_sym)
+
+      @priority_queue_type = type.to_sym
+    end
+
+
+    ##
     # Return an array of NSQ lookupd http addresses sourced from ENV['NSQLOOKUPD_HTTP_ADDRESS']
     # @return [Array<String>] list of nsqlookupd http addresses
     def lookupd_http_addresses

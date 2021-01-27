@@ -115,4 +115,28 @@ RSpec.describe FastlyNsq do
       expect { FastlyNsq.on(:foo, &-> {}) }.to raise_error(ArgumentError, /Invalid event name/)
     end
   end
+
+  describe '#priority_queue_type' do
+    it 'returns the default setting' do
+      expect(subject.priority_queue_type).to eq(:min)
+    end
+
+    it 'returns the current setting' do
+      subject.instance_variable_set(:@priority_queue_type, :max)
+
+      expect(subject.priority_queue_type).to eq(:max)
+    end
+  end
+
+  describe '#priority_queue_type=' do
+    it 'sets the priority_queue_type' do
+      subject.priority_queue_type = :max
+
+      expect(subject.priority_queue_type).to eq(:max)
+    end
+
+    it 'rasies an error if the priority_queue_type is not valid' do
+      expect { subject.priority_queue_type = :fsly }.to raise_error(ArgumentError, /Invalid priority queue type/)
+    end
+  end
 end

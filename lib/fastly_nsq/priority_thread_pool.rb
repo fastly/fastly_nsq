@@ -6,7 +6,7 @@ class FastlyNsq::PriorityThreadPool < Concurrent::ThreadPoolExecutor
   def initialize(*)
     super
 
-    @queue = FastlyNsq::PriorityQueue.new(:max)
+    @queue = FastlyNsq::PriorityQueue.new(FastlyNsq.priority_queue_type)
   end
 
   # tries to enqueue task
