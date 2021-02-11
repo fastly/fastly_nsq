@@ -1,5 +1,14 @@
 # Change Log
 
+## [v1.17.0](https://github.com/fastly/fastly_nsq/tree/v1.17.0) (2021-02-11)
+[Full Changelog](https://github.com/fastly/fastly_nsq/compare/v1.16.0...v1.17.0)
+
+**Merged pull requests:**
+
+- Support for arbitary sent\_at Time [\#99](https://github.com/fastly/fastly_nsq/pull/99) ([leklund](https://github.com/leklund))
+- remove version pin on rake for development [\#97](https://github.com/fastly/fastly_nsq/pull/97) ([leklund](https://github.com/leklund))
+- Ignore from Humane Registry [\#96](https://github.com/fastly/fastly_nsq/pull/96) ([leklund](https://github.com/leklund))
+
 ## [v1.16.0](https://github.com/fastly/fastly_nsq/tree/v1.16.0) (2019-08-16)
 [Full Changelog](https://github.com/fastly/fastly_nsq/compare/v1.15.0...v1.16.0)
 
