@@ -129,10 +129,10 @@ module FastlyNsq::Messenger
     meta[:originating_service] = originating_service || self.originating_service
 
     meta[:sent_at] = if sent_at && sent_at.respond_to?(:iso8601)
-      sent_at.iso8601(5)
-    else
-      Time.now.iso8601(5)
-    end
+                       sent_at.iso8601(5)
+                     else
+                       Time.now.iso8601(5)
+                     end
 
     meta
   end
