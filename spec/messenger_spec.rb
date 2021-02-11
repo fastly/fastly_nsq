@@ -72,6 +72,19 @@ RSpec.describe FastlyNsq::Messenger do
 
       expect(producer).to have_received(:write).with(expected_attributes.to_json)
     end
+
+    it 'can set the sent_at in the metadata' do
+      sent_at = Time.parse('2020-06-08 23:42:42')
+      meta = {}
+
+      expected_attributes = { data: message, meta: meta.merge(originating_service: origin, sent_at: sent_at.iso8601(5)) }
+
+      subject.producers['topic'] = producer
+
+      subject.deliver message: message, topic: 'topic', sent_at: sent_at, meta: meta, originating_service: origin
+
+      expect(producer).to have_received(:write).with(expected_attributes.to_json)
+    end
   end
 
   describe '#deliver_multi' do
