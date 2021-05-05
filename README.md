@@ -1,4 +1,4 @@
-# fastly_nsq [![Build Status](https://travis-ci.org/fastly/fastly_nsq.svg?branch=master)](https://travis-ci.org/fastly/fastly_nsq)
+# fastly_nsq [![Build Status](https://travis-ci.org/fastly/fastly_nsq.svg?branch=main)](https://travis-ci.org/fastly/fastly_nsq)
 
 NSQ adapter and testing objects
 for using the NSQ messaging system
