@@ -338,14 +338,3 @@ See [LICENSE.txt](LICENSE.txt) for details.
 # Metadata
 
 - Ignore
-
-### Release
-
-This gem is published on Fastly's [Github Packages](https://github.com/orgs/fastly/packages) repository. In order to make a release, take the following steps:
-
-1. Tag a release. The release tag must start with a v and should be followed by a version identifier (e.g., `v1.2.3`).
-2. Push that tag up to Github.
-3. Wait for the Github Actions hook to publish the release.
-4. Ensure the release is available in the Github Packages repository above.
-
-If anything goes wrong, check the Github Actions publish log. If something doesn't make sense, reach out in the #team-devprod slack channel for further assistance.

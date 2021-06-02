@@ -9,6 +9,7 @@ script:
 services:
   - docker
 before_install:
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
   - docker-compose up -d
 before_script:
   - gem update --system
