@@ -77,25 +77,25 @@ class FastlyNsq::Listener
   #     max_attempts: 15,
   #   )
   def initialize(topic:, processor:, preprocessor: FastlyNsq.preprocessor, channel: FastlyNsq.channel, consumer: nil,
-                 logger: FastlyNsq.logger, priority: DEFAULT_PRIORITY, connect_timeout: DEFAULT_CONNECTION_TIMEOUT,
-                 max_attempts: FastlyNsq.max_attempts, **consumer_options)
+    logger: FastlyNsq.logger, priority: DEFAULT_PRIORITY, connect_timeout: DEFAULT_CONNECTION_TIMEOUT,
+    max_attempts: FastlyNsq.max_attempts, **consumer_options)
 
     raise ArgumentError, "processor #{processor.inspect} does not respond to #call" unless processor.respond_to?(:call)
     raise ArgumentError, "priority #{priority.inspect} must be a Integer" unless priority.is_a?(Integer)
 
-    @channel      = channel
-    @logger       = logger
+    @channel = channel
+    @logger = logger
     @max_attempts = max_attempts
     @preprocessor = preprocessor
-    @priority     = priority
-    @processor    = processor
-    @topic        = topic
+    @priority = priority
+    @processor = processor
+    @topic = topic
 
     @consumer = consumer || FastlyNsq::Consumer.new(topic: topic,
-                                                    connect_timeout: connect_timeout,
-                                                    channel: channel,
-                                                    queue: FastlyNsq::Feeder.new(self, priority),
-                                                    max_attempts: max_attempts,
+      connect_timeout: connect_timeout,
+      channel: channel,
+      queue: FastlyNsq::Feeder.new(self, priority),
+      max_attempts: max_attempts,
                                                     **consumer_options)
 
     FastlyNsq.manager.add_listener(self)
@@ -114,12 +114,12 @@ class FastlyNsq::Listener
     message = FastlyNsq::Message.new(nsq_message)
 
     msg_info = {
-      channel:  channel,
-      topic:    topic,
+      channel: channel,
+      topic: topic,
       attempts: message.attempts,
-      id:       Digest::MD5.hexdigest(nsq_message.body.to_s),
-      nsq_id:   message.id,
-      metadata: message.meta,
+      id: Digest::MD5.hexdigest(nsq_message.body.to_s),
+      nsq_id: message.id,
+      metadata: message.meta
     }
 
     logger.info do

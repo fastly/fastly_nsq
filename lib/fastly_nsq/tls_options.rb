@@ -20,7 +20,7 @@ module FastlyNsq
       else
         {
           tls_v1: true,
-          tls_options: @context,
+          tls_options: @context
         }
       end
     end
@@ -28,19 +28,19 @@ module FastlyNsq
     private
 
     def env_key
-      ENV.fetch('NSQ_SSL_KEY', nil)
+      ENV.fetch("NSQ_SSL_KEY", nil)
     end
 
     def env_certificate
-      ENV.fetch('NSQ_SSL_CERTIFICATE', nil)
+      ENV.fetch("NSQ_SSL_CERTIFICATE", nil)
     end
 
     def env_ca_certificate
-      ENV.fetch('NSQ_SSL_CA_CERTIFICATE', nil)
+      ENV.fetch("NSQ_SSL_CA_CERTIFICATE", nil)
     end
 
     def verify_mode
-      ENV.fetch('NSQ_SSL_VERIFY_MODE', nil)
+      ENV.fetch("NSQ_SSL_VERIFY_MODE", nil)
     end
 
     def env_default_hash
@@ -48,7 +48,7 @@ module FastlyNsq
         key: env_key,
         certificate: env_certificate,
         ca_certificate: env_ca_certificate,
-        verify_mode: verify_mode,
+        verify_mode: verify_mode
       }
     end
 

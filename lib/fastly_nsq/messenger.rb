@@ -10,7 +10,7 @@
 #     meta: metadata_hash,
 #   )
 module FastlyNsq::Messenger
-  DEFAULT_ORIGIN = 'Unknown'
+  DEFAULT_ORIGIN = "Unknown"
   @originating_service = DEFAULT_ORIGIN
 
   module_function
@@ -37,7 +37,7 @@ module FastlyNsq::Messenger
   def deliver(message:, topic:, originating_service: nil, sent_at: nil, meta: {})
     payload = {
       data: message,
-      meta: populate_meta(originating_service: originating_service, sent_at: sent_at, meta: meta),
+      meta: populate_meta(originating_service: originating_service, sent_at: sent_at, meta: meta)
     }
 
     deliver_payload(topic: topic, payload: payload.to_json)
@@ -69,7 +69,7 @@ module FastlyNsq::Messenger
     payload = messages.each_with_object([]) do |message, a|
       msg = {
         data: message,
-        meta: meta,
+        meta: meta
       }
 
       a << msg.to_json
@@ -129,10 +129,10 @@ module FastlyNsq::Messenger
     meta[:originating_service] = originating_service || self.originating_service
 
     meta[:sent_at] = if sent_at && sent_at.respond_to?(:iso8601)
-                       sent_at.iso8601(5)
-                     else
-                       Time.now.iso8601(5)
-                     end
+      sent_at.iso8601(5)
+    else
+      Time.now.iso8601(5)
+    end
 
     meta
   end

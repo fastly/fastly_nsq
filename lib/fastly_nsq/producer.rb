@@ -31,10 +31,10 @@ class FastlyNsq::Producer
   # @param logger [Logger] defaults to FastlyNsq.logger
   # @param connect_timeout [Integer] NSQ connection timeout in seconds
   def initialize(topic:, tls_options: nil, logger: FastlyNsq.logger, connect_timeout: DEFAULT_CONNECTION_TIMEOUT)
-    @topic           = topic
-    @tls_options     = FastlyNsq::TlsOptions.as_hash(tls_options)
+    @topic = topic
+    @tls_options = FastlyNsq::TlsOptions.as_hash(tls_options)
     @connect_timeout = connect_timeout
-    @logger          = logger
+    @logger = logger
 
     connect
   end
@@ -75,14 +75,14 @@ class FastlyNsq::Producer
 
     @connection ||= Nsq::Producer.new(
       tls_options.merge(
-        nsqlookupd:  lookupd,
-        topic:       topic,
-      ),
+        nsqlookupd: lookupd,
+        topic: topic
+      )
     )
 
     timeout_args = [connect_timeout, FastlyNsq::ConnectionFailed]
 
-    if RUBY_VERSION > '2.4.0'
+    if RUBY_VERSION > "2.4.0"
       timeout_args << "Failed connection to #{lookupd} within #{connect_timeout} seconds"
     end
 

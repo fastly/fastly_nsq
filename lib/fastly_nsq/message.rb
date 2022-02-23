@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'json'
+require "json"
 
 ##
 # Adapter to Nsq::Message. Provides convenience methods for interacting
@@ -36,7 +36,7 @@ class FastlyNsq::Message
   # @return [String] Nsq::Message body
   attr_reader :raw_body
 
-  alias to_s raw_body
+  alias_method :to_s, :raw_body
 
   ##
   # @param nsq_message [Nsq::Message]
@@ -46,11 +46,11 @@ class FastlyNsq::Message
   end
 
   def data
-    @data ||= body['data']
+    @data ||= body["data"]
   end
 
   def meta
-    @meta ||= body['meta']
+    @meta ||= body["meta"]
   end
 
   def body

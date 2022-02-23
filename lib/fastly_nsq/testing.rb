@@ -98,7 +98,7 @@ module FastlyNsq
       #   processor_klass.call(test_message)
       #   expect(Post.find(post_data['id']).not_to be nil
       def message(data:, meta: nil)
-        test_message = FastlyNsq::TestMessage.new(JSON.dump('data' => data, 'meta' => meta))
+        test_message = FastlyNsq::TestMessage.new(JSON.dump("data" => data, "meta" => meta))
         FastlyNsq::Message.new(test_message)
       end
     end
@@ -121,7 +121,7 @@ module FastlyNsq
 
     def initialize(raw_body)
       @raw_body = raw_body
-      @id       = Digest::SHA1.hexdigest(raw_body.to_s + Time.now.to_s)
+      @id = Digest::SHA1.hexdigest(raw_body.to_s + Time.now.to_s)
       @attempts = 0
     end
 
@@ -250,7 +250,8 @@ module FastlyNsq
   FastlyNsq::Listener.prepend(ListenerTesting)
 
   class FakeConnection
-    def connected?; end
+    def connected?
+    end
   end
 
   module ConsumerTesting

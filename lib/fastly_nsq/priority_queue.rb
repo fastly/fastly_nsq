@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
 class FastlyNsq::PriorityQueue < FastContainers::PriorityQueue
-  alias << push
-  alias length size
+  alias_method :<<, :push
+  alias_method :length, :size
 
   def shift
     pop

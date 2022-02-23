@@ -1,15 +1,15 @@
 # frozen_string_literal: true
 
-require 'spec_helper'
+require "spec_helper"
 
-RSpec.describe 'integration' do
-  let!(:topic) { 'fnsq-topic' }
-  let!(:channel) { 'fnsq-channel' }
-  let!(:message) { { 'foo' => 'bar' } }
+RSpec.describe "integration" do
+  let!(:topic) { "fnsq-topic" }
+  let!(:channel) { "fnsq-channel" }
+  let!(:message) { {"foo" => "bar"} }
 
   before { reset_topic(topic, channel: channel) }
 
-  it 'processes jobs' do
+  it "processes jobs" do
     received = nil
     producer = FastlyNsq::Producer.new(topic: topic)
     FastlyNsq::Listener.new(topic: topic, channel: channel, processor: ->(m) { received = m })
@@ -18,8 +18,8 @@ RSpec.describe 'integration' do
     expect { received&.body }.to eventually(eq(message)).within(2)
   end
 
-  describe 'inline', :inline do
-    it 'processes job' do
+  describe "inline", :inline do
+    it "processes job" do
       received = nil
       producer = FastlyNsq::Producer.new(topic: topic)
       FastlyNsq::Listener.new(topic: topic, channel: channel, processor: ->(m) { received = m })
@@ -29,8 +29,8 @@ RSpec.describe 'integration' do
     end
   end
 
-  describe 'fake', :fake do
-    it 'stores jobs' do
+  describe "fake", :fake do
+    it "stores jobs" do
       received = nil
       encoded_message = JSON.dump(message)
       producer = FastlyNsq::Producer.new(topic: topic)

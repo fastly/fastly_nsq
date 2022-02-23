@@ -1,14 +1,13 @@
 # frozen_string_literal: true
 
-# rubocop:disable Metrics/ClassLength
 $stdout.sync = true
 
-require 'fastly_nsq'
-require 'fastly_nsq/launcher'
-require 'fastly_nsq/manager'
-require 'fileutils'
-require 'optparse'
-require 'singleton'
+require "fastly_nsq"
+require "fastly_nsq/launcher"
+require "fastly_nsq/manager"
+require "fileutils"
+require "optparse"
+require "singleton"
 
 # Provides functionality to support running FastlyNsq as a command line
 # application that listens and processes NSQ messages.
@@ -44,26 +43,24 @@ class FastlyNsq::CLI
 
     read_loop
   rescue Interrupt
-    FastlyNsq.logger.info 'Shutting down'
+    FastlyNsq.logger.info "Shutting down"
     launcher.stop
     # Explicitly exit so busy Processor threads can't block
     # process shutdown.
-    FastlyNsq.logger.info 'Bye!'
+    FastlyNsq.logger.info "Bye!"
     exit(0)
   end
 
   private
 
   def launcher
-    @launcher ||= FastlyNsq::Launcher.new(options)
+    @launcher ||= FastlyNsq::Launcher.new(**options)
   end
 
   def read_loop
     trapped_read_io = trap_signals
-    loop do
-      readable_io = IO.select([trapped_read_io])
-      break unless readable_io
-      signal = readable_io.first[0].gets.strip
+    while trapped_read_io.wait_readable
+      signal = trapped_read_io.gets.strip
       handle_signal signal
     end
   end
@@ -72,51 +69,51 @@ class FastlyNsq::CLI
     boot_rails
     require options[:require] if options[:require]
     FastlyNsq.logger.info "Running in #{RUBY_DESCRIPTION}"
-    FastlyNsq.logger.info 'Starting processing, hit Ctrl-C to stop' unless options[:daemon]
+    FastlyNsq.logger.info "Starting processing, hit Ctrl-C to stop" unless options[:daemon]
   end
 
   def boot_rails
-    return unless ENV['RAILS_ENV']
+    return unless ENV["RAILS_ENV"]
 
-    require 'rails'
-    require File.expand_path('./config/application.rb')
-    require File.expand_path('./config/environment.rb')
+    require "rails"
+    require File.expand_path("./config/application.rb")
+    require File.expand_path("./config/environment.rb")
   end
 
   def parse(args)
     opts = {}
 
     @parser = OptionParser.new do |o|
-      o.on '-c', '--concurrency COUNT', 'Number of threads used to process messages' do |arg|
+      o.on "-c", "--concurrency COUNT", "Number of threads used to process messages" do |arg|
         opts[:max_threads] = arg
       end
 
-      o.on '-d', '--daemon', 'Daemonize process' do |arg|
+      o.on "-d", "--daemon", "Daemonize process" do |arg|
         opts[:daemonize] = arg
       end
 
-      o.on '-L', '--logfile PATH', 'path to writable logfile' do |arg|
+      o.on "-L", "--logfile PATH", "path to writable logfile" do |arg|
         opts[:logfile] = arg
       end
 
-      o.on '-P', '--pidfile PATH', 'path to pidfile' do |arg|
+      o.on "-P", "--pidfile PATH", "path to pidfile" do |arg|
         opts[:pidfile] = arg
       end
 
-      o.on '-r', '--require [PATH|DIR]', 'Location of message_processor definition' do |arg|
+      o.on "-r", "--require [PATH|DIR]", "Location of message_processor definition" do |arg|
         opts[:require] = arg
       end
 
-      o.on '-v', '--verbose', 'enable verbose logging output' do |arg|
+      o.on "-v", "--verbose", "enable verbose logging output" do |arg|
         opts[:verbose] = arg
       end
 
-      o.on '-t', '--timeout SECONDS', 'shutdown deadline timeout' do |arg|
+      o.on "-t", "--timeout SECONDS", "shutdown deadline timeout" do |arg|
         opts[:timeout] = arg
       end
     end
 
-    @parser.banner = 'fastly_nsq [options]'
+    @parser.banner = "fastly_nsq [options]"
     @parser.parse!(args)
 
     @options = opts
@@ -171,13 +168,11 @@ class FastlyNsq::CLI
     sigs = %w[INT TERM TTIN USR1]
 
     sigs.each do |sig|
-      begin
-        trap sig do
-          self_write.puts(sig)
-        end
-      rescue ArgumentError
-        puts "Signal #{sig} not supported"
+      trap sig do
+        self_write.puts(sig)
       end
+    rescue ArgumentError
+      puts "Signal #{sig} not supported"
     end
     self_read
   end
@@ -185,28 +180,28 @@ class FastlyNsq::CLI
   def handle_signal(sig)
     FastlyNsq.logger.debug "Got #{sig} signal"
     case sig
-    when 'INT'
+    when "INT"
       # Handle Ctrl-C in JRuby like MRI
       # http://jira.codehaus.org/browse/JRUBY-4637
       raise Interrupt
-    when 'TERM'
+    when "TERM"
       # Heroku sends TERM and then waits 10 seconds for process to exit.
       raise Interrupt
-    when 'USR1'
-      FastlyNsq.logger.info 'Received USR1, no longer accepting new work'
+    when "USR1"
+      FastlyNsq.logger.info "Received USR1, no longer accepting new work"
       launcher.stop_listeners
-    when 'TTIN'
+    when "TTIN"
       handle_ttin
     end
   end
 
   def handle_ttin
     Thread.list.each do |thread|
-      FastlyNsq.logger.warn "Thread TID-#{thread.object_id.to_s(36)} #{thread['fastly_nsq_label']}"
+      FastlyNsq.logger.warn "Thread TID-#{thread.object_id.to_s(36)} #{thread["fastly_nsq_label"]}"
       if thread.backtrace
         FastlyNsq.logger.warn thread.backtrace.join("\n")
       else
-        FastlyNsq.logger.warn '<no backtrace available>'
+        FastlyNsq.logger.warn "<no backtrace available>"
       end
     end
   end
@@ -224,26 +219,24 @@ class FastlyNsq::CLI
     reopen(files_to_reopen)
 
     [$stdout, $stderr].each do |io|
-      File.open(options.fetch(:logfile, '/dev/null'), 'ab') do |f|
+      File.open(options.fetch(:logfile, "/dev/null"), "ab") do |f|
         io.reopen(f)
       end
       io.sync = true
     end
-    $stdin.reopen('/dev/null')
+    $stdin.reopen("/dev/null")
 
     setup_logger
   end
 
   def reopen(files)
     files.each do |file|
-      begin
-        file.reopen file.path, 'a+'
-        file.sync = true
-      rescue IOError => e
-        FastlyNsq.logger.warn "IOError reopening file:  #{e.message}"
-      rescue StandardError => e
-        FastlyNsq.logger.error "Non IOError reopening file:  #{e.message}"
-      end
+      file.reopen file.path, "a+"
+      file.sync = true
+    rescue IOError => e
+      FastlyNsq.logger.warn "IOError reopening file:  #{e.message}"
+    rescue => e
+      FastlyNsq.logger.error "Non IOError reopening file:  #{e.message}"
     end
   end
 

@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-require 'net/https'
-require 'fastly_nsq/http/nsqd'
-require 'fastly_nsq/http/nsqlookupd'
+require "net/https"
+require "fastly_nsq/http/nsqd"
+require "fastly_nsq/http/nsqlookupd"
 
 ##
 # Adapter class for HTTP requests to NSQD
@@ -15,7 +15,7 @@ require 'fastly_nsq/http/nsqlookupd'
 # @see FastlyNsq::Http::Nsqd
 # @see FastlyNsq::Http::Nsqlookupd
 class FastlyNsq::Http
-  def initialize(uri:, cert_filename: ENV['NSQ_SSL_CERTIFICATE'], key_filename: ENV['NSQ_SSL_KEY'])
+  def initialize(uri:, cert_filename: ENV["NSQ_SSL_CERTIFICATE"], key_filename: ENV["NSQ_SSL_KEY"])
     @uri = uri.is_a?(URI) ? uri : URI.parse(uri)
     @cert_filename = cert_filename
     @key_filename = key_filename

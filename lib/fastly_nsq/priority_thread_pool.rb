@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class FastlyNsq::PriorityThreadPool < Concurrent::ThreadPoolExecutor
-  alias max_threads max_length
+  alias_method :max_threads, :max_length
 
   def initialize(*)
     super
@@ -15,7 +15,7 @@ class FastlyNsq::PriorityThreadPool < Concurrent::ThreadPoolExecutor
   # @!visibility private
   def ns_enqueue(*args, &task)
     if !ns_limited_queue? || @queue.size < @max_queue
-      @queue.push([task, args[1..-1]], args[0])
+      @queue.push([task, args[1..]], args[0])
       true
     else
       false
@@ -27,6 +27,6 @@ class FastlyNsq::PriorityThreadPool < Concurrent::ThreadPoolExecutor
   #
   # @!visibility private
   def ns_assign_worker(*args, &task)
-    super(args[1..-1], &task)
+    super(args[1..], &task)
   end
 end

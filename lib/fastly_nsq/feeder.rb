@@ -36,13 +36,11 @@ class FastlyNsq::Feeder
   # @see Nsq::Connection#read_loop
   def push(message)
     FastlyNsq.manager.pool.post(priority) do
-      begin
-        processor.call(message)
-      rescue => ex
-        FastlyNsq.logger.error ex
-        FastlyNsq.tracer.notice_error ex
-        raise ex
-      end
+      processor.call(message)
+    rescue => ex
+      FastlyNsq.logger.error ex
+      FastlyNsq.tracer.notice_error ex
+      raise ex
     end
   end
 end

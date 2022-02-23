@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
 begin
-  require 'newrelic_rpm'
-rescue LoadError # rubocop:disable Lint/HandleExceptions
+  require "newrelic_rpm"
+rescue LoadError
 end
 
 ##
@@ -11,7 +11,7 @@ end
 class FastlyNsq::NewRelic
   include NewRelic::Agent::Instrumentation::ControllerInstrumentation if defined?(::NewRelic)
 
-  CATEGORY = 'OtherTransaction/FastlyNsqProcessor'
+  CATEGORY = "OtherTransaction/FastlyNsqProcessor"
 
   attr_reader :agent
 
@@ -22,14 +22,14 @@ class FastlyNsq::NewRelic
   #   tracer = FastlyNsq::NewRelic.new
   #   tracer.notice_error(exception)
   def initialize(agent = nil)
-    @agent = agent || (Object.const_defined?('NewRelic') ? NewRelic::Agent : nil)
+    @agent = agent || (Object.const_defined?(:NewRelic) ? NewRelic::Agent : nil)
   end
 
   ##
   # Returns true if NewRelic is loaded and available.
   # @return [Boolean]
   def enabled?
-    @enabled ||= Object.const_defined?('NewRelic')
+    @enabled ||= Object.const_defined?(:NewRelic)
   end
 
   ##
@@ -49,7 +49,7 @@ class FastlyNsq::NewRelic
   # @see {https://www.rubydoc.info/github/newrelic/rpm/NewRelic%2FAgent%2FInstrumentation%2FControllerInstrumentation:perform_action_with_newrelic_trace}
   def trace_with_newrelic(**args)
     if enabled?
-      perform_action_with_newrelic_trace(trace_args(args)) do
+      perform_action_with_newrelic_trace(trace_args(**args)) do
         yield
       end
     else
@@ -61,8 +61,8 @@ class FastlyNsq::NewRelic
 
   def trace_args(**args)
     {
-      name: 'call',
-      category: CATEGORY,
+      name: "call",
+      category: CATEGORY
     }.merge(args)
   end
 end

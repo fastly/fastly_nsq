@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'fastly_nsq/http'
+require "fastly_nsq/http"
 
 class FastlyNsq::Http
   ##
@@ -13,11 +13,11 @@ class FastlyNsq::Http
     def_delegator :client, :get
     def_delegator :client, :post
 
-    BASE_NSQD_URL = ENV.fetch('NSQD_URL') do
-      if ENV['NSQD_HTTPS_ADDRESS']
-        "https://#{ENV.fetch('NSQD_HTTPS_ADDRESS')}"
+    BASE_NSQD_URL = ENV.fetch("NSQD_URL") do
+      if ENV["NSQD_HTTPS_ADDRESS"]
+        "https://#{ENV.fetch("NSQD_HTTPS_ADDRESS")}"
       else
-        "http://#{ENV.fetch('NSQD_HTTP_ADDRESS')}"
+        "http://#{ENV.fetch("NSQD_HTTP_ADDRESS")}"
       end
     end
     VALID_FORMATS = %w[text json].freeze
@@ -27,13 +27,13 @@ class FastlyNsq::Http
     #
     # NOTE: The only "unhealthy" state is if nsqd failed to write messages to disk when overflow occurred.
     def self.ping(**args)
-      new(request_uri: '/ping', **args).get
+      new(request_uri: "/ping", **args).get
     end
 
     ##
     # NSQ version information
     def self.info(**args)
-      new(request_uri: '/info', **args).get
+      new(request_uri: "/info", **args).get
     end
 
     ##
@@ -47,12 +47,12 @@ class FastlyNsq::Http
     #
     # @example Fetch Statistics for topic: 'foo', channel: 'bar' as text
     #   Nsqd.stats(topic: 'foo', channel: 'bar', format: 'text')
-    def self.stats(topic: nil, channel: nil, format: 'json', **args)
+    def self.stats(topic: nil, channel: nil, format: "json", **args)
       raise InvalidFormatError unless VALID_FORMATS.include?(format)
-      params = { format: format }
+      params = {format: format}
       params[:topic] = topic if topic
       params[:channel] = channel if channel
-      new(request_uri: '/stats', **args).get(params)
+      new(request_uri: "/stats", **args).get(params)
     end
 
     ##
@@ -62,9 +62,9 @@ class FastlyNsq::Http
     # @param defer [String] the time in ms to delay message delivery
     # @param message the message body
     def self.pub(topic:, message:, defer: nil, **args)
-      params = { topic: topic }
+      params = {topic: topic}
       params[:defer] = defer if defer
-      new(request_uri: '/pub', **args).post(params, message)
+      new(request_uri: "/pub", **args).post(params, message)
     end
 
     ##
@@ -83,17 +83,17 @@ class FastlyNsq::Http
     # @param topic [String] the topic to publish to
     # @param binary [Boolean] enables binary mode
     # @param message the messages to send with \n used to seperate messages
-    def self.mpub(topic:, binary: false, message:, **args)
-      binary_param = binary ? 'true' : 'false'
-      raise NotImplementedError, 'binary mode has yet to be implemented' if binary
-      params = { topic: topic, binary: binary_param }
-      new(request_uri: '/mpub', **args).post(params, message)
+    def self.mpub(topic:, message:, binary: false, **args)
+      binary_param = binary ? "true" : "false"
+      raise NotImplementedError, "binary mode has yet to be implemented" if binary
+      params = {topic: topic, binary: binary_param}
+      new(request_uri: "/mpub", **args).post(params, message)
     end
 
     ##
     # List of nsqlookupd TCP addresses
     def self.config_nsqlookupd_tcp_addresses(**args)
-      new(request_uri: '/config/nsqlookupd_tcp_addresses', **args).get
+      new(request_uri: "/config/nsqlookupd_tcp_addresses", **args).get
     end
 
     ##
@@ -101,7 +101,7 @@ class FastlyNsq::Http
     #
     # @param topic [String] the topic to create
     def self.topic_create(topic:, **args)
-      new(request_uri: '/topic/create', **args).post(topic: topic)
+      new(request_uri: "/topic/create", **args).post(topic: topic)
     end
 
     ##
@@ -109,7 +109,7 @@ class FastlyNsq::Http
     #
     # @param topic [String] the existing topic to delete
     def self.topic_delete(topic:, **args)
-      new(request_uri: '/topic/delete', **args).post(topic: topic)
+      new(request_uri: "/topic/delete", **args).post(topic: topic)
     end
 
     ##
@@ -117,7 +117,7 @@ class FastlyNsq::Http
     #
     # @param topic [String] the existing topic to empty
     def self.topic_empty(topic:, **args)
-      new(request_uri: '/topic/empty', **args).post(topic: topic)
+      new(request_uri: "/topic/empty", **args).post(topic: topic)
     end
 
     ##
@@ -126,7 +126,7 @@ class FastlyNsq::Http
     #
     # @param topic [String] the existing topic to pause
     def self.topic_pause(topic:, **args)
-      new(request_uri: '/topic/pause', **args).post(topic: topic)
+      new(request_uri: "/topic/pause", **args).post(topic: topic)
     end
 
     ##
@@ -134,7 +134,7 @@ class FastlyNsq::Http
     #
     # @param topic [String] the existing, paused topic to unpause
     def self.topic_unpause(topic:, **args)
-      new(request_uri: '/topic/unpause', **args).post(topic: topic)
+      new(request_uri: "/topic/unpause", **args).post(topic: topic)
     end
 
     ##
@@ -143,7 +143,7 @@ class FastlyNsq::Http
     # @param topic [String] the existing topic
     # @param channel [String] the channel to create
     def self.channel_create(topic:, channel:, **args)
-      new(request_uri: '/channel/create', **args).post(topic: topic, channel: channel)
+      new(request_uri: "/channel/create", **args).post(topic: topic, channel: channel)
     end
 
     ##
@@ -152,7 +152,7 @@ class FastlyNsq::Http
     # @param topic [String] the existing topic
     # @param channel [String] the channel to delete
     def self.channel_delete(topic:, channel:, **args)
-      new(request_uri: '/channel/delete', **args).post(topic: topic, channel: channel)
+      new(request_uri: "/channel/delete", **args).post(topic: topic, channel: channel)
     end
 
     ##
@@ -161,7 +161,7 @@ class FastlyNsq::Http
     # @param topic [String] the existing topic
     # @param channel [String] the channel to empty
     def self.channel_empty(topic:, channel:, **args)
-      new(request_uri: '/channel/empty', **args).post(topic: topic, channel: channel)
+      new(request_uri: "/channel/empty", **args).post(topic: topic, channel: channel)
     end
 
     ##
@@ -171,7 +171,7 @@ class FastlyNsq::Http
     # @param topic [String] the existing topic
     # @param channel [String] the channel to pause
     def self.channel_pause(topic:, channel:, **args)
-      new(request_uri: '/channel/pause', **args).post(topic: topic, channel: channel)
+      new(request_uri: "/channel/pause", **args).post(topic: topic, channel: channel)
     end
 
     ##
@@ -180,7 +180,7 @@ class FastlyNsq::Http
     # @param topic [String] the existing topic
     # @param channel [String] the existing, paused, channel to unpause
     def self.channel_unpause(topic:, channel:, **args)
-      new(request_uri: '/channel/unpause', **args).post(topic: topic, channel: channel)
+      new(request_uri: "/channel/unpause", **args).post(topic: topic, channel: channel)
     end
 
     ##
