@@ -52,7 +52,7 @@ RSpec.describe FastlyNsq do
       logger = subject.logger
 
       expect(logger).to be_instance_of(Logger)
-      expect(logger.instance_variable_get(:@logdev).dev).to eq(STDERR)
+      expect(logger.instance_variable_get(:@logdev).dev).to eq($stderr)
       expect(logger).to eq(Nsq.logger)
     end
   end
@@ -62,14 +62,14 @@ RSpec.describe FastlyNsq do
     after { subject.logger = default_logger }
 
     it "allows the logger to be set and retrieved" do
-      logger = Logger.new(STDOUT)
+      logger = Logger.new($stdout)
       subject.logger = logger
 
       expect(subject.logger).to eq logger
     end
 
     it "sets Nsq.logger" do
-      logger = Logger.new(STDOUT)
+      logger = Logger.new($stdout)
       subject.logger = logger
 
       expect(Nsq.logger).to eq logger

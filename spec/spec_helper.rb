@@ -17,7 +17,7 @@ FastlyNsq::Testing.disable!
 
 if ENV["DEBUG"]
   Concurrent.use_stdlib_logger(Logger::DEBUG)
-  FastlyNsq.logger = Logger.new(STDOUT)
+  FastlyNsq.logger = Logger.new($stdout)
 else
   Concurrent.use_stdlib_logger(Logger::ERROR)
   FastlyNsq.logger = Logger.new("/dev/null").tap { |l| l.level = Logger::DEBUG }

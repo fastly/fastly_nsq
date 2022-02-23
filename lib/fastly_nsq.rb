@@ -58,7 +58,7 @@ module FastlyNsq
     def logger
       return @logger if @logger
 
-      self.logger = Logger.new(STDERR)
+      self.logger = Logger.new($stderr)
     end
 
     ##
