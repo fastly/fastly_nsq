@@ -22,14 +22,14 @@ class FastlyNsq::NewRelic
   #   tracer = FastlyNsq::NewRelic.new
   #   tracer.notice_error(exception)
   def initialize(agent = nil)
-    @agent = agent || (Object.const_defined?("NewRelic") ? NewRelic::Agent : nil)
+    @agent = agent || (Object.const_defined?(:NewRelic) ? NewRelic::Agent : nil)
   end
 
   ##
   # Returns true if NewRelic is loaded and available.
   # @return [Boolean]
   def enabled?
-    @enabled ||= Object.const_defined?("NewRelic")
+    @enabled ||= Object.const_defined?(:NewRelic)
   end
 
   ##
