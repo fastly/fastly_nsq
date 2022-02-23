@@ -59,10 +59,8 @@ class FastlyNsq::CLI
 
   def read_loop
     trapped_read_io = trap_signals
-    loop do
-      readable_io = IO.select([trapped_read_io])
-      break unless readable_io
-      signal = readable_io.first[0].gets.strip
+    while trapped_read_io.wait_readable
+      signal = trapped_read_io.gets.strip
       handle_signal signal
     end
   end
