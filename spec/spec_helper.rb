@@ -11,7 +11,7 @@ require "fastly_nsq"
 require "fastly_nsq/http"
 require "fastly_nsq/testing"
 
-Dir[File.expand_path("../{support,shared,matchers}/**/*.rb", __FILE__)].each { |f| require(f) }
+Dir[File.expand_path("../{support,shared,matchers}/**/*.rb", __FILE__)].sort.each { |f| require(f) }
 
 FastlyNsq::Testing.disable!
 
