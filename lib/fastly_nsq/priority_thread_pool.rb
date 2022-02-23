@@ -15,7 +15,7 @@ class FastlyNsq::PriorityThreadPool < Concurrent::ThreadPoolExecutor
   # @!visibility private
   def ns_enqueue(*args, &task)
     if !ns_limited_queue? || @queue.size < @max_queue
-      @queue.push([task, args[1..-1]], args[0])
+      @queue.push([task, args[1..]], args[0])
       true
     else
       false
@@ -27,6 +27,6 @@ class FastlyNsq::PriorityThreadPool < Concurrent::ThreadPoolExecutor
   #
   # @!visibility private
   def ns_assign_worker(*args, &task)
-    super(args[1..-1], &task)
+    super(args[1..], &task)
   end
 end
