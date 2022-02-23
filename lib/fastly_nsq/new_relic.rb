@@ -49,7 +49,7 @@ class FastlyNsq::NewRelic
   # @see {https://www.rubydoc.info/github/newrelic/rpm/NewRelic%2FAgent%2FInstrumentation%2FControllerInstrumentation:perform_action_with_newrelic_trace}
   def trace_with_newrelic(**args)
     if enabled?
-      perform_action_with_newrelic_trace(trace_args(args)) do
+      perform_action_with_newrelic_trace(trace_args(**args)) do
         yield
       end
     else

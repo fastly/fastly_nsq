@@ -17,13 +17,13 @@ class FastlyNsq::Launcher
     FastlyNsq.manager
   end
 
-  def initialize(timeout: 5, pulse: 5, logger: FastlyNsq.logger, **options)
+  def initialize(**options)
     @done = false
-    @timeout = timeout
-    @pulse = pulse
-    @logger = logger
+    @timeout = options[:timeout] || 5
+    @pulse = options[:pulse] || 5
+    @logger = options[:logger] || FastlyNsq.logger
 
-    FastlyNsq.manager = FastlyNsq::Manager.new(options)
+    FastlyNsq.manager = FastlyNsq::Manager.new(**options)
     FastlyNsq.fire_event :startup
   end
 

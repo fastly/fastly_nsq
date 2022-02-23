@@ -54,7 +54,7 @@ class FastlyNsq::CLI
   private
 
   def launcher
-    @launcher ||= FastlyNsq::Launcher.new(options)
+    @launcher ||= FastlyNsq::Launcher.new(**options)
   end
 
   def read_loop

@@ -7,7 +7,7 @@ RSpec.describe FastlyNsq::Launcher do
   let!(:options) { {max_threads: 3, timeout: 9} }
   let!(:topic) { "fnsq" }
 
-  let(:launcher) { FastlyNsq::Launcher.new options }
+  let(:launcher) { FastlyNsq::Launcher.new(**options) }
   let(:listener) { FastlyNsq::Listener.new(topic: topic, channel: channel, processor: ->(*) {}) }
   let(:manager) { launcher.manager }
 

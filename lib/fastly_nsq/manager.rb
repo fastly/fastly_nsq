@@ -17,14 +17,15 @@ class FastlyNsq::Manager
   ##
   # Create a FastlyNsq::Manager
   #
-  # @param logger [Logger]
-  # @param max_threads [Integer] Maxiumum number of threads to be used by {FastlyNsq::PriorityThreadPool}
-  # @param pool_options [Hash] Options forwarded to {FastlyNsq::PriorityThreadPool} constructor.
-  def initialize(logger: FastlyNsq.logger, max_threads: FastlyNsq.max_processing_pool_threads, **pool_options)
+  # @param opts [Hash] Set of options passed to FastlyNsqw::PriorityThreadPool. valid options include:
+  # * max_threads [Integer] Maxiumum number of threads to be used by {FastlyNsq::PriorityThreadPool}
+  # * logger [Logger]
+  def initialize(**opts) # logger: FastlyNsq.logger, max_threads: FastlyNsq.max_processing_pool_threads)
     @done = false
-    @logger = logger
+    @logger = opts[:logger] || FastlyNsq.logger
+    max_threads = opts[:max_threads] || FastlyNsq.max_processing_pool_threads
     @pool = FastlyNsq::PriorityThreadPool.new(
-      {fallback_policy: :caller_runs, max_threads: max_threads}.merge(pool_options)
+      {fallback_policy: :caller_runs, max_threads: max_threads}.merge(opts)
     )
   end
 
