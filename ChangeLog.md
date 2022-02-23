@@ -1,5 +1,12 @@
 # Change Log
 
+## [v1.17.1](https://github.com/fastly/fastly_nsq/tree/v1.17.1) (2022-02-23)
+[Full Changelog](https://github.com/fastly/fastly_nsq/compare/v1.17.0...v1.17.1)
+
+**Merged pull requests:**
+
+- Use standardrb for style and formatting [\#104](https://github.com/fastly/fastly_nsq/pull/104)
+
 ## [v1.17.0](https://github.com/fastly/fastly_nsq/tree/v1.17.0) (2021-02-11)
 [Full Changelog](https://github.com/fastly/fastly_nsq/compare/v1.16.0...v1.17.0)
 
