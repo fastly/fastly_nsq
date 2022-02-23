@@ -1,14 +1,14 @@
 # frozen_string_literal: true
 
-require 'spec_helper'
+require "spec_helper"
 
 RSpec.describe FastlyNsq::Feeder do
-  describe '#push' do
-    it 'sends message to processor with the specified priority' do
+  describe "#push" do
+    it "sends message to processor with the specified priority" do
       messages = []
       processor = ->(m) { messages << m }
       priority = 5
-      message = 'foo'
+      message = "foo"
 
       feeder = described_class.new(processor, priority)
 

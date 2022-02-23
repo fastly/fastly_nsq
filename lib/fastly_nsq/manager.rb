@@ -21,10 +21,10 @@ class FastlyNsq::Manager
   # @param max_threads [Integer] Maxiumum number of threads to be used by {FastlyNsq::PriorityThreadPool}
   # @param pool_options [Hash] Options forwarded to {FastlyNsq::PriorityThreadPool} constructor.
   def initialize(logger: FastlyNsq.logger, max_threads: FastlyNsq.max_processing_pool_threads, **pool_options)
-    @done      = false
-    @logger    = logger
-    @pool      = FastlyNsq::PriorityThreadPool.new(
-      { fallback_policy: :caller_runs, max_threads: max_threads }.merge(pool_options),
+    @done = false
+    @logger = logger
+    @pool = FastlyNsq::PriorityThreadPool.new(
+      {fallback_policy: :caller_runs, max_threads: max_threads}.merge(pool_options)
     )
   end
 
@@ -99,7 +99,7 @@ class FastlyNsq::Manager
   ##
   # Terminate all listeners
   def stop_listeners
-    logger.info { 'Stopping listeners' }
+    logger.info { "Stopping listeners" }
     listeners.each(&:terminate)
     topic_listeners.clear
   end
@@ -110,13 +110,13 @@ class FastlyNsq::Manager
   # Shutdown the pool
   # @param deadline [Integer] Number of seconds to wait for pool to stop processing
   def stop_processing(deadline)
-    logger.info { 'Stopping processors' }
+    logger.info { "Stopping processors" }
     pool.shutdown
 
-    logger.info { 'Waiting for processors to finish...' }
+    logger.info { "Waiting for processors to finish..." }
     return if pool.wait_for_termination(deadline)
 
-    logger.info { 'Killing processors...' }
+    logger.info { "Killing processors..." }
     pool.kill
   end
 end

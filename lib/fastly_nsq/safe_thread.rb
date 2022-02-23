@@ -3,7 +3,7 @@
 module FastlyNsq::SafeThread
   def safe_thread(name, &block)
     Thread.new do
-      Thread.current['fastly_nsq_label'] = name
+      Thread.current["fastly_nsq_label"] = name
       watchdog(name, &block)
     end
   end

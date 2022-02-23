@@ -78,11 +78,11 @@ class FastlyNsq::Consumer
   #     channel: 'channel'
   #   )
   def initialize(topic:, channel:, queue: nil, tls_options: nil, connect_timeout: DEFAULT_CONNECTION_TIMEOUT, max_attempts: FastlyNsq.max_attempts, **options)
-    @topic           = topic
-    @channel         = channel
-    @tls_options     = FastlyNsq::TlsOptions.as_hash(tls_options)
+    @topic = topic
+    @channel = channel
+    @tls_options = FastlyNsq::TlsOptions.as_hash(tls_options)
     @connect_timeout = connect_timeout
-    @max_attempts    = max_attempts
+    @max_attempts = max_attempts
 
     @connection = connect(queue, **options)
   end
@@ -106,8 +106,8 @@ class FastlyNsq::Consumer
         channel: channel,
         queue: queue,
         max_attempts: max_attempts,
-        **options,
-      }.merge(tls_options),
+        **options
+      }.merge(tls_options)
     )
   end
 end

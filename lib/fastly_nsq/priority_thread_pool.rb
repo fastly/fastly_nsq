@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class FastlyNsq::PriorityThreadPool < Concurrent::ThreadPoolExecutor
-  alias max_threads max_length
+  alias_method :max_threads, :max_length
 
   def initialize(*)
     super

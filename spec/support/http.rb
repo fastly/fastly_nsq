@@ -2,8 +2,8 @@
 
 module SupportHttp
   def message_count(topic)
-    topic_stats = JSON.parse(FastlyNsq::Http::Nsqd.stats(topic: topic).body)['topics'].first || {}
-    topic_stats['message_count']
+    topic_stats = JSON.parse(FastlyNsq::Http::Nsqd.stats(topic: topic).body)["topics"].first || {}
+    topic_stats["message_count"]
   end
 
   def create_topic(topic)

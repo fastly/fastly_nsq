@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 
-require 'spec_helper'
+require "spec_helper"
 
 RSpec.describe FastlyNsq::Consumer do
-  let!(:topic)   { 'fnsq' }
-  let!(:channel) { 'fnsq' }
-  let!(:queue)   { nil }
+  let!(:topic) { "fnsq" }
+  let!(:channel) { "fnsq" }
+  let!(:queue) { nil }
 
   subject { described_class.new(topic: topic, channel: channel, queue: queue) }
 
@@ -16,15 +16,15 @@ RSpec.describe FastlyNsq::Consumer do
 
   it { should be_connected }
 
-  it 'should terminate' do
+  it "should terminate" do
     expect { subject.terminate }.to change(subject, :connected?).to(false)
   end
 
-  describe 'with a specified queue' do
+  describe "with a specified queue" do
     let!(:queue) { Queue.new }
 
-    it 'passes #queue to Nsq::Consumer' do
-      message = 'foo'
+    it "passes #queue to Nsq::Consumer" do
+      message = "foo"
 
       FastlyNsq::Messenger.deliver(message: message, topic: topic)
 
@@ -41,16 +41,16 @@ RSpec.describe FastlyNsq::Consumer do
   it { should delegate(:pop).to(:connection) }
   it { should delegate(:pop_without_blocking).to(:connection) }
 
-  describe 'with a message' do
-    let(:message) { 'foo' }
+  describe "with a message" do
+    let(:message) { "foo" }
 
     before { FastlyNsq::Messenger.deliver(message: message, topic: topic) }
 
-    it 'should not be empty' do
+    it "should not be empty" do
       expect { subject }.to eventually(be_empty).within(15)
     end
 
-    describe 'that has finished' do
+    describe "that has finished" do
       before { subject.pop.finish }
 
       it { should be_empty }

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'webmock/rspec/matchers'
+require "webmock/rspec/matchers"
 
 RSpec.configure do |config|
   config.include WebMock::API, :webmock

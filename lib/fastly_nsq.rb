@@ -1,12 +1,12 @@
 # frozen_string_literal: true
 
-require 'nsq'
-require 'concurrent'
-require 'fc'
-require 'set'
-require 'logger'
-require 'forwardable'
-require 'digest/md5'
+require "nsq"
+require "concurrent"
+require "fc"
+require "set"
+require "logger"
+require "forwardable"
+require "digest/md5"
 
 module FastlyNsq
   NotConnectedError = Class.new(StandardError)
@@ -112,21 +112,21 @@ module FastlyNsq
     # @return [Integer]
     # @see https://nsq.io/components/nsqd.html#command-line-options
     def max_req_timeout
-      @max_req_timeout ||= ENV.fetch('MAX_REQ_TIMEOUT', 60 * 60 * 1_000).to_i
+      @max_req_timeout ||= ENV.fetch("MAX_REQ_TIMEOUT", 60 * 60 * 1_000).to_i
     end
 
     # Maximum number of threads for FastlyNsq::PriorityThreadPool
     # Default setting is 5 and can be set via ENV['MAX_PROCESSING_POOL_THREADS']
     # @return [Integer]
     def max_processing_pool_threads
-      @max_processing_pool_threads ||= ENV.fetch('MAX_PROCESSING_POOL_THREADS', 5).to_i
+      @max_processing_pool_threads ||= ENV.fetch("MAX_PROCESSING_POOL_THREADS", 5).to_i
     end
 
     ##
     # Return an array of NSQ lookupd http addresses sourced from ENV['NSQLOOKUPD_HTTP_ADDRESS']
     # @return [Array<String>] list of nsqlookupd http addresses
     def lookupd_http_addresses
-      ENV.fetch('NSQLOOKUPD_HTTP_ADDRESS').split(',').map(&:strip)
+      ENV.fetch("NSQLOOKUPD_HTTP_ADDRESS").split(",").map(&:strip)
     end
 
     # Register a block to run at a point in the lifecycle.
@@ -151,11 +151,9 @@ module FastlyNsq
     def fire_event(event)
       blocks = FastlyNsq.events.fetch(event)
       blocks.each do |block|
-        begin
-          block.call
-        rescue => e
-          logger.error "[#{event}] #{e.inspect}"
-        end
+        block.call
+      rescue => e
+        logger.error "[#{event}] #{e.inspect}"
       end
     end
 
@@ -168,16 +166,16 @@ module FastlyNsq
   end
 end
 
-require 'fastly_nsq/consumer'
-require 'fastly_nsq/feeder'
-require 'fastly_nsq/launcher'
-require 'fastly_nsq/listener'
-require 'fastly_nsq/manager'
-require 'fastly_nsq/message'
-require 'fastly_nsq/messenger'
-require 'fastly_nsq/new_relic'
-require 'fastly_nsq/priority_queue'
-require 'fastly_nsq/priority_thread_pool'
-require 'fastly_nsq/producer'
-require 'fastly_nsq/tls_options'
-require 'fastly_nsq/version'
+require "fastly_nsq/consumer"
+require "fastly_nsq/feeder"
+require "fastly_nsq/launcher"
+require "fastly_nsq/listener"
+require "fastly_nsq/manager"
+require "fastly_nsq/message"
+require "fastly_nsq/messenger"
+require "fastly_nsq/new_relic"
+require "fastly_nsq/priority_queue"
+require "fastly_nsq/priority_thread_pool"
+require "fastly_nsq/producer"
+require "fastly_nsq/tls_options"
+require "fastly_nsq/version"

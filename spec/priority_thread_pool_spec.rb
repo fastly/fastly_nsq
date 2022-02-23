@@ -1,13 +1,13 @@
 # frozen_string_literal: true
 
-require 'spec_helper'
+require "spec_helper"
 
 RSpec.describe FastlyNsq::PriorityThreadPool do
   let!(:pool) { described_class.new(max_threads: 1) }
 
   after { pool.shutdown || pool.wait_for_termination }
 
-  it 'executes work based on supplied priority' do
+  it "executes work based on supplied priority" do
     actual = []
     count = 10
     count.times { |i| pool.post(i) { actual << i } }

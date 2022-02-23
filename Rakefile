@@ -1,28 +1,28 @@
 # frozen_string_literal: true
 
-require 'rubygems'
+require "rubygems"
 
 begin
-  require 'bundler/setup'
+  require "bundler/setup"
 rescue LoadError => e
   abort e.message
 end
 
-require 'rake'
+require "rake"
 
-require 'rubygems/tasks'
+require "rubygems/tasks"
 Gem::Tasks.new
 
-require 'rdoc/task'
+require "rdoc/task"
 RDoc::Task.new
 task doc: :rdoc
 
-require 'rspec/core/rake_task'
+require "rspec/core/rake_task"
 RSpec::Core::RakeTask.new(:spec)
 
-require 'bundler/audit/cli'
+require "bundler/audit/cli"
 namespace :bundler do
-  desc 'Updates the ruby-advisory-db and runs audit'
+  desc "Updates the ruby-advisory-db and runs audit"
   task :audit do
     %w[update check].each do |command|
       Bundler::Audit::CLI.start [command]
@@ -30,8 +30,7 @@ namespace :bundler do
   end
 end
 
-require 'rubocop/rake_task'
-RuboCop::RakeTask.new
+require "standard/rake"
 
 task(:default).clear
-task default: ['spec', 'rubocop', 'bundler:audit']
+task default: ["spec", "standard", "bundler:audit"]
