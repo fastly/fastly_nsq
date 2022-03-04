@@ -47,7 +47,7 @@ RSpec.describe FastlyNsq::Producer do
       .to raise_error(FastlyNsq::ConnectionFailed, match(FastlyNsq.lookupd_http_addresses.inspect))
   end
 
-  describe "connection priorioty" do
+  describe "connection priority" do
     after do
       FastlyNsq.lookupd_http_addresses = nil
       FastlyNsq.producer_nsqds = nil

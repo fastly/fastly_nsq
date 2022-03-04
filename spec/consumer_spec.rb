@@ -57,7 +57,7 @@ RSpec.describe FastlyNsq::Consumer do
     end
   end
 
-  describe "connection priorioty" do
+  describe "connection priority" do
     after do
       FastlyNsq.lookupd_http_addresses = nil
       FastlyNsq.consumer_nsqds = nil
