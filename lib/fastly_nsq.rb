@@ -126,7 +126,44 @@ module FastlyNsq
     # Return an array of NSQ lookupd http addresses sourced from ENV['NSQLOOKUPD_HTTP_ADDRESS']
     # @return [Array<String>] list of nsqlookupd http addresses
     def lookupd_http_addresses
-      ENV.fetch("NSQLOOKUPD_HTTP_ADDRESS").split(",").map(&:strip)
+      @lookups ||= ENV.fetch("NSQLOOKUPD_HTTP_ADDRESS").split(",").map(&:strip)
+    end
+
+    ##
+    # Set the lookupd_http_addresses
+    # @param lookups [Array] List of http lookupd addresses to use.
+    def lookupd_http_addresses=(lookups)
+      @lookups = Array(lookups)
+    end
+
+    ##
+    # Return an array of NSQD TCP addresses for NSQ consumers. Defaults to the value of ENV['NSQD_CONSUMERS'].
+    # ENV['NSQD_CONSUMERS'] must be a comma or space seperated string of NSQD addresses
+    # @return [Array<String>] list of nsqd addresses
+    def consumer_nsqds
+      @consumer_nsqds ||= ENV.fetch("NSQD_CONSUMERS").split(/, ?|\s+/).map(&:strip)
+    end
+
+    ##
+    # Set the consumer_nsqd addresses
+    # @param nsqd_addresses [Array] List of consumer nsqd addresses to use
+    def consumer_nsqds=(nsqd_addresses)
+      @consumer_nsqds = Array(nsqd_addresses)
+    end
+
+    ##
+    # Return an array of NSQD TCP addresses for NSQ producers. Defaults to the value of ENV['NSQD_PRODUCERS'].
+    # ENV['NSQD_PRODUCERS'] must be a comma or space seperated string of NSQD addresses
+    # @return [Array<String>] list of nsqd addresses
+    def producer_nsqds
+      @producer_nsqds ||= ENV.fetch("NSQD_PRODUCERS").split(/, ?|\s+/).map(&:strip)
+    end
+
+    ##
+    # Set the producer_nsqd addresses
+    # @param nsqd_addresses [Array] List of producer nsqd addresses to use
+    def producer_nsqds=(nsqd_addresses)
+      @producer_nsqds = Array(nsqd_addresses)
     end
 
     # Register a block to run at a point in the lifecycle.

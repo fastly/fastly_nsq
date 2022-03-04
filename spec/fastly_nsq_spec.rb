@@ -94,8 +94,80 @@ RSpec.describe FastlyNsq do
   end
 
   describe "#lookupd_http_addresses" do
-    it "retreives NSQLOOKUPD_HTTP_ADDRESS" do
+    after { subject.instance_variable_set(:@lookups, nil) }
+
+    it "retreives NSQLOOKUPD_HTTP_ADDRESS by default" do
       expect(subject.lookupd_http_addresses).to eq(ENV["NSQLOOKUPD_HTTP_ADDRESS"].split(","))
+    end
+
+    it "returns the value of the instance variable" do
+      subject.instance_variable_set(:@lookups, ["lolcathost"])
+
+      expect(subject.lookupd_http_addresses).to eq(["lolcathost"])
+    end
+  end
+
+  describe "#lookupd_http_addresses=" do
+    let!(:default_loookups) { subject.lookupd_http_addresses }
+    after { subject.lookupd_http_addresses = default_loookups }
+
+    it "allows the lookups to be set and retrieved" do
+      lookups = ["lolcathost:1234"]
+      subject.lookupd_http_addresses = lookups
+
+      expect(subject.lookupd_http_addresses).to eq lookups
+    end
+  end
+
+  describe "#producer_nsqds" do
+    after { subject.instance_variable_set(:@producer_nsqds, nil) }
+
+    it "retreives NSQD_PRODUCERS by default" do
+      expect(subject.producer_nsqds).to eq(ENV["NSQD_PRODUCERS"].split(","))
+    end
+
+    it "returns the value of the instance variable" do
+      subject.instance_variable_set(:@producer_nsqds, ["producer:1234"])
+
+      expect(subject.producer_nsqds).to eq(["producer:1234"])
+    end
+  end
+
+  describe "#producer_nsqds=" do
+    let!(:default_producers) { subject.producer_nsqds }
+    after { subject.producer_nsqds = default_producers }
+
+    it "allows the producer_nsqds to be set and retrieved" do
+      producers = ["producer:1234"]
+      subject.producer_nsqds = producers
+
+      expect(subject.producer_nsqds).to eq producers
+    end
+  end
+
+  describe "#consumer_nsqds" do
+    after { subject.instance_variable_set(:@consumer_nsqds, nil) }
+
+    it "retreives NSQD_CONSUMERS by default" do
+      expect(subject.consumer_nsqds).to eq(ENV["NSQD_CONSUMERS"].split(","))
+    end
+
+    it "returns the value of the instance variable" do
+      subject.instance_variable_set(:@consumer_nsqds, ["consumer:1234"])
+
+      expect(subject.consumer_nsqds).to eq(["consumer:1234"])
+    end
+  end
+
+  describe "#consumer_nsqds=" do
+    let!(:default_consumers) { subject.consumer_nsqds }
+    after { subject.consumer_nsqds = default_consumers }
+
+    it "allows the consumer_nsqds to be set and retrieved" do
+      consumers = ["consumer:1234"]
+      subject.consumer_nsqds = consumers
+
+      expect(subject.consumer_nsqds).to eq consumers
     end
   end
 

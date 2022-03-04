@@ -293,10 +293,10 @@ stock NSQ on OS X,
 installed via Homebrew:
 
 ```shell
-NSQD_TCP_ADDRESS='127.0.0.1:4150'
 NSQD_HTTP_ADDRESS='127.0.0.1:4151'
-NSQLOOKUPD_TCP_ADDRESS='127.0.0.1:4160'
 NSQLOOKUPD_HTTP_ADDRESS='127.0.0.1:4161, 10.1.1.101:4161'
+NSQD_CONSUMERS='127.0.0.1:4150'
+NSQD_PRODUCERS='127.0.0.1:4150'
 ```
 
 See the [`.sample.env`](examples/.sample.env) file
