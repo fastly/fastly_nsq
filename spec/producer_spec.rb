@@ -43,13 +43,8 @@ RSpec.describe FastlyNsq::Producer do
     logger = spy("logger")
     expect(logger).to receive(:error).and_return("Producer for #{topic} failed to connect!")
 
-    if RUBY_VERSION > "2.4.0"
-      expect { FastlyNsq::Producer.new(topic: topic, logger: logger, connect_timeout: 0.2) }
-        .to raise_error(FastlyNsq::ConnectionFailed, match(FastlyNsq.lookupd_http_addresses.inspect))
-    else
-      expect { FastlyNsq::Producer.new(topic: topic, logger: logger, connect_timeout: 0.2) }
-        .to raise_error(FastlyNsq::ConnectionFailed)
-    end
+    expect { FastlyNsq::Producer.new(topic: topic, logger: logger, connect_timeout: 0.2) }
+      .to raise_error(FastlyNsq::ConnectionFailed, match(FastlyNsq.lookupd_http_addresses.inspect))
   end
 
   describe "connection priorioty" do

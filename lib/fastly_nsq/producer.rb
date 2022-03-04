@@ -89,11 +89,11 @@ class FastlyNsq::Producer
 
     @connection ||= Nsq::Producer.new(opts)
 
-    timeout_args = [connect_timeout, FastlyNsq::ConnectionFailed]
-
-    if RUBY_VERSION > "2.4.0"
-      timeout_args << "Failed connection to #{opts[:nsqd] || opts[:nsqlookupd]} within #{connect_timeout} seconds"
-    end
+    timeout_args = [
+      connect_timeout,
+      FastlyNsq::ConnectionFailed,
+      "Failed connection to #{opts[:nsqd] || opts[:nsqlookupd]} within #{connect_timeout} seconds"
+    ]
 
     Timeout.timeout(*timeout_args) { Thread.pass until connection.connected? }
 
