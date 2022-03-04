@@ -56,4 +56,45 @@ RSpec.describe FastlyNsq::Consumer do
       it { should be_empty }
     end
   end
+
+  describe "connection priority" do
+    after do
+      FastlyNsq.lookupd_http_addresses = nil
+      FastlyNsq.consumer_nsqds = nil
+    end
+
+    it "connects to consumer_nsqds if provided" do
+      allow(Nsq::Consumer).to receive(:new)
+
+      expect(FastlyNsq.lookupd_http_addresses).not_to be_empty
+      expect(FastlyNsq.consumer_nsqds).not_to be_empty
+
+      FastlyNsq::Consumer.new(topic: topic, channel: channel)
+      expect(Nsq::Consumer).to have_received(:new).with a_hash_including(nsqd: FastlyNsq.consumer_nsqds).and(excluding(:nsqlookupd))
+    end
+
+    it "connects to lookupd_http_addresses if consumer_nsqds is empty" do
+      FastlyNsq.consumer_nsqds = []
+      allow(Nsq::Consumer).to receive(:new)
+
+      expect(FastlyNsq.lookupd_http_addresses).not_to be_empty
+      expect(FastlyNsq.consumer_nsqds).to be_empty
+
+      FastlyNsq::Consumer.new(topic: topic, channel: channel)
+      expect(Nsq::Consumer).to have_received(:new).with a_hash_including(nsqlookupd: FastlyNsq.lookupd_http_addresses).and(excluding(:nsqd))
+    end
+
+    it "raises when neither consumer_nsqds or lookupd_http_addresses are available" do
+      FastlyNsq.consumer_nsqds = []
+      FastlyNsq.lookupd_http_addresses = []
+      allow(Nsq::Consumer).to receive(:new)
+
+      expect(FastlyNsq.lookupd_http_addresses).to be_empty
+      expect(FastlyNsq.consumer_nsqds).to be_empty
+
+      expect { FastlyNsq::Consumer.new(topic: topic, channel: channel) }
+        .to raise_error(FastlyNsq::ConnectionFailed, "One of FastlyNsq.consumer_nsqds or FastlyNsq.lookupd_http_addresses must be present")
+      expect(Nsq::Consumer).not_to have_received(:new)
+    end
+  end
 end

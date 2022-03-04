@@ -96,7 +96,7 @@ RSpec.describe FastlyNsq::Listener do
   describe "#call" do
     it "processes a message" do
       body = {"foo" => "bar"}
-      message = spy("message", body: JSON.dump(body))
+      message = spy("message", body: JSON.dump(body), attempts: 1, id: 1)
       expect { subject.call(message) }.to change { messages }.to([body])
     end
 
@@ -104,7 +104,7 @@ RSpec.describe FastlyNsq::Listener do
       let(:processor) { ->(_) { true } }
 
       it "finishes the message" do
-        message = spy("message", body: "{}")
+        message = spy("message", body: "{}", attempts: 1, id: 1)
         subject.call(message)
 
         expect(message).to have_received(:finish)
@@ -115,7 +115,7 @@ RSpec.describe FastlyNsq::Listener do
       let(:processor) { ->(_) { false } }
 
       it "finishes the message" do
-        message = spy("message", body: "{}")
+        message = spy("message", body: "{}", attempts: 1, id: 1)
         subject.call(message)
 
         expect(message).not_to have_received(:finish)

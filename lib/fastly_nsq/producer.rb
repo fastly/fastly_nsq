@@ -24,6 +24,9 @@ class FastlyNsq::Producer
   ##
   # Create a FastlyNsq::Producer
   #
+  # Will connect to NSQDs in this priority: 1. direct from FastlyNsq.producer_nsqds 2. discovered via FastlyNsq.lookupd_http_addresses.
+  # If both `producer_nsqds` and `lookupd_http_addresses` are set only the FastlyNsq.producer_nsqds will be used.
+  #
   # @param topic [String] NSQ topic on which to deliver the message
   # @param tls_options [Hash] Hash of TSL options passed the connection.
   #   In most cases this should be nil unless you need to override the
@@ -71,27 +74,33 @@ class FastlyNsq::Producer
   # Create an Nsq::Producer and set as +@connection+ instance variable
   # @return [Boolean]
   def connect
+    producers = FastlyNsq.producer_nsqds
     lookupd = FastlyNsq.lookupd_http_addresses
 
-    @connection ||= Nsq::Producer.new(
-      tls_options.merge(
-        nsqlookupd: lookupd,
-        topic: topic
-      )
-    )
+    opts = tls_options.merge(topic: topic)
 
-    timeout_args = [connect_timeout, FastlyNsq::ConnectionFailed]
-
-    if RUBY_VERSION > "2.4.0"
-      timeout_args << "Failed connection to #{lookupd} within #{connect_timeout} seconds"
+    if !producers.empty?
+      opts[:nsqd] = producers
+    elsif !lookupd.empty?
+      opts[:nsqlookupd] = lookupd
+    else
+      raise FastlyNsq::ConnectionFailed, "One of FastlyNsq.producer_nsqds or FastlyNsq.lookupd_http_addresses must be present"
     end
+
+    @connection ||= Nsq::Producer.new(opts)
+
+    timeout_args = [
+      connect_timeout,
+      FastlyNsq::ConnectionFailed,
+      "Failed connection to #{opts[:nsqd] || opts[:nsqlookupd]} within #{connect_timeout} seconds"
+    ]
 
     Timeout.timeout(*timeout_args) { Thread.pass until connection.connected? }
 
     true
   rescue FastlyNsq::ConnectionFailed
     logger.error { "Producer for #{topic} failed to connect!" }
-    terminate
+    terminate if @connection
     raise
   end
 
