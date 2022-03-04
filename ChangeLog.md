@@ -1,5 +1,12 @@
 # Change Log
 
+## [v1.18.0](https://github.com/fastly/fastly_nsq/tree/v1.18.0) (2022-03-04)
+[Full Changelog](https://github.com/fastly/fastly_nsq/compare/v1.17.1...v1.18.0)
+
+**Merged pull requests:**
+
+- Configurable NSQDs for Consumers and Producers [\#105](https://github.com/fastly/fastly_nsq/pull/105)
+
 ## [v1.17.1](https://github.com/fastly/fastly_nsq/tree/v1.17.1) (2022-02-23)
 [Full Changelog](https://github.com/fastly/fastly_nsq/compare/v1.17.0...v1.17.1)
 
