@@ -126,7 +126,7 @@ module FastlyNsq
     # Return an array of NSQ lookupd http addresses sourced from ENV['NSQLOOKUPD_HTTP_ADDRESS']
     # @return [Array<String>] list of nsqlookupd http addresses
     def lookupd_http_addresses
-      @lookups ||= ENV.fetch("NSQLOOKUPD_HTTP_ADDRESS").split(",").map(&:strip)
+      @lookups ||= ENV.fetch("NSQLOOKUPD_HTTP_ADDRESS", "").split(/, ?|\s+/).map(&:strip)
     end
 
     ##
@@ -141,7 +141,7 @@ module FastlyNsq
     # ENV['NSQD_CONSUMERS'] must be a comma or space seperated string of NSQD addresses
     # @return [Array<String>] list of nsqd addresses
     def consumer_nsqds
-      @consumer_nsqds ||= ENV.fetch("NSQD_CONSUMERS").split(/, ?|\s+/).map(&:strip)
+      @consumer_nsqds ||= ENV.fetch("NSQD_CONSUMERS", "").split(/, ?|\s+/).map(&:strip)
     end
 
     ##
@@ -156,7 +156,7 @@ module FastlyNsq
     # ENV['NSQD_PRODUCERS'] must be a comma or space seperated string of NSQD addresses
     # @return [Array<String>] list of nsqd addresses
     def producer_nsqds
-      @producer_nsqds ||= ENV.fetch("NSQD_PRODUCERS").split(/, ?|\s+/).map(&:strip)
+      @producer_nsqds ||= ENV.fetch("NSQD_PRODUCERS", "").split(/, ?|\s+/).map(&:strip)
     end
 
     ##
