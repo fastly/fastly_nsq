@@ -1,4 +1,4 @@
-# fastly_nsq [![Build Status](https://travis-ci.org/fastly/fastly_nsq.svg?branch=main)](https://travis-ci.org/fastly/fastly_nsq)
+# fastly_nsq [![Build Status](https://travis-ci.com/fastly/fastly_nsq.svg?branch=main)](https://travis-ci.com/fastly/fastly_nsq)
 
 NSQ adapter and testing objects
 for using the NSQ messaging system
@@ -12,9 +12,9 @@ We also include fakes
 to make testing easier.
 
 This library is dependent
-on the [`nsq-ruby`] gem.
+on the [`nsq-ruby-fastly`] gem.
 
-[`nsq-ruby`]: https://github.com/wistia/nsq-ruby
+[`nsq-ruby-fastly`]: https://github.com/fastly/nsq-ruby
 
 Please use [GitHub Issues] to report bugs.
 
@@ -34,6 +34,65 @@ and `bundle install`.
 
 ## Usage
 
+### Connections
+
+NSQD cconnections can be discovered via nsqlookupd's or
+specified explicity for consumers and producers.
+
+#### Using nsqlookup:
+
+Set the ENV variable to a comma sepearated string of lookups:
+
+```
+ENV['NSQLOOKUPD_HTTP_ADDRESS'] = "lookup01:1234,lookup01:1234"
+```
+
+Or configure them directly:
+
+```
+FastlyNsq.configure do |config|
+  config.lookupd_http_addresses = ["lookup01:1234", "lookup02:1234"]
+end
+```
+
+#### Using nsqd directly:
+
+NSQD connections can be specified for consumers and producers. Being able to set
+different sets for consumers and producers facilitates removing and adding new instances
+without downtime.
+
+Set the following ENV variables to a comma sepearted string of nsqds:
+
+```
+ENV['NSQD_CONSUMERS']="nsqd01:4150,nsd02:4150"
+ENV['NSQD_PRODUCERS']="nsqd01:4150,nsd02:4150"
+```
+
+Or configure them directly:
+
+```
+FastlyNsq.configure do |config|
+  config.consumer_nsqds = ["nsqd01:4150", "nsqd02:4150"]
+  config.producer_nsqds = ["nsqd01:4150", "nsqd02:4150"]
+end
+```
+
+### Connection Priority
+
+When `FastlyNsq.consumer_nsqds` or `FastlyNsq.producer_nsqds` are set they
+will be used instead of `FastlyNsq.lookupd_http_addresses`.
+
+### TLS
+
+Set the following ENV variables to enable TLS support:
+
+```
+NSQ_SSL_KEY
+NSQ_SSL_CERTIFICATE
+NSQ_SSL_CA_CERTIFICATE
+NSQ_SSL_VERIFY_MODE (optional)
+```
+
 ### `FastlyNsq::Producer`
 
 This is a class
@@ -50,7 +109,6 @@ message_data = {
 }
 
 producer = FastlyNsq::Producer.new(
-  nsqd: ENV.fetch('NSQD_TCP_ADDRESS'),
   topic: topic,
 )
 
@@ -280,6 +338,22 @@ expect(some_result)
 ```
 
 ## Configuration
+
+See the [documentation](https://www.rubydoc.info/gems/fastly_nsq/FastlyNsq) for additional settings
+
+Example:
+
+```
+FastlyNsq.configure do |config|
+ config.channel = "z"
+ config.producer_nsqds = ["nsqd01:4150", "nsqd02:4150"]
+ config.lookupd_http_addresses = ["lookupd01:4161", "lookupd02:4161"]
+ config.logger = Logger.new(STDOUT)
+ config.max_attempts = 10
+ config.max_req_timeout = 10_000
+ config.max_processing_pool_threads = 42
+end
+```
 
 ### Environment Variables
 
