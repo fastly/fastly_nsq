@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require "spec_helper"
+RSpec::Matchers.define_negated_matcher :excluding, :include
 
 RSpec.describe FastlyNsq::Producer do
   let!(:topic) { "fnsq" }
@@ -48,6 +49,49 @@ RSpec.describe FastlyNsq::Producer do
     else
       expect { FastlyNsq::Producer.new(topic: topic, logger: logger, connect_timeout: 0.2) }
         .to raise_error(FastlyNsq::ConnectionFailed)
+    end
+  end
+
+  describe "connection priorioty" do
+    after do
+      FastlyNsq.lookupd_http_addresses = nil
+      FastlyNsq.producer_nsqds = nil
+    end
+
+    it "connects to producer_nsqds if provided" do
+      connection = double "FastlyNsq::Producer", connected?: true
+      allow(Nsq::Producer).to receive(:new).and_return(connection)
+
+      expect(FastlyNsq.lookupd_http_addresses).not_to be_empty
+      expect(FastlyNsq.producer_nsqds).not_to be_empty
+
+      FastlyNsq::Producer.new(topic: topic)
+      expect(Nsq::Producer).to have_received(:new).with a_hash_including(nsqd: FastlyNsq.producer_nsqds).and(excluding(:nsqlookupd))
+    end
+
+    it "connects to lookupd_http_addresses if producer_nsqds is empty" do
+      FastlyNsq.producer_nsqds = []
+      connection = double "FastlyNsq::Producer", connected?: true
+      allow(Nsq::Producer).to receive(:new).and_return(connection)
+
+      expect(FastlyNsq.lookupd_http_addresses).not_to be_empty
+      expect(FastlyNsq.producer_nsqds).to be_empty
+
+      FastlyNsq::Producer.new(topic: topic)
+      expect(Nsq::Producer).to have_received(:new).with a_hash_including(nsqlookupd: FastlyNsq.lookupd_http_addresses).and(excluding(:nsqd))
+    end
+
+    it "raises when neither producer_nsqds or lookupd_http_addresses are available" do
+      FastlyNsq.producer_nsqds = []
+      FastlyNsq.lookupd_http_addresses = []
+      allow(Nsq::Producer).to receive(:new)
+
+      expect(FastlyNsq.lookupd_http_addresses).to be_empty
+      expect(FastlyNsq.producer_nsqds).to be_empty
+
+      expect { FastlyNsq::Producer.new(topic: topic) }
+        .to raise_error(FastlyNsq::ConnectionFailed, "One of FastlyNsq.producer_nsqds or FastlyNsq.lookupd_http_addresses must be present")
+      expect(Nsq::Producer).not_to have_received(:new)
     end
   end
 

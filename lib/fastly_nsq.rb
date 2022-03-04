@@ -133,7 +133,7 @@ module FastlyNsq
     # Set the lookupd_http_addresses
     # @param lookups [Array] List of http lookupd addresses to use.
     def lookupd_http_addresses=(lookups)
-      @lookups = Array(lookups)
+      @lookups = lookups.nil? ? nil : Array(lookups)
     end
 
     ##
@@ -148,7 +148,7 @@ module FastlyNsq
     # Set the consumer_nsqd addresses
     # @param nsqd_addresses [Array] List of consumer nsqd addresses to use
     def consumer_nsqds=(nsqd_addresses)
-      @consumer_nsqds = Array(nsqd_addresses)
+      @consumer_nsqds = nsqd_addresses.nil? ? nil : Array(nsqd_addresses)
     end
 
     ##
@@ -163,7 +163,7 @@ module FastlyNsq
     # Set the producer_nsqd addresses
     # @param nsqd_addresses [Array] List of producer nsqd addresses to use
     def producer_nsqds=(nsqd_addresses)
-      @producer_nsqds = Array(nsqd_addresses)
+      @producer_nsqds = nsqd_addresses.nil? ? nil : Array(nsqd_addresses)
     end
 
     # Register a block to run at a point in the lifecycle.
