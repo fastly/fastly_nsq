@@ -37,7 +37,10 @@ RSpec.describe FastlyNsq do
 
   describe "#logger" do
     let!(:default_logger) { subject.logger }
-    after { subject.logger = default_logger }
+    after do
+      subject.logger = default_logger
+      $stderr = STDERR
+    end
 
     it "returns the set logger" do
       logger = Logger.new(nil)
@@ -47,6 +50,7 @@ RSpec.describe FastlyNsq do
     end
 
     it "sets the default logger if none is set" do
+      $stderr = File.new("/dev/null", "w")
       subject.instance_variable_set(:@logger, nil)
       expect(subject.instance_variable_get(:@logger)).to be nil
       logger = subject.logger
@@ -62,14 +66,14 @@ RSpec.describe FastlyNsq do
     after { subject.logger = default_logger }
 
     it "allows the logger to be set and retrieved" do
-      logger = Logger.new($stdout)
+      logger = Logger.new("/dev/null")
       subject.logger = logger
 
       expect(subject.logger).to eq logger
     end
 
     it "sets Nsq.logger" do
-      logger = Logger.new($stdout)
+      logger = Logger.new("/dev/null")
       subject.logger = logger
 
       expect(Nsq.logger).to eq logger
