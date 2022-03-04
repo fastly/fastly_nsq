@@ -97,5 +97,4 @@ RSpec.describe FastlyNsq::Consumer do
       expect(Nsq::Consumer).not_to have_received(:new)
     end
   end
-
 end
