@@ -61,6 +61,9 @@ class FastlyNsq::Consumer
   ##
   # Create a FastlyNsq::Consumer
   #
+  # Will connect to NSQDs in this priority: 1. direct from FastlyNsq.consumer_nsqds 2. discovered via FastlyNsq.lookupd_http_addresses.
+  # If both `consumer_nsqds` and `lookupd_http_addresses` are set only the FastlyNsq.consumer_nsqds will be used.
+  #
   # @param topic [String] NSQ topic from which to consume
   # @param channel [String] NSQ channel from which to consume
   # @param queue [#pop, #size] Queue object, most likely an instance of {FastlyNsq::Feeder}
@@ -99,15 +102,25 @@ class FastlyNsq::Consumer
   attr_reader :tls_options
 
   def connect(queue, **options)
-    Nsq::Consumer.new(
-      {
-        nsqlookupd: FastlyNsq.lookupd_http_addresses,
-        topic: topic,
-        channel: channel,
-        queue: queue,
-        max_attempts: max_attempts,
-        **options
-      }.merge(tls_options)
-    )
+    consumers = FastlyNsq.consumer_nsqds
+    lookupd = FastlyNsq.lookupd_http_addresses
+
+    opts = {
+      topic: topic,
+      channel: channel,
+      queue: queue,
+      max_attempts: max_attempts,
+      **options
+    }.merge(tls_options)
+
+    if !consumers.empty?
+      opts[:nsqd] = consumers
+    elsif !lookupd.empty?
+      opts[:nsqlookupd] = lookupd
+    else
+      raise FastlyNsq::ConnectionFailed, "One of FastlyNsq.consumer_nsqds or FastlyNsq.lookupd_http_addresses must be present"
+    end
+
+    Nsq::Consumer.new(opts)
   end
 end
