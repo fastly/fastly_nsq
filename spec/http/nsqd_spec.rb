@@ -63,7 +63,7 @@ RSpec.describe FastlyNsq::Http::Nsqd, :webmock do
       stub_request(:post, url)
       data = {topic: "lol"}
 
-      FastlyNsq::Http::Nsqd.send("topic_#{verb}".to_sym, topic: "lol", base_uri: base_uri)
+      FastlyNsq::Http::Nsqd.send(:"topic_#{verb}", topic: "lol", base_uri: base_uri)
 
       expect(a_request(:post, url).with(query: data)).to have_been_requested
 
@@ -71,7 +71,7 @@ RSpec.describe FastlyNsq::Http::Nsqd, :webmock do
       stub_request(:post, url)
       data = {topic: "lol", channel: "foo"}
 
-      FastlyNsq::Http::Nsqd.send("channel_#{verb}".to_sym, topic: "lol", channel: "foo", base_uri: base_uri)
+      FastlyNsq::Http::Nsqd.send(:"channel_#{verb}", topic: "lol", channel: "foo", base_uri: base_uri)
 
       expect(a_request(:post, url).with(query: data)).to have_been_requested
     end
