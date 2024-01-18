@@ -17,7 +17,6 @@ Gem::Specification.new do |gem|
   gem.files = `git ls-files`.split("\n")
 
   gem.executables = gem.files.grep(%r{^bin/}).map { |f| File.basename(f) }
-  gem.test_files = gem.files.grep(%r{^(test|features)/})
   gem.require_paths = ["lib"]
 
   gem.add_development_dependency "awesome_print", "~> 1.6"
@@ -31,6 +30,6 @@ Gem::Specification.new do |gem|
   gem.add_development_dependency "yard"
 
   gem.add_dependency "concurrent-ruby", "~> 1.0"
-  gem.add_dependency "nsq-ruby-fastly", "~> 2.4"
+  gem.add_dependency "nsq-ruby", "~> 2.4.1"
   gem.add_dependency "priority_queue_cxx", "~> 0.3"
 end
